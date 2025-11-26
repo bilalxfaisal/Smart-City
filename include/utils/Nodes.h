@@ -3,6 +3,7 @@
 #define NODES_H
 
 #include <string>
+using std::string;
 
 // ==================== FORWARD DECLARATIONS ====================
 
@@ -75,14 +76,14 @@ public:
     std::string className;
 
 
-    Student* studentHead;
+    Student* Bacha;
 
-    Class* next;
+    Class* nextSibling;
 
     Class()
     {
-        studentHead = nullptr;
-        next = nullptr;
+        Bacha = nullptr;
+        nextSibling = nullptr;
     }
 };
 
@@ -93,14 +94,14 @@ public:
     std::string deptName;
 
 
-    Class* classHead;
+    Class* Bacha;
 
-    Department* next;
+    Department* nextSibling;
 
     Department()
     {
-        classHead = nullptr;
-        next = nullptr;
+        Bacha = nullptr;
+        nextSibling = nullptr;
     }
 };
 
@@ -134,21 +135,21 @@ public:
     string* subjects;
     int subjectCount;
 
-    Department* deptHead;
+    Department* Bacha;
 
     Faculty* FacultyHead;
 
-    School* next; // n ary trees
+    School* nextSibling; // n ary trees
 
     School()
     {
         subjects = nullptr;
         subjectCount = 0;
 
-        deptHead = nullptr;
+        Bacha = nullptr;
         FacultyHead = nullptr;
 
-        next = nullptr;
+        nextSibling = nullptr;
     }
 };
 
