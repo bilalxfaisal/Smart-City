@@ -164,10 +164,9 @@ public:
     string sector;
     float rating;
     int campusNo;
-
     string* subjects;
-    int subjectCount;
-
+	int subjectCount; // current number of subjects
+    int totalSubjets; // size of the array of strings, initial size set to 10
     Department* Bacha;
 
     Faculty* FacultyHead;
@@ -178,12 +177,16 @@ public:
     {
         subjects = nullptr;
         subjectCount = 0;
-
+		totalSubjets = 10; // initial size
+		rating = 0.0f;
         Bacha = nullptr;
         FacultyHead = nullptr;
-
+		campusNo = 0;
         nextSibling = nullptr;
     }
+    School(string ID, string name, string sector, int campus);
+    void addSubject(const string& subject);
+    void addFaculty();
 };
 
 
