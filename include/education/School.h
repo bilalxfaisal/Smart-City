@@ -45,4 +45,5 @@ void School::addSubject(const string& sub) {
 	}
 }
 
+
 #endif
