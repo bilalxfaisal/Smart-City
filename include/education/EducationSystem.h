@@ -39,7 +39,7 @@ public:
 		School* toAdd = new School(newSchool);
 
 		// getting index using the hashFunction
-		int index = hashFunction(newSchool.schoolID);
+		int index = Polynomial_Rolling_Hash_V1(newSchool.schoolID);
 		
 		// checking for collisions
 		if (schoolHashTable[index] != NULL) {
