@@ -106,9 +106,10 @@ public:
         age = ag;
         next = nullptr;
     }
-
+    int getStudentID();
+    string getStudentName();
+    void printStudentDetails();
 };
-
 
 class Class
 {
@@ -126,6 +127,18 @@ public:
         Bacha = nullptr;
         nextSibling = nullptr;
     }
+
+    void switchStudentPlaces(Student*, Student*);
+    void switchStudentPlaces(int, int);
+    bool isClassEmpty();
+    string getClassID();
+    string getClassName();
+    Student* searchStudentByID(int ID);
+    Student* searchStudentByName();
+    int getStudentCount();
+    void printStudentsInClass();
+    void deleteStudentbyID(int studentID);
+    void deleteStudentByName(string name);
 };
 
 class Department
