@@ -64,10 +64,34 @@ public:
 		// Now for MaxHeap
 		if (heapSize < heapCapacity) {
 			heapArr[heapSize] = toAdd;
-			heapify();
 			heapSize++;
+			heapifyUp(heapSize - 1);  // Heapify up from the newly added element
 		}
 
+	}
+	
+	// Heapify up : maintains max - heap property after insertion
+	// CONSIDERING NO DELETION HAPPENS
+	void heapifyUp(int index) {
+		while (index > 0) {
+			int parent = (index - 1) / 2;
+
+			// If current node's rating is greater than parent's, swap
+			if (heapArr[index]->rating > heapArr[parent]->rating) {
+				School* temp = heapArr[index];
+				heapArr[index] = heapArr[parent];
+				heapArr[parent] = temp;
+
+				index = parent;
+			}
+			else {
+				break;  // Heap property satisfied
+			}
+		}
+	}
+
+	School* getMaxRatedSchool() {
+		return (heapSize > 0) ? heapArr[0] : nullptr;
 	}
 };
 
