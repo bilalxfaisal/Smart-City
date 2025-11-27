@@ -1,11 +1,6 @@
+#include <iostream>
 #ifndef Stack_Heap_nMORE_H
 #define Stack_Heap_nMORE_H
-
-#include <iostream>
-#include <string>
-using namespace std;
-
-
 class NodeQ {
 public:
     void* data;
@@ -227,4 +222,5 @@ public:
     }
 };
 
-#endif // !1
+
+#endif

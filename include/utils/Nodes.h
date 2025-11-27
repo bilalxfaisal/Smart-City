@@ -1,4 +1,4 @@
-<<<<<<< Updated upstream
+
 // include/utils/Nodes.h
 #ifndef NODES_H
 #define NODES_H
