@@ -45,5 +45,17 @@ void School::addSubject(const string& sub) {
 	}
 }
 
+void School::addFaculty(const Faculty& fac) {
+	// assuming that the faculty head variable is actually an n-ary pwease
+	Faculty* toAdd = new Faculty(fac);
+	if (FacultyHead == nullptr) {
+		FacultyHead = toAdd;
+	}
+	else {
+		// adding to head for ease cuz why not meri jaan why not
+		toAdd->next = FacultyHead;
+		FacultyHead = toAdd;
+	}
+}
 
 #endif
