@@ -91,117 +91,11 @@ class Library;
 
 // ==================== NODE STRUCTURES ====================
 
-class Student
-{
-public:
-    std::string studentID;
-    std::string name;
-    int age;
-    Student* next;
 
-    Student(string id = "", string nam = "", int ag = 0)
-    {
-        studentID = id;
-        name = nam;
-        age = ag;
-        next = nullptr;
-    }
 
-    int getStudentID();
-    string getStudentName();
-    void printStudentDetails();
-};
 
-class Class
-{
-public:
-    std::string classID;
-    std::string className;
-    Student* Bacha;
-    Class* nextSibling;
 
-    Class()
-    {
-        Bacha = nullptr;
-        nextSibling = nullptr;
-    }
 
-    void switchStudentPlaces(Student*, Student*);
-    void switchStudentPlaces(int, int);
-    bool isClassEmpty();
-    string getClassID();
-    string getClassName();
-    Student* searchStudentByID(int ID);
-    Student* searchStudentByName();
-    int getStudentCount();
-    void printStudentsInClass();
-    void deleteStudentbyID(int studentID);
-    void deleteStudentByName(string name);
-};
-
-class Department
-{
-public:
-    std::string deptID;
-    std::string deptName;
-    Class* Bacha;
-    Department* nextSibling;
-
-    Department()
-    {
-        Bacha = nullptr;
-        nextSibling = nullptr;
-    }
-};
-
-class Faculty
-{
-public:
-    string FacultyID;
-    string name;
-    string specialization;
-    Faculty* next;
-
-    Faculty(string id = "", string nam = "", string spec = "")
-    {
-        FacultyID = id;
-        name = nam;
-        specialization = spec;
-        next = nullptr;
-    }
-};
-
-class School
-{
-public:
-    string schoolID;
-    string schoolName;
-    string sector;
-    float rating;
-    int campusNo;
-    string* subjects;
-    int subjectCount;     // current number of subjects
-    int totalSubjets;     // size of the array of strings, initial size set to 10
-    Department* Bacha;
-    Faculty* FacultyHead;
-    School* nextSibling;  // n-ary trees
-
-    School()
-    {
-        subjects = nullptr;
-        subjectCount = 0;
-        totalSubjets = 10; // initial size
-        rating = 0.0f;
-        Bacha = nullptr;
-        FacultyHead = nullptr;
-        campusNo = 0;
-        nextSibling = nullptr;
-    }
-
-    School(string ID, string name, string sector, int campus);
-    void addSubject(const string& subject);
-    void addFaculty();
-};
 
 class edgeSchool
 {
