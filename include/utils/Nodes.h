@@ -1,3 +1,4 @@
+
 // include/utils/Nodes.h
 #ifndef NODES_H
 #define NODES_H
@@ -6,42 +7,39 @@
 #include <iostream>
 using std::string;
 using std::cout;
-
-// String Keys
-inline int Polynomial_Rolling_Hash_V1(string& str)
-{
-    const int p = 31;
-    const int m = 1e9 + 9;
-    int hash_value = 0;
-    int p_pow = 1;
-    for (char c : str) {
-        hash_value = (hash_value + (c - 'a' + 1) * p_pow) % m;
-        p_pow = (p_pow * p) % m;
+  //String Keys
+    inline int Polynomial_Rolling_Hash_V1(string& str)
+    {
+        const int p = 31;
+        const int m = 1e9 + 9;
+        int hash_value = 0;
+        int p_pow = 1;
+        for (char c : str) {
+            hash_value = (hash_value + (c - 'a' + 1) * p_pow) % m;
+            p_pow = (p_pow * p) % m;
+        }
+        return static_cast<int>(hash_value);
     }
-    return static_cast<int>(hash_value);
-}
-
-inline int Polynomial_Rolling_Hash_V2(string& str)
-{
-    const int p = 53;
-    const int m = 1e9 + 9;
-    int hash_value = 0;
-    int p_pow = 1;
-    for (char c : str) {
-        hash_value = (hash_value + (c - 'a' + 1) * p_pow) % m;
-        p_pow = (p_pow * p) % m;
+    inline int Polynomial_Rolling_Hash_V2(string& str)
+    {
+        const int p = 53;
+        const int m = 1e9 + 9;
+        int hash_value = 0;
+        int p_pow = 1;
+        for (char c : str) {
+            hash_value = (hash_value + (c - 'a' + 1) * p_pow) % m;
+            p_pow = (p_pow * p) % m;
+        }
+        return static_cast<int>(hash_value);
     }
-    return static_cast<int>(hash_value);
-}
-
-inline int DJB2_Hash(string& str)
-{
-    unsigned long hash = 5381;
-    for (char c : str) {
-        hash = ((hash << 5) + hash) + c;
+    inline int DJB2_Hash(string& str)
+    {
+        unsigned long hash = 5381;
+        for (char c : str) {
+            hash = ((hash << 5) + hash) + c;
+        }
+        return static_cast<int>(hash);
     }
-    return static_cast<int>(hash);
-}
 
 // ==================== FORWARD DECLARATIONS ====================
 
@@ -56,11 +54,12 @@ class Class;
 class Department;
 class School;
 class Faculty; // yes needed; 25/11/25 11:58 AM
-// well I need some classes for school ke graphs
-// So HERE GOES NOTHIN -HADIAH
+//well I need some classes for school ke graphs
+//So HERE GOES NOTHIN -HADIAH
 class edgeSchool;
 class schoolGraphNode;
 class SchoolGraph;
+
 
 // Medical entities
 class Doctor;
@@ -90,6 +89,7 @@ class Library;
 // me is stupid
 
 // ==================== NODE STRUCTURES ====================
+// the rest of the node structures would go here...
 
 
 
@@ -100,17 +100,22 @@ class Library;
 class edgeSchool
 {
 public:
-    int toIndex; // index of vertex to which it points
+    int toIndex; //index of vertex to which it points
     float weight;
-    edgeSchool* next = nullptr;
-
-    edgeSchool(int toi = 0, float w = 0)
+    //A ptr for next in idk ll adjacency list
+    edgeSchool* next=nullptr;
+    edgeSchool(int toi=0, float w=0) 
     {
         toIndex = toi;
         weight = w;
         next = nullptr;
     }
+
+public:
 };
+
+
+
 
 struct DijkstraEntry
 {
@@ -130,6 +135,9 @@ static int DijkstraEntryCmp(void* a, void* b)
     return 0;
 }
 
+
+
+
 class schoolGraphNode
 {
 public:
@@ -142,48 +150,45 @@ public:
         adjList = edg;
     }
 };
-
 class SchoolGraph
 {
 private:
+    //ARRAY  OF EDGES AA IN ZERO OF ONE 
     schoolGraphNode* VertexArray = nullptr;
     int capacity = 0;
     int count = 0;
-
+   
 public:
-    SchoolGraph(int vertices = 10)
+    SchoolGraph(int vertices =10 ) 
     {
-        if (vertices <= 0)
-        {
+        if (vertices <= 0) 
+        { 
             vertices = 10;
         }
         capacity = vertices;
         VertexArray = new schoolGraphNode[vertices];
     }
-
-    void resizeGraph()
+    void resizeGraph() 
     {
         int newCapacity = capacity * 2;
         schoolGraphNode* newArray = new schoolGraphNode[newCapacity];
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < count; i++) 
         {
             newArray[i] = VertexArray[i];
         }
         delete[] VertexArray;
         VertexArray = newArray;
         capacity = newCapacity;
-    }
-
+	}
     void addSchool(School* newSchool)
     {
-        if (count == capacity)
+        if (count == capacity) 
         {
             resizeGraph();
         }
         VertexArray[count] = schoolGraphNode(newSchool);
         count++;
     }
-
     void addLink(int fromIndex, int toIndex, float weight)
     {
         if (fromIndex < 0 || fromIndex >= count || toIndex < 0 || toIndex >= count)
@@ -196,26 +201,26 @@ public:
         newEdge->next = VertexArray[fromIndex].adjList;
         VertexArray[fromIndex].adjList = newEdge;
     }
-
-    void bfs(int start)
+    void bfs(int start) 
     {
         myQueue q;
         bool* visited = new bool[count]();
-        if (start < 0 || start >= count)
+        //Locate start
+        if (start < 0 || start>count)
         {
-            delete[] visited;
             return;
         }
         schoolGraphNode st = VertexArray[start];
-        q.enqueue(&st);
+		q.enqueue(&st);
         visited[start] = true;
         while (!q.isEmpty())
         {
             schoolGraphNode* s = (schoolGraphNode*)q.dequeue();
-            if (s == nullptr)
+            if (s == nullptr) 
             {
                 continue;
             }
+            int idx = int(s - VertexArray); //ASSEMBLY AA
             if (s->mehSchool)
             {
                 cout << s->mehSchool->schoolName << " ";
@@ -228,38 +233,46 @@ public:
             while (edg)
             {
                 int to = edg->toIndex;
-                if (to >= 0 && to < count && !visited[to])
+                if (to >= 0 && !visited[to])
                 {
                     q.enqueue(&VertexArray[to]);
                     visited[to] = true;
                 }
                 edg = edg->next;
             }
+
+
+
         }
         std::cout << std::endl;
         delete[] visited;
     }
 
+
+    // Prints distances from src to every vertex;
     void dijkstra(int src)
     {
-        if (count == 0 || src < 0 || src >= count)
+        if (count == 0)
+        {
+            return;
+        }
+        if (src < 0 || src >= count)
         {
             return;
         }
 
-        const float INF = 1e30f;
+        const float INF = 1e30f; //infinity aaaaaaaa
         float* dist = new float[count];
         int* prev = new int[count];
         bool* visited = new bool[count]();
 
-        for (int i = 0; i < count; ++i) {
-            dist[i] = INF;
-            prev[i] = -1;
-            visited[i] = false;
-        }
+        for (int i = 0; i < count; ++i) { dist[i] = INF; prev[i] = -1; visited[i] = false; }
         dist[src] = 0.0f;
 
+        // Heap capacity: at least 1; more entries may be pushed (stale entries allowed).
         MaxHeap heap((count > 0 ? count : 1) * 2, DijkstraEntryCmp);
+
+        // push source
         heap.insert(new DijkstraEntry(src, 0.0f));
 
         while (!heap.isEmpty())
@@ -269,9 +282,12 @@ public:
 
             int u = cur->vertex;
             float d = cur->dist;
-            delete cur;
+            delete cur; // free popped entry
 
+            // If already finalized (visited) skip stale entry.
             if (visited[u]) continue;
+
+            // If this popped dist is greater than best-known, skip.
             if (d > dist[u]) continue;
 
             visited[u] = true;
@@ -288,6 +304,7 @@ public:
                     {
                         dist[v] = nd;
                         prev[v] = u;
+                        // push new tentative distance (may create stale entries; handled above)
                         heap.insert(new DijkstraEntry(v, nd));
                     }
                 }
@@ -296,23 +313,17 @@ public:
         }
 
         cout << "Dijkstra distances from ";
-        if (VertexArray[src].mehSchool)
-            cout << VertexArray[src].mehSchool->schoolName;
-        else
-            cout << "(src)";
+        if (VertexArray[src].mehSchool) cout << VertexArray[src].mehSchool->schoolName;
+        else cout << "(src)";
         cout << ":\n";
 
         for (int i = 0; i < count; ++i)
         {
-            if (VertexArray[i].mehSchool)
-                cout << VertexArray[i].mehSchool->schoolName << " : ";
-            else
-                cout << "(null) : ";
+            if (VertexArray[i].mehSchool) cout << VertexArray[i].mehSchool->schoolName << " : ";
+            else cout << "(null) : ";
 
-            if (dist[i] >= INF / 2.0f)
-                cout << "unreachable\n";
-            else
-                cout << dist[i] << "\n";
+            if (dist[i] >= INF / 2.0f) cout << "unreachable\n";
+            else cout << dist[i] << "\n";
         }
 
         delete[] dist;
@@ -333,7 +344,6 @@ public:
         std::cout << std::endl;
         delete[] visited;
     }
-
     void dfsUtil(int index, bool* visited)
     {
         visited[index] = true;
@@ -350,13 +360,21 @@ public:
         while (edg)
         {
             int to = edg->toIndex;
-            if (to >= 0 && to < count && !visited[to])
+            if (to >= 0 && !visited[to])
             {
                 dfsUtil(to, visited);
             }
             edg = edg->next;
         }
     }
-};
 
-#endif // NODES_H
+
+
+
+
+
+};
+          
+
+
+#endif

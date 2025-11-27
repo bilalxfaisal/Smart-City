@@ -1,9 +1,6 @@
-#pragma once
 #include <iostream>
-#include <string>
-using namespace std;
-
-
+#ifndef Stack_Heap_nMORE_H
+#define Stack_Heap_nMORE_H
 class NodeQ {
 public:
     void* data;
@@ -225,3 +222,5 @@ public:
     }
 };
 
+
+#endif
