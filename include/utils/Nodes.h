@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 // include/utils/Nodes.h
 #ifndef NODES_H
 #define NODES_H
@@ -346,7 +347,7 @@ public:
             while (edg)
             {
                 int to = edg->toIndex;
-                if (to >= 0 && !visited[to]) 
+                if (to >= 0 && !visited[to])
                 {
                     q.enqueue(&VertexArray[to]);
                     visited[to] = true;
@@ -361,19 +362,19 @@ public:
         delete[] visited;
     }
 
-    
-   // Prints distances from src to every vertex;
+
+    // Prints distances from src to every vertex;
     void dijkstra(int src)
     {
-        if (count == 0) 
+        if (count == 0)
         {
             return;
         }
-        if (src < 0 || src >= count) 
+        if (src < 0 || src >= count)
         {
             return;
         }
-         
+
         const float INF = 1e30f; //infinity aaaaaaaa
         float* dist = new float[count];
         int* prev = new int[count];
@@ -445,20 +446,20 @@ public:
         delete[] visited;
     }
 
-    void dfs() 
+    void dfs()
     {
         bool* visited = new bool[count]();
-        for (int i = 0; i < count; i++) 
+        for (int i = 0; i < count; i++)
         {
-            if (!visited[i]) 
+            if (!visited[i])
             {
                 dfsUtil(i, visited);
             }
         }
         std::cout << std::endl;
-		delete[] visited;
+        delete[] visited;
     }
-    void dfsUtil(int index, bool* visited) 
+    void dfsUtil(int index, bool* visited)
     {
         visited[index] = true;
         schoolGraphNode s = VertexArray[index];
@@ -471,23 +472,24 @@ public:
             cout << "(null) ";
         }
         edgeSchool* edg = s.adjList;
-        while (edg) 
+        while (edg)
         {
             int to = edg->toIndex;
-            if (to >= 0 && !visited[to]) 
+            if (to >= 0 && !visited[to])
             {
                 dfsUtil(to, visited);
             }
             edg = edg->next;
         }
-	}
+    }
 
 
-   
+
 
 
 
 };
+          
 
 
 #endif

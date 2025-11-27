@@ -1,4 +1,6 @@
-#pragma once
+#ifndef Stack_Heap_nMORE_H
+#define Stack_Heap_nMORE_H
+
 #include <iostream>
 #include <string>
 using namespace std;
@@ -225,3 +227,4 @@ public:
     }
 };
 
+#endif // !1
