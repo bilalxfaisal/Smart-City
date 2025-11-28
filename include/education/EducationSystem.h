@@ -158,6 +158,16 @@ public:
 		}
 		return false;
 	}
+
+	void display() {
+		School* temp = schools;
+		cout << "Displaying all schools in the Education System:" << endl;
+		while (temp) {
+			cout << "School ID: " << temp->schoolID << ", Name: " << temp->schoolName << ", Rating: " << temp->rating << endl;
+			temp->display();
+			temp = temp->nextSibling;
+		}
+	}
 };
 
 #endif

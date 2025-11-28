@@ -148,4 +148,8 @@ bool School::addDepartment(string deptId) {
 	return false;
 }
 
+void display() {
+
+}
+
 #endif
