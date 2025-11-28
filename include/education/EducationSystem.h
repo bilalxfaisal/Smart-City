@@ -103,8 +103,60 @@ public:
 		return (heapSize > 0) ? heapArr[0] : nullptr;
 	}
 
-	bool addStudent() {
+	// takes in School ID, Department Name, Classroom Name
+	// will be using the 
+	bool addStudent(Student& st1, string& destSchool, string& destDepartment, string& destClassroom) {
+		School* toAdd = nullptr;
+		int index = Polynomial_Rolling_Hash_V1(destSchool);
+		toAdd = schoolHashTable[index];
+		if (toAdd == nullptr) {
+			return false; // school not found
+		}
+		else {
+			 return toAdd->addStudent(st1, destDepartment, destClassroom);
+		}
+		return false;
+	}
 
+	// takes in School ID and adds Department to it
+	bool addDepartment(string& destSchool, Department& dp1) {
+		School* toAdd = nullptr;
+		int index = Polynomial_Rolling_Hash_V1(destSchool);
+		toAdd = schoolHashTable[index];
+		if (toAdd == nullptr) {
+			return false;
+		}
+		else {
+			return toAdd->addDepartment(dp1);
+		}
+		return false;
+	}
+
+	// takes in School ID as a string, Department ID as a string and adds the class to it
+	bool addClass(string& destSchool, string& destDepartment, Class& c1) {
+		School* toAdd = nullptr;
+		int index = Polynomial_Rolling_Hash_V1(destSchool);
+		toAdd = schoolHashTable[index];
+		if (toAdd == nullptr) {
+			return false;
+		}
+		else {
+			return toAdd->addClass(destDepartment, c1);
+		}
+		return false;
+	}
+
+	bool addFaculty(string& destSchool, Faculty& f1) {
+		School* toAdd = nullptr;
+		int index = Polynomial_Rolling_Hash_V1(destSchool);
+		toAdd = schoolHashTable[index];
+		if (toAdd == nullptr) {
+			return false;
+		}
+		else {
+			return toAdd->addFaculty(f1);
+		}
+		return false;
 	}
 };
 
