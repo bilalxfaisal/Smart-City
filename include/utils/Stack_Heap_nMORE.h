@@ -1,3 +1,9 @@
+<<<<<<< Updated upstream
+=======
+#ifndef Stack_Heap_nMORE_H
+#define Stack_Heap_nMORE_H
+
+>>>>>>> Stashed changes
 #include <iostream>
 #ifndef Stack_Heap_nMORE_H
 #define Stack_Heap_nMORE_H
@@ -222,5 +228,9 @@ public:
     }
 };
 
+<<<<<<< Updated upstream
 
 #endif
+=======
+#endif // !1
+>>>>>>> Stashed changes
