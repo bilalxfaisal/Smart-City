@@ -40,6 +40,7 @@ public:
 	School(string ID, string name, string sector, int campus);
 	void addSubject(const string& subject);
 	void addFaculty(const Faculty& fac);
+	bool addClassToDepartment(Department& dept, const Class& cls);
 };
 
 
@@ -89,6 +90,19 @@ void School::addFaculty(const Faculty& fac) {
 		toAdd->next = FacultyHead;
 		FacultyHead = toAdd;
 	}
+}
+bool School::addClassToDepartment(Department& dept, const Class& cls) {
+	// find the department in the school
+	Department* temp = Bacha;
+	while (temp) {
+		if (temp->deptID == dept.deptID) {
+			// found the department, add class
+			temp->addClass(cls);
+			return true;
+		}
+		temp = temp->nextSibling;
+	}
+	return false; // department not found
 }
 
 #endif
