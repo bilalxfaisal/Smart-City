@@ -39,8 +39,11 @@ public:
 
 	School(string ID, string name, string sector, int campus);
 	void addSubject(const string& subject);
-	void addFaculty(const Faculty& fac);
+	bool addFaculty(const Faculty& fac);
 	bool addClassToDepartment(const string& deptID, const Class& cls);
+
+	bool AddStudent(string classId, Student student);
+	bool addDepartment(string deptId);
 };
 
 
@@ -79,17 +82,21 @@ void School::addSubject(const string& sub) {
 	}
 }
 
-void School::addFaculty(const Faculty& fac) {
+bool School::addFaculty(const Faculty& fac) 
+{
 	// assuming that the faculty head variable is actually an n-ary pwease
 	Faculty* toAdd = new Faculty(fac);
-	if (FacultyHead == nullptr) {
+	if (FacultyHead == nullptr)
+	{
 		FacultyHead = toAdd;
+		return true;
 	}
 	else {
 		// adding to head for ease cuz why not meri jaan why not
 		toAdd->next = FacultyHead;
 		FacultyHead = toAdd;
 	}
+	return true;
 }
 bool School::addClassToDepartment(const string& deptID, const Class& cls) {
 	Department* temp = Bacha;
@@ -100,6 +107,33 @@ bool School::addClassToDepartment(const string& deptID, const Class& cls) {
 		}
 		temp = temp->nextSibling;
 		cout << "Added a class to department " << deptID << endl;
+	}
+	return false;
+
+}
+bool School::AddStudent(string classId, Student student) {
+	Department* temp = Bacha;
+	while (temp) {
+		Class* cls = temp->findClassByID(classId);
+		if (cls) {
+			cls->addStudent(student);
+			return true;
+		}
+		temp = temp->nextSibling;
+	}
+	return false;
+}
+bool School::addDepartment(string deptId) {
+	Department* toADD = new Department();
+	toADD->deptID = deptId;
+	if (Bacha == nullptr) {
+		Bacha = toADD;
+		return true;
+	}
+	else {
+		toADD->nextSibling = Bacha;
+		Bacha = toADD;
+		return true;
 	}
 	return false;
 }
