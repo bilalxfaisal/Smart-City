@@ -141,7 +141,7 @@ public:
 			return false;
 		}
 		else {
-			return toAdd->addClass(destDepartment, c1);
+			return toAdd->addClassToDepartment(destDepartment, c1);
 		}
 		return false;
 	}
