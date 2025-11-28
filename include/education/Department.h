@@ -85,6 +85,19 @@ public:
         }
         return false;
     }
+	//Add a student in respective class
+    void addStudentToClass(string classID, string studentID, string studentName, int age) {
+        Class* cls = findClassByID(classID);
+        if (cls) 
+        {
+			cls->addStudent(Student(studentID, studentName, age));
+
+        }
+        else 
+        {
+            cout << "Class with ID " << classID << " not found in Department " << deptName << endl;
+        }
+	}
 };
 
 
