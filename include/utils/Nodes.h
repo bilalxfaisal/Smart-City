@@ -7,18 +7,33 @@
 using std::string;
 using std::cout;
 //String Keys
-inline int Polynomial_Rolling_Hash_V1(string& str)
-{
-    const int p = 31;
-    const int m = 1e9 + 9;
-    int hash_value = 0;
-    int p_pow = 1;
+#include <string>
+using namespace std;
+
+inline int Polynomial_Rolling_Hash_V1(const string& str) {
+    const long long p = 31;
+    const long long m = 1000000009LL;  // 1e9 + 9 (prime)
+
+    long long hash_value = 0;
+    long long p_pow = 1;
+
     for (char c : str) {
-        hash_value = (hash_value + (c - 'a' + 1) * p_pow) % m;
+        // Safely convert char to non-negative integer (0–255)
+        long long char_val = static_cast<unsigned char>(c);
+
+        // Compute: hash += char_val * (p^i)
+        hash_value = (hash_value + (char_val * p_pow) % m) % m;
+
+        // Update power: p_pow = p_pow * p mod m
         p_pow = (p_pow * p) % m;
     }
+
+    // Normalize to [0, m-1] — critical for hash table indexing
+    hash_value = (hash_value % m + m) % m;
+
     return static_cast<int>(hash_value);
 }
+
 inline int Polynomial_Rolling_Hash_V2(string& str)
 {
     const int p = 53;

@@ -52,7 +52,7 @@ public:
 
 		// getting index using the hashFunction
 		int index = Polynomial_Rolling_Hash_V1(newSchool.schoolID);
-		
+		index = index % totalSchools;		
 		// checking for collisions
 		if (schoolHashTable[index] != NULL) {
 			// perform chaining, adding to head of L. List
@@ -117,6 +117,8 @@ public:
 	bool addStudent(Student& st1, string& destSchool, string& destDepartment, string& destClassroom) {
 		School* toAdd = nullptr;
 		int index = Polynomial_Rolling_Hash_V1(destSchool);
+		index = index % totalSchools;
+
 		toAdd = schoolHashTable[index];
 		if (toAdd == nullptr) {
 			return false; // school not found
@@ -131,6 +133,8 @@ public:
 	bool addDepartment(string& destSchool, Department& dp1) {
 		School* toAdd = nullptr;
 		int index = Polynomial_Rolling_Hash_V1(destSchool);
+		index = index % totalSchools;
+
 		toAdd = schoolHashTable[index];
 		if (toAdd == nullptr) {
 			return false;
@@ -145,6 +149,8 @@ public:
 	bool addClass(string& destSchool, string& destDepartment, Class& c1) {
 		School* toAdd = nullptr;
 		int index = Polynomial_Rolling_Hash_V1(destSchool);
+		index = index % totalSchools;
+
 		toAdd = schoolHashTable[index];
 		if (toAdd == nullptr) {
 			return false;
@@ -158,6 +164,8 @@ public:
 	bool addFaculty(string& destSchool, Faculty& f1) {
 		School* toAdd = nullptr;
 		int index = Polynomial_Rolling_Hash_V1(destSchool);
+		index = index % totalSchools;
+
 		toAdd = schoolHashTable[index];
 		if (toAdd == nullptr) {
 			return false;

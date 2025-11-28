@@ -136,7 +136,7 @@ bool School::AddStudent(string classId,string deptId, Student student)
 }
 bool School::addDepartment(Department& dept) 
 {
-	Department* toADD = &dept;
+	Department* toADD = new Department(dept);
 	if (Bacha == nullptr) 
 	{
 		Bacha = toADD;

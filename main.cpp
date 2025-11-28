@@ -1,4 +1,4 @@
-#include "../Smart-City-DS-Project/include/education/EducationSystem.h"
+#include "../DS_PROJECT/include/education/EducationSystem.h"
 #include <iostream>
 #include <string>
 
@@ -13,12 +13,13 @@ void showMenu() {
     cout << "4. Add Student to Class\n";
     cout << "5. Add Faculty to School\n";
     cout << "6. Show Max Rated School\n";
+    cout << "7. DISSplay \n";
     cout << "0. Exit\n";
     cout << "Enter choice: ";
 }
 
 int main() {
-    EducationSystem ES(20, 50);  // Capacity: 20 schools, hash=50
+    EducationSystem ES(20);  // Capacity: 20 schools
 
     int choice;
     do {
@@ -32,11 +33,11 @@ int main() {
             int campus;
 
             cout << "Enter School ID: ";
-            getline(cin, id);
+            cin >> id;
             cout << "Enter School Name: ";
-            getline(cin, name);
+            cin >> name;
             cout << "Enter Sector: ";
-            getline(cin, sector);
+            cin >> sector;
             cout << "Enter Campus No: ";
             cin >> campus;
 
@@ -51,13 +52,12 @@ int main() {
             string schoolID, deptID, deptName;
 
             cout << "Enter School ID: ";
-            cin.ignore();
-            getline(cin, schoolID);
+            cin >> schoolID;
 
             cout << "Enter Department ID: ";
-            getline(cin, deptID);
+            cin >> deptID;
             cout << "Enter Department Name: ";
-            getline(cin, deptName);
+            cin >> deptName;
 
             Department dp;
             dp.deptID = deptID;
@@ -74,8 +74,7 @@ int main() {
             string schoolID, deptID, classID, className;
 
             cout << "Enter School ID: ";
-            cin.ignore();
-            getline(cin, schoolID);
+            cin >> schoolID;
 
             cout << "Enter Department ID: ";
             getline(cin, deptID);
@@ -162,6 +161,9 @@ int main() {
             }
         }
 
+        else if(choice == 7) {
+            ES.display();
+        }
         else if (choice == 0) {
             cout << "Exiting system… Goodbye!\n";
         }
