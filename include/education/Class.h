@@ -34,6 +34,7 @@ public:
 	void printStudentsInClass();
 	void deleteStudentbyID(string studentID);
 	void deleteStudentByName(string name);
+	void addStudent(const Student& stu);
 };
 
 
@@ -153,6 +154,21 @@ void Class::deleteStudentByName(string name)
 			prev = temp;
 			temp = temp->next;
 		}
+	}
+}
+
+
+void Class::addStudent(const Student& stu)
+{
+	Student* toAdd = new Student(stu);
+	if (Bacha == nullptr)
+	{
+		Bacha = toAdd;
+	}
+	else
+	{
+		toAdd->next = Bacha;
+		Bacha = toAdd;
 	}
 }
 

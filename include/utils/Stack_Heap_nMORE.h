@@ -1,12 +1,8 @@
-<<<<<<< Updated upstream
-=======
 #ifndef Stack_Heap_nMORE_H
 #define Stack_Heap_nMORE_H
 
->>>>>>> Stashed changes
 #include <iostream>
-#ifndef Stack_Heap_nMORE_H
-#define Stack_Heap_nMORE_H
+
 class NodeQ {
 public:
     void* data;
@@ -64,9 +60,9 @@ public:
     int size() { return currSize; }
 };
 
-// ======================================================
+//======================================================
 // Helper Stack (No STL Allowed)
-// ======================================================
+//======================================================
 class NodeS {
 public:
     void* data;
@@ -228,9 +224,4 @@ public:
     }
 };
 
-<<<<<<< Updated upstream
-
 #endif
-=======
-#endif // !1
->>>>>>> Stashed changes

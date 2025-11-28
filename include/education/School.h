@@ -1,4 +1,5 @@
 #include "../utils/Nodes.h"
+#include "Department.h"
 #include <iostream>
 
 #ifndef School_H

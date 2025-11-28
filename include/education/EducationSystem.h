@@ -1,4 +1,5 @@
 #include "../utils/Nodes.h"
+#include "School.h"
 #include <iostream>
 #ifndef EDUCATIONSYSTEM_H
 #define EDUCATIONSYSTEM_H
@@ -20,7 +21,15 @@ class EducationSystem
 	School** heapArr; // max heap for schools based on rating, array structure
 
 protected:
-	void resizeHeap();
+	void resizeHeap() {
+		School** newArr = new School * [heapCapacity * 2];
+		for (int i = 0; i < heapSize; i++) {
+			newArr[i] = heapArr[i];
+		}
+		delete[] heapArr;
+		heapArr = newArr;
+		heapCapacity *= 2;
+	}
 public:
 	EducationSystem(int nSchools, int hashSize)
 		: noOfSchools(nSchools), hashTableSize(hashSize), heapSize(0) {
@@ -92,6 +101,10 @@ public:
 
 	School* getMaxRatedSchool() {
 		return (heapSize > 0) ? heapArr[0] : nullptr;
+	}
+
+	bool addStudent() {
+
 	}
 };
 
