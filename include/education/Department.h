@@ -76,9 +76,17 @@ public:
         Class* prev = nullptr;
         while (temp) {
             if (temp->className == name) {
-                prev->nextSibling = temp->nextSibling;
-                delete temp;
-                return true;
+                if (prev != nullptr) {
+                    prev->nextSibling = temp->nextSibling;
+                    delete temp;
+                    return true;
+                }
+                else {
+					temp = temp->nextSibling;
+					delete Bacha;
+					Bacha = temp;
+					return true;
+                }
             }
             prev = temp;
             temp = temp->nextSibling;
@@ -98,6 +106,16 @@ public:
             cout << "Class with ID " << classID << " not found in Department " << deptName << endl;
         }
 	}
+
+    void display() {
+		Class* temp = Bacha;
+        while (temp) {
+            cout << "  Class ID: " << temp->classID << " | ";
+            cout << "Class Name: " << temp->className << endl;
+            temp->display();
+            temp = temp->nextSibling;
+        }
+    }
 };
 
 

@@ -35,6 +35,7 @@ public:
 	void deleteStudentbyID(string studentID);
 	void deleteStudentByName(string name);
 	bool addStudent(const Student& stu);
+	void display();
 };
 
 
@@ -173,6 +174,16 @@ bool Class::addStudent(const Student& stu)
 		return true;
 	}
 
+}
+
+void Class::display()
+{
+	Student* temp = Bacha;
+	while (temp)
+	{
+		cout << "Student ID: " << temp->studentID << ", Name: " << temp->name << ", Age: " << temp->age << endl;
+		temp = temp->next;
+	}
 }
 
 #endif

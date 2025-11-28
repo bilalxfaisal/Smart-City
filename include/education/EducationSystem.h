@@ -12,10 +12,13 @@ using std::string;
 // TODO: make hashfunction, implement maxheap, add required pointers to school class, make heapify
 class EducationSystem
 {
-	int hashTableSize;
-	int noOfSchools;
+	// heap array size
 	int heapSize;
+	// heap array capacity
 	int heapCapacity;
+
+	int currSchools; // current number of schools stored in the array
+	int totalSchools; // current capacity of the array
 	School* schools; // n-ary tree for schools
 	School** schoolHashTable; // hash table for quick access to schools by ID
 	School** heapArr; // max heap for schools based on rating, array structure
@@ -31,11 +34,11 @@ protected:
 		heapCapacity *= 2;
 	}
 public:
-	EducationSystem(int nSchools, int hashSize)
-		: noOfSchools(nSchools), hashTableSize(hashSize), heapSize(0) {
+	EducationSystem(int nSchools) : currSchools(0), totalSchools(nSchools), 
+	heapSize(0), heapCapacity(nSchools) {
 
-		schools = nullptr;
-		schoolHashTable = new School * [hashSize](); // initializes to nullptr
+		schools = nullptr; // cuz n-ary so linkedlist
+		schoolHashTable = new School * [nSchools](); // initializes to nullptr
 
 		// Pre-allocate heap for max N schools (no need to resize later)
 		heapCapacity = nSchools;
@@ -75,6 +78,12 @@ public:
 			heapArr[heapSize] = toAdd;
 			heapSize++;
 			heapifyUp(heapSize - 1);  // Heapify up from the newly added element
+		}
+		else {
+			resizeHeap();
+			heapArr[heapSize] = toAdd;
+			heapSize++;
+			heapifyUp(heapSize - 1);  // Heapify up from the newly
 		}
 
 	}

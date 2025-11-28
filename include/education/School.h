@@ -22,7 +22,7 @@ public:
 	int subjectCount;     // current number of subjects
 	int totalSubjets;     // size of the array of strings, initial size set to 10
 	Department* Bacha;
-	Faculty* FacultyHead;
+	Faculty* FacultyHead; // n-ary tree of faculties
 	School* nextSibling;  // n-ary trees
 
 	School()
@@ -44,6 +44,7 @@ public:
 
 	bool AddStudent(string classId, string deptId, Student student);
 	bool addDepartment(Department& dept);
+	void display();
 };
 
 
@@ -149,8 +150,14 @@ bool School::addDepartment(Department& dept)
 	return false;
 }
 
-void display() {
-
+void School::display() {
+	Department* temp = Bacha;
+	while (temp) {
+		cout << "Department ID: " << temp->deptID << " | ";
+		cout << "Department Name: " << temp->deptName << endl;
+		temp->display();
+		temp = temp->nextSibling;
+	}
 }
 
 #endif
