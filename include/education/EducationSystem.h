@@ -113,7 +113,7 @@ public:
 			return false; // school not found
 		}
 		else {
-			 return toAdd->addStudent(st1, destDepartment, destClassroom);
+			 return toAdd->AddStudent(destClassroom, destDepartment, st1);
 		}
 		return false;
 	}

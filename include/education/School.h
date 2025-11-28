@@ -42,7 +42,7 @@ public:
 	bool addFaculty(const Faculty& fac);
 	bool addClassToDepartment(const string& deptID, const Class& cls);
 
-	bool AddStudent(string classId, Student student);
+	bool AddStudent(string classId, string deptId, Student student);
 	bool addDepartment(string deptId);
 };
 
@@ -111,9 +111,19 @@ bool School::addClassToDepartment(const string& deptID, const Class& cls) {
 	return false;
 
 }
-bool School::AddStudent(string classId, Student student) {
+bool School::AddStudent(string classId,string deptId, Student student)
+{
+
 	Department* temp = Bacha;
-	while (temp) {
+	while (temp) 
+	{
+		if (temp->deptID == deptId) {
+			break;
+		}
+		temp = temp->nextSibling;
+	}
+	while (temp) 
+	{
 		Class* cls = temp->findClassByID(classId);
 		if (cls) {
 			cls->addStudent(student);
