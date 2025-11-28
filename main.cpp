@@ -1,11 +1,37 @@
-#include "../DS_PROJECT/include/education/EducationSystem.h"
+
+#include "../Smart-City-DS-Project/include/education/EducationSystem.h"
 #include <iostream>
 #include <string>
 
 
 using namespace std;
 
-void showMenu() {
+static string readLine(const string& prompt)
+{
+    string line;
+    cout << prompt;
+    std::getline(cin, line);
+    return line;
+}
+
+static int readInt(const string& prompt)
+{
+    while (true)
+    {
+        string s = readLine(prompt);
+        try
+        {
+            size_t pos = 0;
+            int val = stoi(s, &pos);
+            if (pos == s.length()) return val;
+        }
+        catch (...) { /* fallthrough to retry */ }
+        cout << "Invalid number, please try again.\n";
+    }
+}
+
+void showMenu()
+{
     cout << "\n====== EDUCATION SYSTEM MENU ======\n";
     cout << "1. Add School\n";
     cout << "2. Add Department to School\n";
@@ -18,46 +44,45 @@ void showMenu() {
     cout << "Enter choice: ";
 }
 
-int main() {
+int main()
+{
     EducationSystem ES(20);  // Capacity: 20 schools
 
-    int choice;
-    do {
+    int choice = -1;
+    do
+    {
         showMenu();
-        cin >> choice;
-        cin.ignore();
+        
+        string choiceLine;
+        std::getline(cin, choiceLine);
+        try
+        {
+            choice = stoi(choiceLine);
+        }
+        catch (...)
+        {
+            choice = -1;
+        }
 
-        if (choice == 1) {
+        if (choice == 1)
+        {
             // ADD SCHOOL
-            string id, name, sector;
-            int campus;
-
-            cout << "Enter School ID: ";
-            cin >> id;
-            cout << "Enter School Name: ";
-            cin >> name;
-            cout << "Enter Sector: ";
-            cin >> sector;
-            cout << "Enter Campus No: ";
-            cin >> campus;
+            string id = readLine("Enter School ID: ");
+            string name = readLine("Enter School Name: ");
+            string sector = readLine("Enter Sector: ");
+            int campus = readInt("Enter Campus No: ");
 
             School sch(id, name, sector, campus);
             ES.addSchool(sch);
 
             cout << "School added successfully!\n";
         }
-
-        else if (choice == 2) {
+        else if (choice == 2)
+        {
             // ADD DEPARTMENT
-            string schoolID, deptID, deptName;
-
-            cout << "Enter School ID: ";
-            cin >> schoolID;
-
-            cout << "Enter Department ID: ";
-            cin >> deptID;
-            cout << "Enter Department Name: ";
-            cin >> deptName;
+            string schoolID = readLine("Enter School ID: ");
+            string deptID = readLine("Enter Department ID: ");
+            string deptName = readLine("Enter Department Name: ");
 
             Department dp;
             dp.deptID = deptID;
@@ -68,21 +93,13 @@ int main() {
             else
                 cout << "School not found!\n";
         }
-
-        else if (choice == 3) {
+        else if (choice == 3)
+        {
             // ADD CLASS
-            string schoolID, deptID, classID, className;
-
-            cout << "Enter School ID: ";
-            cin >> schoolID;
-
-            cout << "Enter Department ID: ";
-            getline(cin, deptID);
-
-            cout << "Enter Class ID: ";
-            getline(cin, classID);
-            cout << "Enter Class Name: ";
-            getline(cin, className);
+            string schoolID = readLine("Enter School ID: ");
+            string deptID = readLine("Enter Department ID: ");
+            string classID = readLine("Enter Class ID: ");
+            string className = readLine("Enter Class Name: ");
 
             Class cls;
             cls.classID = classID;
@@ -93,28 +110,15 @@ int main() {
             else
                 cout << "School/Department not found!\n";
         }
-
-        else if (choice == 4) {
+        else if (choice == 4)
+        {
             // ADD STUDENT
-            string schoolID, deptID, classID, studentID, studentName;
-            int age;
-
-            cout << "Enter School ID: ";
-            cin.ignore();
-            getline(cin, schoolID);
-
-            cout << "Enter Department ID: ";
-            getline(cin, deptID);
-
-            cout << "Enter Class ID: ";
-            getline(cin, classID);
-
-            cout << "Enter Student ID: ";
-            getline(cin, studentID);
-            cout << "Enter Student Name: ";
-            getline(cin, studentName);
-            cout << "Enter Age: ";
-            cin >> age;
+            string schoolID = readLine("Enter School ID: ");
+            string deptID = readLine("Enter Department ID: ");
+            string classID = readLine("Enter Class ID: ");
+            string studentID = readLine("Enter Student ID: ");
+            string studentName = readLine("Enter Student Name: ");
+            int age = readInt("Enter Age: ");
 
             Student st(studentID, studentName, age);
 
@@ -123,21 +127,13 @@ int main() {
             else
                 cout << "Error: Could not add student.\n";
         }
-
-        else if (choice == 5) {
+        else if (choice == 5)
+        {
             // ADD FACULTY
-            string schoolID, facID, name, spec;
-
-            cout << "Enter School ID: ";
-            cin.ignore();
-            getline(cin, schoolID);
-
-            cout << "Enter Faculty ID: ";
-            getline(cin, facID);
-            cout << "Enter Faculty Name: ";
-            getline(cin, name);
-            cout << "Enter Specialization: ";
-            getline(cin, spec);
+            string schoolID = readLine("Enter School ID: ");
+            string facID = readLine("Enter Faculty ID: ");
+            string name = readLine("Enter Faculty Name: ");
+            string spec = readLine("Enter Specialization: ");
 
             Faculty f(facID, name, spec);
 
@@ -146,29 +142,32 @@ int main() {
             else
                 cout << "Could not add faculty.\n";
         }
-
-        else if (choice == 6) {
+        else if (choice == 6)
+        {
             // SHOW TOP SCHOOL BY RATING
             School* max = ES.getMaxRatedSchool();
-            if (max) {
+            if (max)
+            {
                 cout << "\n===== TOP RATED SCHOOL =====\n";
                 cout << "ID: " << max->schoolID << endl;
                 cout << "Name: " << max->schoolName << endl;
                 cout << "Rating: " << max->rating << endl;
             }
-            else {
+            else
+            {
                 cout << "No schools in the system yet.\n";
             }
         }
-
-        else if(choice == 7) {
+        else if (choice == 7)
+        {
             ES.display();
         }
-        else if (choice == 0) {
+        else if (choice == 0)
+        {
             cout << "Exiting system… Goodbye!\n";
         }
-
-        else {
+        else
+        {
             cout << "Invalid option, try again.\n";
         }
 
