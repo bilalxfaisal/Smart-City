@@ -60,7 +60,12 @@ inline int DJB2_Hash(string& str)
 // Transport entities
 class BusStop;
 class Bus;
+class BusRoute;
 class TransportCompany;
+struct Location {
+    int x;
+    int y;
+};
 
 // Education entities
 class Student;

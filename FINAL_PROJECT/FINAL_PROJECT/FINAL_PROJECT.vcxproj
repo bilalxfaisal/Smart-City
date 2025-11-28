@@ -127,12 +127,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\commercial\CommercialSystem.h" />
-    <ClInclude Include="..\..\include\commercial\Mall.h" />
-    <ClInclude Include="..\..\include\commercial\MallGraph.h" />
-    <ClInclude Include="..\..\include\commercial\MallHashTable.h" />
-    <ClInclude Include="..\..\include\commercial\Product.h" />
-    <ClInclude Include="..\..\include\commercial\ProductHashTable.h" />
     <ClInclude Include="..\..\include\education\Class.h" />
     <ClInclude Include="..\..\include\education\Department.h" />
     <ClInclude Include="..\..\include\education\EducationSystem.h" />
@@ -141,6 +135,14 @@
     <ClInclude Include="..\..\include\education\SchoolMaxHeap.h" />
     <ClInclude Include="..\..\include\education\SchoolTree.h" />
     <ClInclude Include="..\..\include\education\Student.h" />
+    <ClInclude Include="..\..\include\transport\Bus.h" />
+    <ClInclude Include="..\..\include\transport\BusHashTable.h" />
+    <ClInclude Include="..\..\include\transport\BusRouteList.h" />
+    <ClInclude Include="..\..\include\transport\BusStop.h" />
+    <ClInclude Include="..\..\include\transport\PassengerQueue.h" />
+    <ClInclude Include="..\..\include\transport\RouteStack.h" />
+    <ClInclude Include="..\..\include\transport\TransportGraph.h" />
+    <ClInclude Include="..\..\include\transport\TransportSystem.h" />
     <ClInclude Include="..\..\include\utils\Nodes.h" />
   </ItemGroup>
   <ItemGroup>
