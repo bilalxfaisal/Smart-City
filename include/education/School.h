@@ -40,7 +40,7 @@ public:
 	School(string ID, string name, string sector, int campus);
 	void addSubject(const string& subject);
 	void addFaculty(const Faculty& fac);
-	bool addClassToDepartment(Department& dept, const Class& cls);
+	bool addClassToDepartment(const string& deptID, const Class& cls);
 };
 
 
@@ -91,18 +91,17 @@ void School::addFaculty(const Faculty& fac) {
 		FacultyHead = toAdd;
 	}
 }
-bool School::addClassToDepartment(Department& dept, const Class& cls) {
-	// find the department in the school
+bool School::addClassToDepartment(const string& deptID, const Class& cls) {
 	Department* temp = Bacha;
 	while (temp) {
-		if (temp->deptID == dept.deptID) {
-			// found the department, add class
+		if (temp->deptID == deptID) {
 			temp->addClass(cls);
 			return true;
 		}
 		temp = temp->nextSibling;
+		cout << "Added a class to department " << deptID << endl;
 	}
-	return false; // department not found
+	return false;
 }
 
 #endif
