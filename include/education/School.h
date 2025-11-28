@@ -43,7 +43,7 @@ public:
 	bool addClassToDepartment(const string& deptID, const Class& cls);
 
 	bool AddStudent(string classId, string deptId, Student student);
-	bool addDepartment(string deptId);
+	bool addDepartment(Department& dept);
 };
 
 
@@ -133,10 +133,11 @@ bool School::AddStudent(string classId,string deptId, Student student)
 	}
 	return false;
 }
-bool School::addDepartment(string deptId) {
-	Department* toADD = new Department();
-	toADD->deptID = deptId;
-	if (Bacha == nullptr) {
+bool School::addDepartment(Department& dept) 
+{
+	Department* toADD = &dept;
+	if (Bacha == nullptr) 
+	{
 		Bacha = toADD;
 		return true;
 	}
