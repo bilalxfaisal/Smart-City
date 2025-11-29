@@ -20,30 +20,33 @@ class BusStop {
 public:
 	BusStop* nextStop; // pointer to the next bus stop in the route
 	BusStop* prevStop; // pointer to the previous bus stop in the route
-	
-	BusStop(string name, int ID, int x, int y) {
-		name = stopName;
-		stopID = ID;
-		stopLocation.x = x;
-		stopLocation.y = y;
-		currBuses = 0;
-		nextStop = nullptr;
-		prevStop = nullptr;
-		totalSize = 10;
-		busesAtStop = new Bus*[totalSize];
-	}
 
-	int getStopID() {
-		return stopID;
-	}
-	string getStopName() {
+public:
+	string getName() const {
 		return stopName;
 	}
 
-	void addBusAtStop(Bus& toAdd) {
-		Bus* newBus = new Bus(toAdd);
-		int index = Polynomial_Rolling_Hash_V1(newBus->busID) % totalSize;
-		busesAtStop[index] = newBus;
+	BusStop(string name, int x, int y) {
+		stopName = name;
+		stopLocation.x = x;
+		stopLocation.y = y;
+		currBuses = 0;
+		totalSize = 10;
+		busesAtStop = new Bus * [totalSize];
+	}
+
+	void addBus(Bus* toAdd) {
+		if (currBuses == totalSize) {
+			totalSize *= 2;
+			Bus** newArray = new Bus * [totalSize];
+			for (int i = 0; i < currBuses; i++) {
+				newArray[i] = busesAtStop[i];
+			}
+			delete[] busesAtStop;
+			busesAtStop = newArray;
+		}
+		busesAtStop[currBuses] = toAdd;
+		currBuses++;
 	}
 };
 
