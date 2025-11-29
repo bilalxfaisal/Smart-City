@@ -26,6 +26,16 @@ class TransportSystem {
 	int currCompanies;
 	int companyTableSize;
 	TransportCompany** companyHashTable; // hashtable of transport companies string based by name
+public:
+	
+	void addTransportCompany(TransportCompany& t1) {
+		TransportCompany* toAdd = new TransportCompany(t1);
+		int index = Polynomial_Rolling_Hash_V1(t1.name);
+		index = index % companyTableSize;
+		if (companyHashTable[index] == nullptr) {
+
+		}
+	}
 };
 
 #endif
