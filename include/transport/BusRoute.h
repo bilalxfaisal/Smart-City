@@ -14,6 +14,63 @@ class BusRoute {
 	int routeID;
 	int busStopsCount; // number of bus stops in the route
 	BusStop* startingStop; // pointer to the starting bus stop
+public:
+	BusRoute(string rName, int rID, int stopsCount) {
+		routeName = rName;
+		routeID = rID;
+		busStopsCount = stopsCount;
+		startingStop = NULL;
+	}
+
+	void addStop(BusStop& toAdd, string AfterStop) {
+		BusStop* newStop = new BusStop(toAdd);
+		BusStop* curr = startingStop;
+		while (curr) {
+			if (curr->getStopName() == AfterStop) {
+				if (curr->nextStop) {
+					curr->nextStop->prevStop = newStop;
+					newStop->nextStop = curr->nextStop;
+					newStop->prevStop = curr;
+					curr->nextStop = newStop;
+					busStopsCount++;
+					return;
+				}
+				else {
+					curr->nextStop = newStop;
+					newStop->prevStop = curr;
+					busStopsCount++;
+					return;
+				}
+			}
+		}
+	}
+
+	void addStop(BusStop& toAdd, string beforeStop) {
+		BusStop* newStop = new BusStop(toAdd);
+		BusStop* curr = startingStop;
+
+		if (startingStop->getStopName() == beforeStop) {
+			newStop->nextStop = startingStop;
+			startingStop->prevStop = newStop;
+			startingStop = newStop;
+			busStopsCount++;
+			return;
+		}
+		while (curr) {
+			if (curr->getStopName() == beforeStop) {
+				curr->prevStop->nextStop = newStop;
+				newStop->prevStop = curr->prevStop;
+				newStop->nextStop = curr;
+				curr->prevStop = newStop;
+				busStopsCount++;
+				return;
+			}
+		}
+	}
+
+	BusStop* getStartingStop() {
+		return startingStop;
+	}
 };
 
 
