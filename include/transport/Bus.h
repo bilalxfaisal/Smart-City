@@ -1,4 +1,7 @@
 #include "../utils/Nodes.h"
+#include "RouteStack.h"
+#include <ctime>
+#include <cstdlib>
 #ifndef BUS_H
 #define BUS_H
 
@@ -8,18 +11,46 @@ using std::cin;
 using std::endl;
 
 class Bus {
-	int currStopID; // can be name too // ID of the vertex where the bus is currently located
-	int busRouteID; //  
-	// cuz doubly linked list
-	// int routeIndex; // index of the route in the graph's route prolly a array of strings of routes
-	string busID;  // cuz number plates are usually alphanumeric
+	int currStopID;
+	int busRouteID;
+	string busID;
 	int capacity;
 	int currPassengers;
 	bool isMoving;
-	bool direction; // true for forward, false for backward
+	bool direction;
+	RouteStack* busRouteHistory;
+public:
+	Bus(string busId="", int currRoute, int cap, bool ammv, bool dir) 
+	{
+		busRouteHistory = new RouteStack();
+		busID = busId;
+		busRouteID = currRoute;
+		capacity = cap;
+		isMoving = ammv;
+		direction = dir;
+	}
+	void changeState()
+	{
+		isMoving = !isMoving;
+	}
+	void changeDIr() 
+	{
+		direction = !direction;
+	}
+	void AddPassengers(BusStop* stop) 
+	{
+		busRouteHistory->push(stop->getName());
+		int toAdd = rand() % (capacity - currPassengers + 1);
+		currPassengers += toAdd;
+		cout << toAdd << " passengers boarded the bus " << busID << ". Current passengers: " << currPassengers << endl;
+	}
+	void RemovePassengers(BusStop* stop) 
+	{
+		busRouteHistory->push(stop->getName());
+		int toRemove = rand() % (currPassengers + 1);
+		currPassengers -= toRemove;
+		cout << toRemove << " passengers alighted from the bus " << busID << ". Current passengers: " << currPassengers << endl;
+	}
 };
-
-
-
 
 #endif

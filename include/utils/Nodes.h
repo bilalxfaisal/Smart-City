@@ -61,6 +61,7 @@ inline int DJB2_Hash(string& str)
 class BusStop;
 class Bus;
 class BusRoute;
+class RouteStack;
 class TransportCompany;
 struct Location {
     int x;

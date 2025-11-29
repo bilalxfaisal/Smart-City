@@ -16,6 +16,11 @@ class BusStop {
 	Bus** busesAtStop; // dynamic array of pointers to buses currently at the stop
 	BusStop* nextStop; // pointer to the next bus stop in the route
 	BusStop* prevStop; // pointer to the previous bus stop in the route
+
+public:
+	string getName() const {
+		return stopName;
+	}
 };
 
 #endif
