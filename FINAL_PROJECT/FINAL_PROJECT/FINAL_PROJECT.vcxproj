@@ -142,6 +142,7 @@
     <ClInclude Include="..\..\include\transport\BusStop.h" />
     <ClInclude Include="..\..\include\transport\PassengerQueue.h" />
     <ClInclude Include="..\..\include\transport\RouteStack.h" />
+    <ClInclude Include="..\..\include\transport\TransportCompany.h" />
     <ClInclude Include="..\..\include\transport\TransportGraph.h" />
     <ClInclude Include="..\..\include\transport\TransportSystem.h" />
     <ClInclude Include="..\..\include\utils\Nodes.h" />
