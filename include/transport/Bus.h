@@ -12,7 +12,7 @@ using std::endl;
 
 class Bus {
 	int currStopID;
-	int busRouteID;
+	string busRouteID;
 	string busID;
 	int capacity;
 	int currPassengers;
@@ -20,6 +20,12 @@ class Bus {
 	bool direction;
 	RouteStack* busRouteHistory;
 public:
+	// --- Basic Getters ---
+	string getID() const { return busID; }
+	string getRoute() const { return busRouteID; }
+	int getPassengers() const { return currPassengers; }
+	int getCapacity() const { return capacity; }
+
 	Bus(string busId="", int currRoute, int cap, bool ammv, bool dir) 
 	{
 		busRouteHistory = new RouteStack();
