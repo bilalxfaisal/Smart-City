@@ -10,79 +10,73 @@ using std::string;
 using std::cout;
 using std::cin;
 using std::endl;
-struct BusNode {
-	Bus* bus;
-	BusNode* next;
 
-	BusNode(Bus* b = nullptr)
-	{
-		bus = b;
-		next = nullptr;
-	}
-};
 class TransportCompany {
 public:
     string name;
     int busNo;
-    BusNode* MyBusses;             // HEAD of linked list
+
     TransportCompany* nextCompany;
+    int currBuses;
+    int busTableSize;
+    Bus** busHashTable; // hashtable of buses string based
 
     TransportCompany(string s = "", int n = 0)
     {
         name = s;
         busNo = n;
-        MyBusses = nullptr;
         nextCompany = nullptr;
+        currBuses = 0;
+        busTableSize = 10;
+        busHashTable = new Bus * [busTableSize];
+        for (int i = 0; i < busTableSize; i++) {
+            busHashTable[i] = nullptr;
+        }
     }
 
-
-    void AddBus(Bus* newBus)
+    void addBus(Bus& b1)
     {
-        if (!newBus) {
-            cout << "Cannot add null bus.\n";
-            return;
+        Bus* toAdd = new Bus(b1);
+        int index = Polynomial_Rolling_Hash_V2(b1.getID());
+        index = index % busTableSize;
+        if (busHashTable[index] == nullptr) {
+            busHashTable[index] = toAdd;
         }
+        else {
+            // collision handling via linked List
+			toAdd->next = busHashTable[index];
+            busHashTable[index] = toAdd;
 
-        BusNode* node = new BusNode(newBus);
-
-        if (MyBusses == nullptr) {
-            MyBusses = node;
-            return;
         }
-
-
-        BusNode* temp = MyBusses;
-        while (temp->next != nullptr) {
-            temp = temp->next;
-        }
-        temp->next = node;
-    }
-
-    void DisplayBuses()
+        currBuses++;
+	}
+    void DiscontineBus(string busID)
     {
-        cout << "Company: " << name << "\n";
-        cout << "Total buses: " << busNo << "\n";
-
-        BusNode* temp = MyBusses;
-
-        if (!temp) {
-            cout << "No buses registered.\n\n";
-            return;
+        int index = Polynomial_Rolling_Hash_V2(busID);
+        index = index % busTableSize;
+        Bus* curr = busHashTable[index];
+        Bus* prev = nullptr;
+        while (curr) {
+            if (curr->getID() == busID) {
+                if (prev == nullptr) {
+                    busHashTable[index] = curr->next;
+                }
+                else {
+                    prev->next = curr->next;
+                }
+                delete curr;
+                currBuses--;
+                cout << "Bus " << busID << " discontinued from company " << name << endl;
+                return;
+            }
+            prev = curr;
+            curr = curr->next;
         }
+        cout << "Bus " << busID << " not found in company " << name << endl;
+	}
 
-        while (temp != nullptr)
-        {
-            Bus* b = temp->bus;
-            cout << " - Bus ID: " << b->getID()
-                << " | Route: " << b->getRoute()
-                << " | Passengers: " << b->getPassengers()
-                << "/" << b->getCapacity()
-                << endl;
 
-            temp = temp->next;
-        }
-        cout << endl;
-    }
+
 };
 
 #endif

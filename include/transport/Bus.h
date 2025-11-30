@@ -19,7 +19,10 @@ class Bus {
 	bool isMoving;
 	bool direction;
 	RouteStack* busRouteHistory;
+	//pointer for linking in hash tables
+	
 public:
+	Bus* next = nullptr;
 	// --- Basic Getters ---
 	string getID() const { return busID; }
 	string getRoute() const { return busRouteID; }

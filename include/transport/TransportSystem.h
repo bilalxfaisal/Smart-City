@@ -21,16 +21,15 @@ class TransportSystem {
 	int routesTableSize;
 	BusRoute** routeHashTable; // hashtable of routes string based
 	
-	int currBuses;
-	int busTableSize;
-	Bus** busHashTable; // hashtable of buses string based
+
 	
 	int currCompanies;
 	int companyTableSize;
 	TransportCompany** companyHashTable; // hashtable of transport companies string based by name
 public:
 	
-	void addTransportCompany(TransportCompany& t1) {
+	void addTransportCompany(TransportCompany& t1) 
+	{
 		TransportCompany* toAdd = new TransportCompany(t1);
 		int index = Polynomial_Rolling_Hash_V1(t1.name);
 		index = index % companyTableSize;
@@ -60,7 +59,8 @@ public:
 		}
 	}
 
-	void addBusToTransportCompany() {
+	void addBusToTransportCompany()
+	{
 
 	}
 };

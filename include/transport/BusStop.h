@@ -48,6 +48,17 @@ public:
 		busesAtStop[currBuses] = toAdd;
 		currBuses++;
 	}
+	//GETTERS
+	int getCurrBuses() const {
+		return currBuses;
+	}
+	string getStopName() const {
+		return stopName;
+	}
+	Location getLocation() const {
+		return stopLocation;
+	}
+
 };
 
 #endif

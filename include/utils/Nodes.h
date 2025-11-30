@@ -34,7 +34,7 @@ inline int Polynomial_Rolling_Hash_V1(const string& str) {
     return static_cast<int>(hash_value);
 }
 
-inline int Polynomial_Rolling_Hash_V2(string& str)
+inline int Polynomial_Rolling_Hash_V2(string str)
 {
     const int p = 53;
     const int m = 1e9 + 9;

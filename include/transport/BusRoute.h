@@ -14,7 +14,9 @@ class BusRoute {
 	int routeID;
 	int busStopsCount; // number of bus stops in the route
 	BusStop* startingStop; // pointer to the starting bus stop
+	
 public:
+	BusRoute* nextRoute; // pointer to the next bus route in the system
 	BusRoute(string rName, int rID, int stopsCount) {
 		routeName = rName;
 		routeID = rID;
@@ -71,6 +73,11 @@ public:
 	BusStop* getStartingStop() {
 		return startingStop;
 	}
+	//GETTER
+	string getRouteName() const {
+		return routeName;
+	}
+
 };
 
 
