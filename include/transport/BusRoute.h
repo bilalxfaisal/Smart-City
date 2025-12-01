@@ -22,6 +22,7 @@ public:
 		routeID = rID;
 		busStopsCount = stopsCount;
 		startingStop = NULL;
+		nextRoute = NULL;
 	}
 
 
@@ -39,7 +40,7 @@ public:
 		BusStop* curr = startingStop;
 		while (curr) {
 			if (curr->getStopName() == AfterStop) {
-				if (curr->nextStop) {
+				if (curr->nextStop) { 
 					curr->nextStop->prevStop = newStop;
 					newStop->nextStop = curr->nextStop;
 					newStop->prevStop = curr;
@@ -47,13 +48,14 @@ public:
 					busStopsCount++;
 					return;
 				}
-				else {
+				else { // adding at the end
 					curr->nextStop = newStop;
 					newStop->prevStop = curr;
 					busStopsCount++;
 					return;
 				}
 			}
+			curr = curr->nextStop;
 		}
 	}
 
@@ -86,6 +88,7 @@ public:
 				busStopsCount++;
 				return;
 			}
+			curr = curr->nextStop;
 		}
 	}
 

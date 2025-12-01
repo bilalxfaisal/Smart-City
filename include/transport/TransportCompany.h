@@ -102,8 +102,14 @@ public:
 		cout << "Bus " << BusToMove->getID() << " not found in company " << name << endl;
     }
 
+	// if exists ok, else return null
+    Bus* getBusOnIndex(int index) {
+		return busHashTable[index];
+    }
 
-
+    int getTableSize() const {
+        return busTableSize;
+	}
 };
 
 #endif

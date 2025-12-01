@@ -46,6 +46,7 @@ public:
 
 		currCompanies = 0;
 		currRoutes = 0;
+		busStopsCount = 0;
 	}
 
 	void addTransportCompany(TransportCompany& t1) 
@@ -142,6 +143,34 @@ public:
 			cout << "Company not found." << endl;
 		}
 	}
+
+	void displayRoutes(string compName) {
+		int index = Polynomial_Rolling_Hash_V1(compName);
+		index = index % companyTableSize;
+		TransportCompany* currCompany = companyHashTable[index];
+
+		if (currCompany) {
+			int tableSize = currCompany->busTableSize;
+			for (int i = 0; i < tableSize; i++) {
+				Bus* currBus = currCompany->busHashTable[i];
+				string currBusStop = currBus->getRoute();
+				int routeIndex = Polynomial_Rolling_Hash_V1(currBusStop);
+				routeIndex = routeIndex % routesTableSize;
+				if (routeHashTable[routeIndex]) {
+					BusRoute* currRoute = routeHashTable[routeIndex];
+					cout << "Displaying route for Bus ID: " << currBus->getID() << endl;
+					cout << "Route Name: " << currRoute->getRouteName() << endl;
+					BusStop* startStop = currRoute->getStartingStop();
+					while (startStop) {
+						cout << "Stop Name: " << startStop->getStopName() << endl;
+						startStop = startStop->nextStop;
+					}
+				}
+			}
+		}
+	}
+
+
 	BusRoute** getRouteHashTable() {
 		return routeHashTable;
 	}
