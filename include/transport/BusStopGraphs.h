@@ -76,7 +76,7 @@ public:
 		for (int i = 0; i < count_stops; i++)
 		{
 			// Assuming BusStop has a method getName() to identify it
-			if (vertices[i].Meh->getStopName() == from->getName())
+			if (vertices[i].Meh->getStopName() == from->getStopName())
 			{
 				fromIndex = i;
 				break;
@@ -85,7 +85,7 @@ public:
 		int toIndex = -1;
 		for (int i = 0; i < count_stops; i++)
 		{
-			if (vertices[i].Meh->getStopName() == to->getName())
+			if (vertices[i].Meh->getStopName() == to->getStopName())
 			{
 				toIndex = i;
 				break;
@@ -108,7 +108,7 @@ public:
 		int fromIndex = -1;
 		for (int i = 0; i < count_stops; i++)
 		{
-			if (vertices[i].Meh->getStopName() == from->getName())
+			if (vertices[i].Meh->getStopName() == from->getStopName())
 			{
 				fromIndex = i;
 				break;
@@ -117,7 +117,7 @@ public:
 		int toIndex = -1;
 		for (int i = 0; i < count_stops; i++)
 		{
-			if (vertices[i].Meh->getStopName() == to->getName())
+			if (vertices[i].Meh->getStopName() == to->getStopName())
 			{
 				toIndex = i;
 				break;
@@ -156,7 +156,7 @@ public:
 		int fromIndex = -1;
 		for (int i = 0; i < count_stops; i++)
 		{
-			if (vertices[i].Meh->getStopName() == from->getName())
+			if (vertices[i].Meh->getStopName() == from->getStopName())
 			{
 				fromIndex = i;
 				break;
@@ -165,7 +165,7 @@ public:
 		int toIndex = -1;
 		for (int i = 0; i < count_stops; i++)
 		{
-			if (vertices[i].Meh->getStopName() == to->getName())
+			if (vertices[i].Meh->getStopName() == to->getStopName())
 			{
 				toIndex = i;
 				break;
@@ -191,4 +191,4 @@ public:
 };
 
 
-#endif  BUSSTOPGRAPHS_H
+#endif  //BUSSTOPGRAPHS_H

@@ -1,177 +1,166 @@
-
-#include "../Smart-City-DS-Project/include/education/EducationSystem.h"
+#include "../Smart-City-DS-Project/include/transport/TransportSystem.h"
 #include <iostream>
 #include <string>
-
-
 using namespace std;
 
-static string readLine(const string& prompt)
+// Read helpers
+string readLine(const string& prompt)
 {
-    string line;
     cout << prompt;
-    std::getline(cin, line);
+    string line;
+    getline(cin, line);
     return line;
 }
 
-static int readInt(const string& prompt)
+int readInt(const string& prompt)
 {
     while (true)
     {
         string s = readLine(prompt);
-        try
-        {
-            size_t pos = 0;
-            int val = stoi(s, &pos);
-            if (pos == s.length()) return val;
+        try {
+            return stoi(s);
         }
-        catch (...) { /* fallthrough to retry */ }
-        cout << "Invalid number, please try again.\n";
+        catch (...) {
+            cout << "Invalid input. Try again.\n";
+        }
     }
 }
 
 void showMenu()
 {
-    cout << "\n====== EDUCATION SYSTEM MENU ======\n";
-    cout << "1. Add School\n";
-    cout << "2. Add Department to School\n";
-    cout << "3. Add Class to Department\n";
-    cout << "4. Add Student to Class\n";
-    cout << "5. Add Faculty to School\n";
-    cout << "6. Show Max Rated School\n";
-    cout << "7. DISSplay \n";
+    cout << "\n====== TRANSPORT SYSTEM MENU ======\n";
+    cout << "1. Add Transport Company\n";
+    cout << "2. Add Bus Route\n";
+    cout << "3. Add Bus Stop to Route\n";
+    cout << "4. Add Bus to Transport Company\n";
+    cout << "5. Simulate Bus Movement\n";
+    cout << "6. Display Transport Company Status\n";
     cout << "0. Exit\n";
     cout << "Enter choice: ";
 }
 
 int main()
 {
-    EducationSystem ES(20);  // Capacity: 20 schools
+    TransportSystem system(20, 20); 
 
-    int choice = -1;
-    do
+    while (true)
     {
         showMenu();
-        
-        string choiceLine;
-        std::getline(cin, choiceLine);
-        try
+        int choice;
+        cin >> choice;
+        cin.ignore(); // flush newline
+
+        if (choice == 0)
         {
-            choice = stoi(choiceLine);
-        }
-        catch (...)
-        {
-            choice = -1;
+            cout << "Exiting...\n";
+            break;
         }
 
-        if (choice == 1)
+        switch (choice)
         {
-            // ADD SCHOOL
-            string id = readLine("Enter School ID: ");
-            string name = readLine("Enter School Name: ");
-            string sector = readLine("Enter Sector: ");
-            int campus = readInt("Enter Campus No: ");
+        case 1:
+        {
+            cout << "\n=== Add Transport Company ===\n";
+            string name = readLine("Enter company name: ");
 
-            School sch(id, name, sector, campus);
-            ES.addSchool(sch);
+            TransportCompany tc(name);
+            system.addTransportCompany(tc);
 
-            cout << "School added successfully!\n";
+            cout << "Company added.\n";
+            break;
         }
-        else if (choice == 2)
+
+        case 2:
         {
-            // ADD DEPARTMENT
-            string schoolID = readLine("Enter School ID: ");
-            string deptID = readLine("Enter Department ID: ");
-            string deptName = readLine("Enter Department Name: ");
+            cout << "\n=== Add Bus Route ===\n";
+            string rname = readLine("Enter route name: ");
+            int rid = readInt("Enter route ID: ");
+            int stops = readInt("Initial stop count: ");
 
-            Department dp;
-            dp.deptID = deptID;
-            dp.deptName = deptName;
+            BusRoute route(rname, rid, stops);
+            system.addBusRoute(route);
 
-            if (ES.addDepartment(schoolID, dp))
-                cout << "Department added!\n";
-            else
-                cout << "School not found!\n";
+            cout << "Bus route added.\n";
+            break;
         }
-        else if (choice == 3)
+
+        case 3:
         {
-            // ADD CLASS
-            string schoolID = readLine("Enter School ID: ");
-            string deptID = readLine("Enter Department ID: ");
-            string classID = readLine("Enter Class ID: ");
-            string className = readLine("Enter Class Name: ");
+            cout << "\n=== Add Stop to Route ===\n";
+            string rname = readLine("Enter route name: ");
 
-            Class cls;
-            cls.classID = classID;
-            cls.className = className;
+            string stopName = readLine("Enter new stop name: ");
+            int x = readInt("Enter X coordinate: ");
+            int y = readInt("Enter Y coordinate: ");
+			bool afterFlag = readInt("Add AFTER(1) or BEFORE(0) a stop? ");
+            
+			string after = afterFlag ? readLine("Add AFTER which stop? (exact name): ") : readLine("Add BEFORE which stop? (exact name): ");
+               
 
-            if (ES.addClass(schoolID, deptID, cls))
-                cout << "Class added!\n";
-            else
-                cout << "School/Department not found!\n";
-        }
-        else if (choice == 4)
-        {
-            // ADD STUDENT
-            string schoolID = readLine("Enter School ID: ");
-            string deptID = readLine("Enter Department ID: ");
-            string classID = readLine("Enter Class ID: ");
-            string studentID = readLine("Enter Student ID: ");
-            string studentName = readLine("Enter Student Name: ");
-            int age = readInt("Enter Age: ");
+            BusStop bs(stopName, x, y);
 
-            Student st(studentID, studentName, age);
+            // Must find route (simple hash lookup)
+            int idx = Polynomial_Rolling_Hash_V1(rname);
+            idx %= 20;
 
-            if (ES.addStudent(st, schoolID, deptID, classID))
-                cout << "Student added!\n";
-            else
-                cout << "Error: Could not add student.\n";
-        }
-        else if (choice == 5)
-        {
-            // ADD FACULTY
-            string schoolID = readLine("Enter School ID: ");
-            string facID = readLine("Enter Faculty ID: ");
-            string name = readLine("Enter Faculty Name: ");
-            string spec = readLine("Enter Specialization: ");
+            BusRoute* rt = system.getRouteHashTable()[idx];
 
-            Faculty f(facID, name, spec);
+            while (rt && rt->getRouteName() != rname)
+                rt = rt->nextRoute;
 
-            if (ES.addFaculty(schoolID, f))
-                cout << "Faculty added!\n";
-            else
-                cout << "Could not add faculty.\n";
-        }
-        else if (choice == 6)
-        {
-            // SHOW TOP SCHOOL BY RATING
-            School* max = ES.getMaxRatedSchool();
-            if (max)
+            if (rt)
             {
-                cout << "\n===== TOP RATED SCHOOL =====\n";
-                cout << "ID: " << max->schoolID << endl;
-                cout << "Name: " << max->schoolName << endl;
-                cout << "Rating: " << max->rating << endl;
+                if(afterFlag)
+                    rt->addStop_AFTR(bs, after);
+				else
+                rt->addStop_B4(bs, after);
+                cout << "Stop added.\n";
             }
             else
             {
-                cout << "No schools in the system yet.\n";
+                cout << "Route not found.\n";
             }
-        }
-        else if (choice == 7)
-        {
-            ES.display();
-        }
-        else if (choice == 0)
-        {
-            cout << "Exiting system… Goodbye!\n";
-        }
-        else
-        {
-            cout << "Invalid option, try again.\n";
+
+            break;
         }
 
-    } while (choice != 0);
+        case 4:
+        {
+            cout << "\n=== Add Bus to Company ===\n";
+            string comp = readLine("Enter company name: ");
+
+            string busID = readLine("Enter bus ID: ");
+            int routeID = readInt("Enter route number: ");
+            int cap = readInt("Enter capacity: ");
+
+            Bus b(busID, routeID, cap, true, true);
+
+            system.addBusToTransportCompany(b, comp);
+
+            cout << "Bus added.\n";
+
+            break;
+        }
+
+        case 5:
+        {
+            cout << "\n=== Simulating movement... ===\n";
+            system.simulateBusMovement();
+            cout << "Simulation step completed.\n";
+            break;
+        }
+
+        case 6:
+        {
+            string comp = readLine("\nEnter company name: ");
+            system.displayCompanyStatus(comp);
+            break;
+        }
+
+        default:
+            cout << "Invalid choice. Try again.\n";
+        }
+    }
 
     return 0;
 }

@@ -54,6 +54,24 @@ inline int DJB2_Hash(string& str)
     }
     return static_cast<int>(hash);
 }
+//Int hashfunction
+unsigned int GoldenHashInt(unsigned int key,
+    unsigned int table_size)
+{
+	const unsigned int GOLDEN = 0x9E3779B1U; // 2^32 / golden ratio  
+
+    unsigned int mixed = key * GOLDEN;
+
+    unsigned int bits = 0;
+    unsigned int temp = table_size;
+    while (temp > 1) {
+        temp >>= 1;
+        bits++;
+    }
+
+    return mixed >> (32 - bits);
+}
+
 
 // ==================== FORWARD DECLARATIONS ====================
 

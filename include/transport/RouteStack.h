@@ -1,6 +1,7 @@
 #include"../utils/Nodes.h"
 
-
+#ifndef ROUTESTACK_H
+#define ROUTESTACK_H
 class RouteStack {
 	struct RouteNode {
 		string StopName;
@@ -63,3 +64,4 @@ public:
 		return size;
 	}
 };
+#endif
