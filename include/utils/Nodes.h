@@ -10,7 +10,7 @@ using std::cout;
 #include <string>
 using namespace std;
 
-inline int Polynomial_Rolling_Hash_V1(const string& str) {
+inline unsigned int Polynomial_Rolling_Hash_V1(const string& str) {
     const long long p = 31;
     const long long m = 1000000009LL;  // 1e9 + 9 (prime)
 
@@ -31,10 +31,10 @@ inline int Polynomial_Rolling_Hash_V1(const string& str) {
     // Normalize to [0, m-1] — critical for hash table indexing
     hash_value = (hash_value % m + m) % m;
 
-    return static_cast<int>(hash_value);
+    return static_cast<unsigned int>(hash_value);
 }
 
-inline int Polynomial_Rolling_Hash_V2(string str)
+inline unsigned int Polynomial_Rolling_Hash_V2(string str)
 {
     const int p = 53;
     const int m = 1e9 + 9;
@@ -52,7 +52,7 @@ inline int DJB2_Hash(string& str)
     for (char c : str) {
         hash = ((hash << 5) + hash) + c;
     }
-    return static_cast<int>(hash);
+    return static_cast<unsigned int>(hash);
 }
 //Int hashfunction
 unsigned int GoldenHashInt(unsigned int key,
