@@ -67,27 +67,34 @@ public:
 		// move one stop forward or backward based on direction
 		BusStop* curr = head;
 		while(curr){
-			if (curr->getStopID() == currStopID) {
-				if (direction) {
-					if (curr->nextStop == nullptr) {
+			if (curr->getStopID() == currStopID) 
+			{
+				if (direction)
+				{
+					if (curr->nextStop == nullptr) 
+					{
 						cout<<"Bus "<<busID<<" has reached the end of the route and will reverse direction."<<endl;
 						direction = !direction;
 						RemovePassengers();
 						AddPassengers();
 						busRouteHistory->push(curr->getStopName());
+						cout << "Bus " << busID << " moved to stop " << curr->getStopName() << " (ID: " << currStopID << ")." << endl;
 						break;
 					}
 					// basically an else case in disguise
 					curr = curr->nextStop;
 					currStopID = curr->getStopID();
 				}
-				else {
-					if (curr->nextStop == nullptr) {
+				else
+				{
+					if (curr->nextStop == nullptr) 
+					{
 						cout << "Bus " << busID << " has reached the end of the route and will reverse direction." << endl;
 						direction = !direction;
 						RemovePassengers();
 						AddPassengers();
 						busRouteHistory->push(curr->getStopName());
+						cout << "Bus " << busID << " moved to stop " << curr->getStopName() << " (ID: " << currStopID << ")." << endl;
 						break;
 					}
 					curr = curr->prevStop;
@@ -97,6 +104,7 @@ public:
 				RemovePassengers();
 				AddPassengers();
 				busRouteHistory->push(curr->getStopName());
+				cout << "Bus " << busID << " moved to stop " << curr->getStopName() << " (ID: " << currStopID << ")." << endl;
 				break;
 			}
 			curr = curr->nextStop;

@@ -17,7 +17,8 @@ class BusRoute {
 	
 public:
 	BusRoute* nextRoute; // pointer to the next bus route in the system
-	BusRoute(string rName, int rID, int stopsCount) {
+	BusRoute(string rName, int rID, int stopsCount) 
+	{
 		routeName = rName;
 		routeID = rID;
 		busStopsCount = stopsCount;
@@ -120,7 +121,16 @@ public:
 	string getRouteName() const {
 		return routeName;
 	}
-
+	void DisplayRoute()
+	{
+		BusStop* curr = startingStop;
+		cout << "Bus Route: " << routeName << " (ID: " << routeID << ")\n";
+		cout << "Stops in Route:\n";
+		while (curr) {
+			cout << " - " << curr->getStopName() << " (ID: " << curr->getStopID() << ")\n";
+			curr = curr->nextStop;
+		}
+	}
 };
 
 
