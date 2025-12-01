@@ -50,6 +50,17 @@ public:
         }
         currBuses++;
 	}
+    void display()
+    {
+		cout << "Transport Company: " << name << ", Buses Number: " << currBuses<< endl;
+        for (int i = 0; i < busTableSize; i++) {
+            Bus* curr = busHashTable[i];
+            while (curr) {
+                cout << "  Bus ID: " << curr->getID() << ", Route: " << curr->getRoute() << ", Passengers: " << curr->getPassengers() << "/" << curr->getCapacity() << endl;
+                curr = curr->next;
+            }
+		}
+    }
     void DiscontineBus(string busID)
     {
         int index = Polynomial_Rolling_Hash_V2(busID);
@@ -74,6 +85,22 @@ public:
         }
         cout << "Bus " << busID << " not found in company " << name << endl;
 	}
+    void simulateBusMovement(Bus* BusToMove, BusRoute* movementRoute)
+    {
+		//Find the bus in the hash table
+        int index = Polynomial_Rolling_Hash_V2(BusToMove->getID());
+        index = index % busTableSize;
+        Bus* curr = busHashTable[index];
+        while (curr) {
+            if (curr->getID() == BusToMove->getID()) {
+                // Simulate movement
+                curr->simulateMovement(movementRoute->getStartingStop());
+                return;
+            }
+            curr = curr->next;
+        }
+		cout << "Bus " << BusToMove->getID() << " not found in company " << name << endl;
+    }
 
 
 

@@ -1,5 +1,5 @@
 #include "../utils/Nodes.h"
-#include "Bus.h"
+//#include "Bus.h"
 #ifndef BUSSTOP_H
 #define BUSSTOP_H
 
@@ -22,9 +22,7 @@ public:
 	BusStop* prevStop; // pointer to the previous bus stop in the route
 
 public:
-	string getName() const {
-		return stopName;
-	}
+
 
 	BusStop(string name, int x, int y) {
 		stopName = name;
@@ -47,6 +45,20 @@ public:
 		}
 		busesAtStop[currBuses] = toAdd;
 		currBuses++;
+	}
+	//DEEP COPY CONSTRUCTOR
+	BusStop(const BusStop& other) {
+		stopName = other.stopName;
+		stopID = other.stopID;
+		stopLocation = other.stopLocation;
+		currBuses = other.currBuses;
+		totalSize = other.totalSize;
+		busesAtStop = new Bus * [totalSize];
+		for (int i = 0; i < currBuses; i++) {
+			busesAtStop[i] = other.busesAtStop[i];
+		}
+		nextStop = nullptr;
+		prevStop = nullptr;
 	}
 	//GETTERS
 	int getCurrBuses() const {

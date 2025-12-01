@@ -1,5 +1,7 @@
 #include "../utils/Nodes.h"
 #include "RouteStack.h"
+#include "BusStop.h"
+
 #include <ctime>
 #include <cstdlib>
 #ifndef BUS_H
@@ -29,7 +31,7 @@ public:
 	int getPassengers() const { return currPassengers; }
 	int getCapacity() const { return capacity; }
 
-	Bus(string busId="", int currRoute, int cap, bool ammv, bool dir) 
+	Bus(string busId="", int currRoute=0, int cap=0, bool ammv=true, bool dir=true) 
 	{
 		busRouteHistory = new RouteStack();
 		busID = busId;
@@ -54,13 +56,14 @@ public:
 	}
 	void RemovePassengers() 
 	{	
-		int maxToRemove = currPassengers * 0.5;
+		int maxToRemove = currPassengers/2;
 		int toRemove = rand() % (maxToRemove);
 		currPassengers -= toRemove;
 		cout << toRemove << " passengers alighted from the bus " << busID << ". Current passengers: " << currPassengers << endl;
 	}
 
-	void simulateMovement(BusStop* head) {
+	void simulateMovement(BusStop* head) 
+	{
 		// move one stop forward or backward based on direction
 		BusStop* curr = head;
 		while(curr){
@@ -71,7 +74,7 @@ public:
 						direction = !direction;
 						RemovePassengers();
 						AddPassengers();
-						busRouteHistory->push(curr->getName());
+						busRouteHistory->push(curr->getStopName());
 						break;
 					}
 					// basically an else case in disguise
@@ -84,7 +87,7 @@ public:
 						direction = !direction;
 						RemovePassengers();
 						AddPassengers();
-						busRouteHistory->push(curr->getName());
+						busRouteHistory->push(curr->getStopName());
 						break;
 					}
 					curr = curr->prevStop;
@@ -93,7 +96,7 @@ public:
 				// removing must be done first i suppose :D
 				RemovePassengers();
 				AddPassengers();
-				busRouteHistory->push(curr->getName());
+				busRouteHistory->push(curr->getStopName());
 				break;
 			}
 			curr = curr->nextStop;

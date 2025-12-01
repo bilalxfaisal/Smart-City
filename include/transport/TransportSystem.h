@@ -11,10 +11,11 @@ using std::string;
 using std::cout;
 using std::cin;
 using std::endl;
-using namespace std::chrono;
+// using namespace std::chrono;
 
 // todo: giraph banana hai
-class TransportSystem {
+class TransportSystem
+{
 	// kaam kaam "bus" ka kaam
 	// jinnah
 	int busStopsCount;// for giraffe
@@ -29,7 +30,24 @@ class TransportSystem {
 	int companyTableSize;
 	TransportCompany** companyHashTable; // hashtable of transport companies string based by name
 public:
-	
+	TransportSystem(int compSize = 20, int routeSize = 20)
+	{
+		companyTableSize = compSize;
+		routesTableSize = routeSize;
+
+		companyHashTable = new TransportCompany * [companyTableSize];
+		routeHashTable = new BusRoute * [routesTableSize];
+
+		for (int i = 0; i < companyTableSize; i++)
+			companyHashTable[i] = nullptr;
+
+		for (int i = 0; i < routesTableSize; i++)
+			routeHashTable[i] = nullptr;
+
+		currCompanies = 0;
+		currRoutes = 0;
+	}
+
 	void addTransportCompany(TransportCompany& t1) 
 	{
 		TransportCompany* toAdd = new TransportCompany(t1);
@@ -79,11 +97,32 @@ public:
 	// add time delays I guess
 	void simulateBusMovement() {
 		TransportCompany* currCompany = nullptr;
-		for (int i = 0; i < companyTableSize; i++) {
+		for (int i = 0; i < companyTableSize; i++) 
+		{
 			currCompany = companyHashTable[i];
 			// function in TransportCompany to simulate all buses
-			if (currCompany) {
-				currCompany->simulateBusMovement();
+			if (currCompany) 
+			{
+				for (int i = 0; i < currCompany->busTableSize; i++)
+				{
+					Bus* BusPtr = currCompany->busHashTable[i];
+					while (BusPtr) 
+					{
+						// find the route for this bus
+						int routeIndex = Polynomial_Rolling_Hash_V1(BusPtr->getRoute());
+						routeIndex = routeIndex % routesTableSize;
+						BusRoute* routePtr = routeHashTable[routeIndex];
+						while (routePtr && routePtr->getRouteName() != BusPtr->getRoute()) 
+						{
+							routePtr = routePtr->nextRoute;
+						}
+						if (routePtr) 
+						{
+							currCompany->simulateBusMovement(BusPtr, routePtr);
+						}
+						BusPtr = BusPtr->next;
+					}
+				}
 			}
 		}
 	}
@@ -102,6 +141,9 @@ public:
 		else {
 			cout << "Company not found." << endl;
 		}
+	}
+	BusRoute** getRouteHashTable() {
+		return routeHashTable;
 	}
 };
 

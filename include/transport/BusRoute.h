@@ -24,7 +24,17 @@ public:
 		startingStop = NULL;
 	}
 
-	void addStop(BusStop& toAdd, string AfterStop) {
+
+	void addStop_AFTR(BusStop& toAdd, string AfterStop) 
+	{
+		//BASE CASE
+		if (startingStop == nullptr)
+		{
+			BusStop* newStop = new BusStop(toAdd);
+			startingStop = newStop;
+			busStopsCount = 1;
+			return;
+		}
 		BusStop* newStop = new BusStop(toAdd);
 		BusStop* curr = startingStop;
 		while (curr) {
@@ -47,7 +57,16 @@ public:
 		}
 	}
 
-	void addStop(BusStop& toAdd, string beforeStop) {
+	void addStop_B4(BusStop& toAdd, string beforeStop)
+	{
+		// CASE 1: route is empty
+		if (startingStop == nullptr)
+		{
+			BusStop* newStop = new BusStop(toAdd);
+			startingStop = newStop;
+			busStopsCount = 1;
+			return;
+		}
 		BusStop* newStop = new BusStop(toAdd);
 		BusStop* curr = startingStop;
 
