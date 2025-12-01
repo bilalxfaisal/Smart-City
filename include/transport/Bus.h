@@ -46,17 +46,16 @@ public:
 	{
 		direction = !direction;
 	}
-	void AddPassengers(BusStop* stop) 
+	void AddPassengers() 
 	{
-		busRouteHistory->push(stop->getName());
 		int toAdd = rand() % (capacity - currPassengers + 1);
 		currPassengers += toAdd;
 		cout << toAdd << " passengers boarded the bus " << busID << ". Current passengers: " << currPassengers << endl;
 	}
-	void RemovePassengers(BusStop* stop) 
-	{
-		busRouteHistory->push(stop->getName());
-		int toRemove = rand() % (currPassengers + 1);
+	void RemovePassengers() 
+	{	
+		int maxToRemove = currPassengers * 0.5;
+		int toRemove = rand() % (maxToRemove);
 		currPassengers -= toRemove;
 		cout << toRemove << " passengers alighted from the bus " << busID << ". Current passengers: " << currPassengers << endl;
 	}
@@ -65,7 +64,38 @@ public:
 		// move one stop forward or backward based on direction
 		BusStop* curr = head;
 		while(curr){
-			if(curr->getStopID())
+			if (curr->getStopID() == currStopID) {
+				if (direction) {
+					if (curr->nextStop == nullptr) {
+						cout<<"Bus "<<busID<<" has reached the end of the route and will reverse direction."<<endl;
+						direction = !direction;
+						RemovePassengers();
+						AddPassengers();
+						busRouteHistory->push(curr->getName());
+						break;
+					}
+					// basically an else case in disguise
+					curr = curr->nextStop;
+					currStopID = curr->getStopID();
+				}
+				else {
+					if (curr->nextStop == nullptr) {
+						cout << "Bus " << busID << " has reached the end of the route and will reverse direction." << endl;
+						direction = !direction;
+						RemovePassengers();
+						AddPassengers();
+						busRouteHistory->push(curr->getName());
+						break;
+					}
+					curr = curr->prevStop;
+					currStopID = curr->getStopID();
+				}
+				// removing must be done first i suppose :D
+				RemovePassengers();
+				AddPassengers();
+				busRouteHistory->push(curr->getName());
+				break;
+			}
 			curr = curr->nextStop;
 		}
 	}
