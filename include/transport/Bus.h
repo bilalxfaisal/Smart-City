@@ -60,6 +60,15 @@ public:
 		currPassengers -= toRemove;
 		cout << toRemove << " passengers alighted from the bus " << busID << ". Current passengers: " << currPassengers << endl;
 	}
+
+	void simulateMovement(BusStop* head) {
+		// move one stop forward or backward based on direction
+		BusStop* curr = head;
+		while(curr){
+			if(curr->getStopID())
+			curr = curr->nextStop;
+		}
+	}
 };
 
 #endif

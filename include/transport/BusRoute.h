@@ -70,6 +70,27 @@ public:
 		}
 	}
 
+	void removeStop(string stopName) {
+		BusStop* curr = startingStop;
+		while (curr) {
+			if (curr->getStopName() == stopName) {
+				if (curr->prevStop) {
+					curr->prevStop->nextStop = curr->nextStop;
+				}
+				else {
+					startingStop = curr->nextStop;
+				}
+				if (curr->nextStop) {
+					curr->nextStop->prevStop = curr->prevStop;
+				}
+				delete curr;
+				busStopsCount--;
+				return;
+			}
+			curr = curr->nextStop;
+		}
+	}
+
 	BusStop* getStartingStop() {
 		return startingStop;
 	}

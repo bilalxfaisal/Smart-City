@@ -52,6 +52,9 @@ public:
 	int getCurrBuses() const {
 		return currBuses;
 	}
+	int getStopID() const {
+		return stopID;
+	}
 	string getStopName() const {
 		return stopName;
 	}
