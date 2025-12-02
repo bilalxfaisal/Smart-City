@@ -17,19 +17,24 @@ class Store
 	int storeID;
 	string storeName;
 	string mallID;
-	ProductHashTable** productsTable;
-	int productCount;
-	Store* nextStore;
+	Category** CategoriesTable;
+	int CatTableSize = 0;
+	int CatTableCount = 0;
+
+
+	
 	
 public:
-	Store(int id = 0, string name = "", string mall_id = "", int productsNum = 0)
+	Store* nextStore;
+	Store(int id = 0, string name = "", string mall_id = "", int catNum = 10)
 	{
 		storeID = id;
 		storeName = name;
 		mallID = mall_id;
-		productsTable = nullptr;
-		productsTable = new Product * [productsNum](); // initializes to nullptr
-		productCount = 0;
+
+		CategoriesTable = new Category * [catNum](); // initializes to nullptr
+		CatTableCount = 0;
+		CatTableSize = catNum;
 		nextStore = nullptr;
 	}
 	Store(Store& store)
@@ -37,52 +42,55 @@ public:
 		storeID = store.storeID;
 		storeName = store.storeName;
 		mallID = store.mallID;
-		productsTabble = store.productsTable;
-		storeCount = store.storeCount;
+		CategoriesTable = store.CategoriesTable;
+
 	}
 	int getStoreID() const { return storeID; }
-	int getStoreName() const { return storeName; }
-	int getMallID() const { return mallID; }
+	string getStoreName() const { return storeName; }
+	string getMallID() const { return mallID; }
 
-	void addProduct(Product& product)
+	void addProduct(string categoryName, Product& product)
 	{
 		Product* toAdd = new Product(product);
 
-		int index = Polynomial_Rolling_Hash_V1(product.productName);
-		index = index % productsTableSize;
+		int index = Polynomial_Rolling_Hash_V1(categoryName);
+		index = index % CatTableSize;
 
-		if (productsTable[index] == nullptr)
-			productsTable[index] = toAdd;
+		if (CategoriesTable[index] == nullptr)
+		{
+			CategoriesTable[index] = new Category(categoryName);
+		}
+
+		CategoriesTable[index]->addProductToCategory(product);
+	}
+	Product* findProductByName(string name, string categoryName)
+	{
+		int index = Polynomial_Rolling_Hash_V1(categoryName);
+		index = index % CatTableSize;
+		if (CategoriesTable[index] == nullptr) return nullptr;
 		else
 		{
-			toAdd->next = productsTable[index];
-			productsTable[index] = toAdd;
+			return CategoriesTable[index]->findProductByName(name);
 		}
 	}
-	Product* findProductByName(string name)
+
+	bool removeAllProductsOfName(string name, string categoryName)
 	{
-		int index = Polynomial_Rolling_Hash_V1(name);
-		index = index % productsTableSize;
+		int index = Polynomial_Rolling_Hash_V1(categoryName);
+		index = index % CatTableSize;
 
-		if (productsTable[index] == nullptr) return nullptr;
-		else
-			return productsTable[index];
-	}
-
-	bool removeAllProductsOfName(string name)
-	{
-		int index = Polynomial_Rolling_Hash_V1(name);
-		index = index % productsTableSize;
-
-		if (productsTable[index] == nullptr)
+		if (CategoriesTable[index] == nullptr)
 		{
 			cout << "\nNo product of name (" << name << ") exists";
 			return false;
 		}
 		else
 		{
-			productsTable[index] = nullptr;
-			return true;
+			Category* category = CategoriesTable[index];
+			if (category != nullptr)
+			{
+				category->removeAllProductsByName(name);
+			}
 		}
 	}
 	bool removeProduct(string name)

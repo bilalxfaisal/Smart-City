@@ -127,6 +127,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\include\commercial\CommercialSystem.h" />
+    <ClInclude Include="..\..\include\commercial\Mall.h" />
+    <ClInclude Include="..\..\include\commercial\MallGraph.h" />
+    <ClInclude Include="..\..\include\commercial\MallHashTable.h" />
+    <ClInclude Include="..\..\include\commercial\Product.h" />
+    <ClInclude Include="..\..\include\commercial\ProductHashTable.h" />
+    <ClInclude Include="..\..\include\commercial\Store.h" />
+    <ClInclude Include="..\..\include\commercial\StoresHashTable.h" />
     <ClInclude Include="..\..\include\education\Class.h" />
     <ClInclude Include="..\..\include\education\Department.h" />
     <ClInclude Include="..\..\include\education\EducationSystem.h" />
@@ -135,6 +143,16 @@
     <ClInclude Include="..\..\include\education\SchoolMaxHeap.h" />
     <ClInclude Include="..\..\include\education\SchoolTree.h" />
     <ClInclude Include="..\..\include\education\Student.h" />
+    <ClInclude Include="..\..\include\medical\Doctor.h" />
+    <ClInclude Include="..\..\include\medical\DoctorHashTable.h" />
+    <ClInclude Include="..\..\include\medical\Hospital.h" />
+    <ClInclude Include="..\..\include\medical\HospitalGraph.h" />
+    <ClInclude Include="..\..\include\medical\HospitalPriorityQueue.h" />
+    <ClInclude Include="..\..\include\medical\MedicalSystem.h" />
+    <ClInclude Include="..\..\include\medical\Medicine.h" />
+    <ClInclude Include="..\..\include\medical\MedicineHashTable.h" />
+    <ClInclude Include="..\..\include\medical\Patient.h" />
+    <ClInclude Include="..\..\include\medical\Pharmacy.h" />
     <ClInclude Include="..\..\include\transport\Bus.h" />
     <ClInclude Include="..\..\include\transport\BusHashTable.h" />
     <ClInclude Include="..\..\include\transport\BusRoute.h" />

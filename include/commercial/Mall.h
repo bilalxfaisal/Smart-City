@@ -19,7 +19,9 @@ class Mall
 	Location location;
 	Mall* nextMall;
 	int storeCount;
-	StoresHashTable** storesTable;
+	Store** storesTable;
+	int storeTableSize;
+	Store* firstStore;
 
 public:
 	// constructor
@@ -32,6 +34,10 @@ public:
 		storeCount = 0;
 		storesTable = new Store * [storesNum](); // initializes to nullptr
 		firstStore = nullptr;
+
+		Product** productsTable;
+		int productTableSize;
+		int ProductCap;
 	}
 	// copy constructor
 	/*Mall(Mall& mall)
@@ -56,8 +62,8 @@ public:
 			storesTable[index] = toAdd;
 		else
 		{
-			toAdd->nextStore = storeTable[index];
-			storeTable[index] = toAdd;
+			toAdd->nextStore = storesTable[index];
+			storesTable[index] = toAdd;
 		}
 	}
 	Store* findStoreByName(string name)
