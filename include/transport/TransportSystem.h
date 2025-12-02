@@ -192,6 +192,23 @@ public:
 	BusRoute** getRouteHashTable() {
 		return routeHashTable;
 	}
+
+	// for bus consstructor so to initialize the starting stop of the bus to the first stop of the route
+	int getStartingBusStopID(string& routeName) {
+		int index = Polynomial_Rolling_Hash_V1(routeName);
+		index = index % routesTableSize;
+		BusRoute* currRoute = routeHashTable[index];
+		while (currRoute) {
+			if (currRoute->getRouteName() == routeName) {
+				BusStop* startStop = currRoute->getStartingStop();
+				if (startStop) {
+					return startStop->getStopID();
+				}
+			}
+			currRoute = currRoute->nextRoute;
+		}
+		return -1; // not found
+	}
 };
 
 #endif

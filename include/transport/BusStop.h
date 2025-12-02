@@ -3,27 +3,24 @@
 #ifndef BUSSTOP_H
 #define BUSSTOP_H
 
-
 using std::string;
 using std::cout;
 using std::cin;
 using std::endl;
 
 class BusStop {
-
 	string stopName; // name of the bus stop
-	int stopID; 
+	static int counter; 
+	int stopID; // unique ID of the bus stop
 	Location stopLocation; // location of the bus stop
 	int currBuses; // number of buses currently at the stop
 	int totalSize; // size of the array
 	Bus** busesAtStop; // dynamic array of pointers to buses currently at the stop
 public:
 	BusStop* nextStop; // pointer to the next bus stop in the route
-	BusStop* prevStop; // pointer to the previous bus stop in the route
+	// Removed prevStop - using singly linked list only
 
 public:
-
-
 	BusStop(string name, int x, int y) {
 		stopName = name;
 		stopLocation.x = x;
@@ -31,6 +28,9 @@ public:
 		currBuses = 0;
 		totalSize = 10;
 		busesAtStop = new Bus * [totalSize];
+		nextStop = nullptr;
+		counter++;
+		stopID = counter;
 	}
 
 	void addBus(Bus* toAdd) {
@@ -46,6 +46,7 @@ public:
 		busesAtStop[currBuses] = toAdd;
 		currBuses++;
 	}
+
 	//DEEP COPY CONSTRUCTOR
 	BusStop(const BusStop& other) {
 		stopName = other.stopName;
@@ -58,13 +59,13 @@ public:
 			busesAtStop[i] = other.busesAtStop[i];
 		}
 		nextStop = nullptr;
-		prevStop = nullptr;
 	}
+
 	//GETTERS
 	int getCurrBuses() const {
 		return currBuses;
 	}
-	int getStopID() const {
+	int getStopID() {
 		return stopID;
 	}
 	string getStopName() const {
@@ -73,7 +74,7 @@ public:
 	Location getLocation() const {
 		return stopLocation;
 	}
-
 };
 
+int BusStop::counter = 0;
 #endif

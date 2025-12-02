@@ -17,15 +17,15 @@ class BusRoute {
 	
 public:
 	BusRoute* nextRoute; // pointer to the next bus route in the system
+	
 	BusRoute(string rName, int rID, int stopsCount) 
 	{
 		routeName = rName;
 		routeID = rID;
 		busStopsCount = stopsCount;
-		startingStop = NULL;
-		nextRoute = NULL;
+		startingStop = nullptr;
+		nextRoute = nullptr;
 	}
-
 
 	bool addStop_AFTR(BusStop& toAdd, string AfterStop) 
 	{
@@ -37,24 +37,17 @@ public:
 			busStopsCount = 1;
 			return true;
 		}
+		
 		BusStop* newStop = new BusStop(toAdd);
 		BusStop* curr = startingStop;
+		
 		while (curr) {
 			if (curr->getStopName() == AfterStop) {
-				if (curr->nextStop) { 
-					curr->nextStop->prevStop = newStop;
-					newStop->nextStop = curr->nextStop;
-					newStop->prevStop = curr;
-					curr->nextStop = newStop;
-					busStopsCount++;
-					return true;
-				}
-				else { // adding at the end
-					curr->nextStop = newStop;
-					newStop->prevStop = curr;
-					busStopsCount++;
-					return true;
-				}
+				// Insert after this stop
+				newStop->nextStop = curr->nextStop;
+				curr->nextStop = newStop;
+				busStopsCount++;
+				return true;
 			}
 			curr = curr->nextStop;
 		}
@@ -71,22 +64,23 @@ public:
 			busStopsCount = 1;
 			return true;
 		}
+		
 		BusStop* newStop = new BusStop(toAdd);
-		BusStop* curr = startingStop;
-
+		
+		// CASE 2: insert before the first stop
 		if (startingStop->getStopName() == beforeStop) {
 			newStop->nextStop = startingStop;
-			startingStop->prevStop = newStop;
 			startingStop = newStop;
 			busStopsCount++;
 			return true;
 		}
-		while (curr) {
-			if (curr->getStopName() == beforeStop) {
-				curr->prevStop->nextStop = newStop;
-				newStop->prevStop = curr->prevStop;
-				newStop->nextStop = curr;
-				curr->prevStop = newStop;
+		
+		// CASE 3: find the stop before the target and insert after it
+		BusStop* curr = startingStop;
+		while (curr->nextStop) {
+			if (curr->nextStop->getStopName() == beforeStop) {
+				newStop->nextStop = curr->nextStop;
+				curr->nextStop = newStop;
 				busStopsCount++;
 				return true;
 			}
@@ -96,19 +90,24 @@ public:
 	}
 
 	void removeStop(string stopName) {
+		if (!startingStop) return;
+		
+		// If removing the first stop
+		if (startingStop->getStopName() == stopName) {
+			BusStop* toDelete = startingStop;
+			startingStop = startingStop->nextStop;
+			delete toDelete;
+			busStopsCount--;
+			return;
+		}
+		
+		// Find the stop before the one to remove
 		BusStop* curr = startingStop;
-		while (curr) {
-			if (curr->getStopName() == stopName) {
-				if (curr->prevStop) {
-					curr->prevStop->nextStop = curr->nextStop;
-				}
-				else {
-					startingStop = curr->nextStop;
-				}
-				if (curr->nextStop) {
-					curr->nextStop->prevStop = curr->prevStop;
-				}
-				delete curr;
+		while (curr->nextStop) {
+			if (curr->nextStop->getStopName() == stopName) {
+				BusStop* toDelete = curr->nextStop;
+				curr->nextStop = curr->nextStop->nextStop;
+				delete toDelete;
 				busStopsCount--;
 				return;
 			}
@@ -116,15 +115,43 @@ public:
 		}
 	}
 
+	// Reverse the entire route (singly linked list reversal)
+	void reverseRoute() {
+		BusStop* prev = nullptr;
+		BusStop* current = startingStop;
+		BusStop* next = nullptr;
+		
+		while (current != nullptr) {
+			next = current->nextStop;
+			current->nextStop = prev;
+			prev = current;
+			current = next;
+		}
+		
+		startingStop = prev;
+	}
+
+	// Find a specific stop by ID
+	BusStop* findStopByID(int stopID) {
+		BusStop* curr = startingStop;
+		while (curr != nullptr) {
+			if (curr->getStopID() == stopID) {
+				return curr;
+			}
+			curr = curr->nextStop;
+		}
+		return nullptr;
+	}
+
 	BusStop* getStartingStop() {
 		return startingStop;
 	}
-	//GETTER
+
 	string getRouteName() const {
 		return routeName;
 	}
-	void DisplayRoute()
-	{
+
+	void DisplayRoute() {
 		BusStop* curr = startingStop;
 		cout << "Bus Route: " << routeName << " (ID: " << routeID << ")\n";
 		cout << "Stops in Route:\n";
@@ -134,6 +161,5 @@ public:
 		}
 	}
 };
-
 
 #endif

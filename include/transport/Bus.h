@@ -1,6 +1,7 @@
 #include "../utils/Nodes.h"
 #include "RouteStack.h"
 #include "BusStop.h"
+#include "BusRoute.h"
 /////
 //// todo use curr STOP ID IDK WHERE
 //////
@@ -33,8 +34,10 @@ public:
 	int getPassengers() const { return currPassengers; }
 	int getCapacity() const { return capacity; }
 	RouteStack* getStack() const { return busRouteHistory; }
+	 // --Setters--
+	void setcurrStopID(int stopID) { currStopID = stopID; }
 
-	Bus(string busId="", string currRoute= "", int cap = 0, bool ammv = true, bool dir = true)
+	Bus(string busId="", string currRoute= "", int stopID = 0, int cap = 0,  bool ammv = true, bool dir = true)
 	{
 		busRouteHistory = new RouteStack();
 		busID = busId;
@@ -43,7 +46,7 @@ public:
 		isMoving = ammv;
 		direction = dir;
 		currPassengers = 0;
-		currStopID = -1; // to be set when the bus is added to a route
+		currStopID = stopID;
 	}
 	void changeState()
 	{
@@ -59,60 +62,88 @@ public:
 		currPassengers += toAdd;
 		cout << toAdd << " passengers boarded the bus " << busID << ". Current passengers: " << currPassengers << endl;
 	}
-	void RemovePassengers() 
-	{	
-		int maxToRemove = currPassengers/2;
-		int toRemove = rand() % (maxToRemove);
+	void RemovePassengers()
+	{
+		// Exit if no passengers to prevent crashes.
+		if (currPassengers <= 0)
+		{
+			return;
+		}
+
+		int maxToRemove = currPassengers / 2;
+		int toRemove;
+
+		if (maxToRemove == 0)
+		{
+			toRemove = 0;
+		}
+		else
+		{
+			toRemove = rand() % maxToRemove;
+		}
+
 		currPassengers -= toRemove;
 		cout << toRemove << " passengers alighted from the bus " << busID << ". Current passengers: " << currPassengers << endl;
 	}
 
-	void simulateMovement(BusStop* head) 
+	void simulateMovement(BusRoute* route) 
 	{
-		// move one stop forward or backward based on direction
+		BusStop* head = route->getStartingStop();
+		
+		// Find current stop in the route
 		BusStop* curr = head;
-		while(curr){
-			if (curr->getStopID() == currStopID) 
-			{
-				if (direction)
-				{
-					if (curr->nextStop == nullptr) 
-					{
-						cout<<"Bus "<<busID<<" has reached the end of the route and will reverse direction."<<endl;
-						direction = !direction;
-						RemovePassengers();
-						AddPassengers();
-						busRouteHistory->push(curr->getStopName());
-						cout << "Bus " << busID << " moved to stop " << curr->getStopName() << " (ID: " << currStopID << ")." << endl;
-						break;
-					}
-					// basically an else case in disguise
-					curr = curr->nextStop;
-					currStopID = curr->getStopID();
-				}
-				else
-				{
-					if (curr->nextStop == nullptr) 
-					{
-						cout << "Bus " << busID << " has reached the end of the route and will reverse direction." << endl;
-						direction = !direction;
-						RemovePassengers();
-						AddPassengers();
-						busRouteHistory->push(curr->getStopName());
-						cout << "Bus " << busID << " moved to stop " << curr->getStopName() << " (ID: " << currStopID << ")." << endl;
-						break;
-					}
-					curr = curr->prevStop;
-					currStopID = curr->getStopID();
-				}
-				// removing must be done first i suppose :D
-				RemovePassengers();
-				AddPassengers();
-				busRouteHistory->push(curr->getStopName());
-				cout << "Bus " << busID << " moved to stop " << curr->getStopName() << " (ID: " << currStopID << ")." << endl;
+		BusStop* currentStop = nullptr;
+		
+		// Find the stop where bus is currently located
+		while (curr) {
+			if (curr->getStopID() == currStopID) {
+				currentStop = curr;
 				break;
 			}
 			curr = curr->nextStop;
+		}
+		
+		if (!currentStop) {
+			cout << "Bus " << busID << " is not on a valid stop!" << endl;
+			return;
+		}
+		
+		// Check if bus can move to next stop
+		if (currentStop->nextStop != nullptr) {
+			// Normal movement - move to next stop
+			currentStop = currentStop->nextStop;
+			currStopID = currentStop->getStopID();
+			
+			RemovePassengers();
+			AddPassengers();
+			busRouteHistory->push(currentStop->getStopName());
+			cout << "Bus " << busID << " moved to stop " << currentStop->getStopName() << " (ID: " << currStopID << ")." << endl;
+		}
+		else {
+			// Reached end of route - reverse the route in the BusRoute object
+			cout << "Bus " << busID << " has reached the end of the route. Reversing route direction." << endl;
+			
+			// Reverse the route in the BusRoute object itself
+			route->reverseRoute();
+			
+			// Now find the bus's current position in the reversed route and move to next
+			head = route->getStartingStop(); // Get new head after reversal
+			curr = head;
+			while (curr) {
+				if (curr->getStopID() == currStopID) {
+					// Bus found in reversed route, move to next stop if possible
+					if (curr->nextStop) {
+						curr = curr->nextStop;
+						currStopID = curr->getStopID();
+						RemovePassengers();
+						AddPassengers();
+						busRouteHistory->push(curr->getStopName());
+						cout << "Bus " << busID << " moved to stop " << curr->getStopName() << " (ID: " << currStopID << ") in reversed route." << endl;
+					}
+					break;
+				}
+				curr = curr->nextStop;
+			}
 		}
 	}
 };

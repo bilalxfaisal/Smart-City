@@ -141,8 +141,9 @@ int main()
             string routeID = readLine("Enter route name: ");
             int cap = readInt("Enter capacity: ");
 
-            Bus b(busID, routeID, cap, true, true);
-
+			int startingStopID = system.getStartingBusStopID(routeID);
+            Bus b(busID, routeID, startingStopID, cap, true, true);
+            
             system.addBusToTransportCompany(b, comp);
 
             cout << "Bus added.\n";

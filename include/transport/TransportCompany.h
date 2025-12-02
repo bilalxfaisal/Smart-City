@@ -89,13 +89,13 @@ public:
     {
 		cout << "Simulating movement for Bus " << BusToMove->getID() << " on route " << movementRoute->getRouteName() << endl;
 		//Find the bus in the hash table
-        int index = Polynomial_Rolling_Hash_V2(BusToMove->getID());
+        int index = Polynomial_Rolling_Hash_V1(BusToMove->getID());
         index = index % busTableSize;
         Bus* curr = busHashTable[index];
         while (curr) {
             if (curr->getID() == BusToMove->getID()) {
-                // Simulate movement
-                curr->simulateMovement(movementRoute->getStartingStop());
+                // Simulate movement - pass the entire route object
+                curr->simulateMovement(movementRoute);
                 return;
             }
             curr = curr->next;
