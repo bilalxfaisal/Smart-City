@@ -10,7 +10,8 @@ using std::cout;
 #include <string>
 using namespace std;
 
-inline unsigned int Polynomial_Rolling_Hash_V1(const string& str) {
+inline unsigned int Polynomial_Rolling_Hash_V1(const string& str) 
+{
     const long long p = 31;
     const long long m = 1000000009LL;  // 1e9 + 9 (prime)
 

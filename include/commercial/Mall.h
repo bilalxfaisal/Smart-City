@@ -22,6 +22,7 @@ class Mall
 	StoresHashTable** storesTable;
 
 public:
+	// constructor
 	Mall(int id = 0, string name = "", Location loc = { 0,0 }, int storesNum = 0)
 	{
 		mallID = id;
@@ -32,11 +33,90 @@ public:
 		storesTable = new Store * [storesNum](); // initializes to nullptr
 		firstStore = nullptr;
 	}
+	// copy constructor
+	/*Mall(Mall& mall)
+	{
+		mallID = mall.mallID;
+		mallName = mall.mallName;
+		location.x = mall.location.x;
+		location.y = mall.location.y;
+	}*/
 	int getMallID() const { return mallID; }
 	string getMallName() const { return mallName; }
 	Location getLocation() const { return location; }
 	int getStoreCount() const { return storeCount; }
 	
+	void addStore(Store& store)
+	{
+		Store* toAdd = new Store(store);
+		int index = Polynomial_Rolling_Hash_V1(store.getStoreName());
+		index = index % storeTableSize;
+
+		if (storesTable[index] == nullptr)
+			storesTable[index] = toAdd;
+		else
+		{
+			toAdd->nextStore = storeTable[index];
+			storeTable[index] = toAdd;
+		}
+	}
+	Store* findStoreByName(string name)
+	{
+		int index = Polynomial_Rolling_Hash_V1(name);
+		index = index % storeTableSize;
+
+		if (storesTable[index] == nullptr) return nullptr;
+		else
+			return storesTable[index];
+	}
+
+	Product* findProductInStore(string storeName, string productName)
+	{
+		Store* store = findStoreByName(storeName);
+		if (store != nullptr)
+		{
+			return store->findProductByName(productName);
+		}
+		return nullptr; // Store not found
+	}
+
+	Product* findProductInMall(string productName)
+	{
+		for (int i = 0; i < storeTableSize; i++)
+		{
+			Store* store = storesTable[i];
+			while (store != nullptr)
+			{
+				Product* product = store->findProductByName(productName);
+				if (product != nullptr)
+				{
+					return product; // Product found
+				}
+				store = store->nextStore;
+			}
+		}
+		return nullptr; // Product not found in any store
+	}
+
+	bool removeStore(string name)
+	{
+		int index = Polynomial_Rolling_Hash_V1(name);
+		index = index % productTableSize;
+
+		if (productsTable[index] == nullptr) return false;
+		else
+		{
+			Store* store = storesTable[index];
+			if (store->getStoreName() == name)
+			{
+				storesTable[index] = store->nextStore;
+				delete store;
+				cout << "\nStore of name (" << name << ") removed successfully.";
+				return true;
+			}
+		}
+	}
+
 };
 
 #endif
