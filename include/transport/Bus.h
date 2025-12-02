@@ -1,7 +1,9 @@
 #include "../utils/Nodes.h"
 #include "RouteStack.h"
 #include "BusStop.h"
-
+/////
+//// todo use curr STOP ID IDK WHERE
+//////
 #include <ctime>
 #include <cstdlib>
 #ifndef BUS_H
@@ -30,8 +32,9 @@ public:
 	string getRoute() const { return busRouteID; }
 	int getPassengers() const { return currPassengers; }
 	int getCapacity() const { return capacity; }
+	RouteStack* getStack() const { return busRouteHistory; }
 
-	Bus(string busId="", int currRoute=0, int cap=0, bool ammv=true, bool dir=true) 
+	Bus(string busId="", string currRoute= "", int cap = 0, bool ammv = true, bool dir = true)
 	{
 		busRouteHistory = new RouteStack();
 		busID = busId;
@@ -39,6 +42,8 @@ public:
 		capacity = cap;
 		isMoving = ammv;
 		direction = dir;
+		currPassengers = 0;
+		currStopID = -1; // to be set when the bus is added to a route
 	}
 	void changeState()
 	{

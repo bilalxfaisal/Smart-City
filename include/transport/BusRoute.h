@@ -27,7 +27,7 @@ public:
 	}
 
 
-	void addStop_AFTR(BusStop& toAdd, string AfterStop) 
+	bool addStop_AFTR(BusStop& toAdd, string AfterStop) 
 	{
 		//BASE CASE
 		if (startingStop == nullptr)
@@ -35,7 +35,7 @@ public:
 			BusStop* newStop = new BusStop(toAdd);
 			startingStop = newStop;
 			busStopsCount = 1;
-			return;
+			return true;
 		}
 		BusStop* newStop = new BusStop(toAdd);
 		BusStop* curr = startingStop;
@@ -47,20 +47,21 @@ public:
 					newStop->prevStop = curr;
 					curr->nextStop = newStop;
 					busStopsCount++;
-					return;
+					return true;
 				}
 				else { // adding at the end
 					curr->nextStop = newStop;
 					newStop->prevStop = curr;
 					busStopsCount++;
-					return;
+					return true;
 				}
 			}
 			curr = curr->nextStop;
 		}
+		return false;
 	}
 
-	void addStop_B4(BusStop& toAdd, string beforeStop)
+	bool addStop_B4(BusStop& toAdd, string beforeStop)
 	{
 		// CASE 1: route is empty
 		if (startingStop == nullptr)
@@ -68,7 +69,7 @@ public:
 			BusStop* newStop = new BusStop(toAdd);
 			startingStop = newStop;
 			busStopsCount = 1;
-			return;
+			return true;
 		}
 		BusStop* newStop = new BusStop(toAdd);
 		BusStop* curr = startingStop;
@@ -78,7 +79,7 @@ public:
 			startingStop->prevStop = newStop;
 			startingStop = newStop;
 			busStopsCount++;
-			return;
+			return true;
 		}
 		while (curr) {
 			if (curr->getStopName() == beforeStop) {
@@ -87,10 +88,11 @@ public:
 				newStop->nextStop = curr;
 				curr->prevStop = newStop;
 				busStopsCount++;
-				return;
+				return true;
 			}
 			curr = curr->nextStop;
 		}
+		return false;
 	}
 
 	void removeStop(string stopName) {

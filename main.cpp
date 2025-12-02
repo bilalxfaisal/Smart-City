@@ -1,4 +1,4 @@
-#include "../Smart-City-DS-Project/include/transport/TransportSystem.h"
+#include "../DS_PROJECT/include/transport/TransportSystem.h"
 #include <iostream>
 #include <string>
 using namespace std;
@@ -35,6 +35,7 @@ void showMenu()
     cout << "4. Add Bus to Transport Company\n";
     cout << "5. Simulate Bus Movement\n";
     cout << "6. Display Transport Company Status\n";
+    cout << "7. Show Routes\n";
     cout << "0. Exit\n";
     cout << "Enter choice: ";
 }
@@ -110,11 +111,18 @@ int main()
 
             if (rt)
             {
+                bool added = false;
                 if(afterFlag)
-                    rt->addStop_AFTR(bs, after);
+                     added = rt->addStop_AFTR(bs, after);
 				else
-                rt->addStop_B4(bs, after);
-                cout << "Stop added.\n";
+                     added = rt->addStop_B4(bs, after);
+
+                if (added) {
+                    cout << "Stop added.\n";
+                }
+                else {
+                    cout << "NOPE\n";
+                }
             }
             else
             {
@@ -130,7 +138,7 @@ int main()
             string comp = readLine("Enter company name: ");
 
             string busID = readLine("Enter bus ID: ");
-            int routeID = readInt("Enter route number: ");
+            string routeID = readLine("Enter route name: ");
             int cap = readInt("Enter capacity: ");
 
             Bus b(busID, routeID, cap, true, true);
@@ -157,6 +165,14 @@ int main()
             break;
         }
 
+        case 7:
+        {
+            string comp;
+            cout << "Enter Company Name: ";
+            cin >> comp;
+            system.displayRoutes(comp);
+            break;
+        }
         default:
             cout << "Invalid choice. Try again.\n";
         }

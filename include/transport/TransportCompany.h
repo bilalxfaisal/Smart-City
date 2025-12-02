@@ -37,7 +37,7 @@ public:
     void addBus(Bus& b1)
     {
         Bus* toAdd = new Bus(b1);
-        int index = Polynomial_Rolling_Hash_V2(b1.getID());
+        int index = Polynomial_Rolling_Hash_V1(b1.getID());
         index = index % busTableSize;
         if (busHashTable[index] == nullptr) {
             busHashTable[index] = toAdd;

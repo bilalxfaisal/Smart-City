@@ -68,7 +68,8 @@ public:
 
 	void addBusRoute(BusRoute& br) {
 		BusRoute* toAdd = new BusRoute(br);
-		int index = Polynomial_Rolling_Hash_V1(br.getRouteName());
+		string nameget = br.getRouteName();
+		int index = Polynomial_Rolling_Hash_V1(nameget);
 		index = index % routesTableSize;
 		if (routeHashTable[index] == nullptr) {
 			routeHashTable[index] = toAdd;
@@ -154,23 +155,39 @@ public:
 			int tableSize = currCompany->busTableSize;
 			for (int i = 0; i < tableSize; i++) {
 				Bus* currBus = currCompany->busHashTable[i];
-				string currBusStop = currBus->getRoute();
-				int routeIndex = Polynomial_Rolling_Hash_V1(currBusStop);
-				routeIndex = routeIndex % routesTableSize;
-				if (routeHashTable[routeIndex]) {
-					BusRoute* currRoute = routeHashTable[routeIndex];
-					cout << "Displaying route for Bus ID: " << currBus->getID() << endl;
-					cout << "Route Name: " << currRoute->getRouteName() << endl;
-					BusStop* startStop = currRoute->getStartingStop();
-					while (startStop) {
-						cout << "Stop Name: " << startStop->getStopName() << endl;
-						startStop = startStop->nextStop;
+				if (currBus) {
+					string currBusStop = currBus->getRoute();
+					int routeIndex = Polynomial_Rolling_Hash_V1(currBusStop);
+					routeIndex = routeIndex % routesTableSize;
+					if (routeHashTable[routeIndex]) {
+						BusRoute* currRoute = routeHashTable[routeIndex];
+						cout << "Showing route for Bus: " << currBus->getID();
+						currRoute->DisplayRoute();
 					}
 				}
 			}
 		}
 	}
 
+	void displayBusHistory(string& company, string& busID) {
+		int companyIndex = Polynomial_Rolling_Hash_V1(company);
+		companyIndex %= companyTableSize;
+
+		TransportCompany* comp = companyHashTable[companyIndex];
+		if (comp) {
+			int busIndex = Polynomial_Rolling_Hash_V1(busID);
+			busIndex %= comp->busTableSize;
+			Bus* busToDisplay = comp->busHashTable[busIndex];
+			if (busToDisplay) {
+				RouteStack* history = busToDisplay->getStack();
+				while (!history->isEmpty()) {
+					string his = history->top();
+					cout << his << " ";
+					history->pop();
+				}
+			}
+		}
+	}
 
 	BusRoute** getRouteHashTable() {
 		return routeHashTable;
