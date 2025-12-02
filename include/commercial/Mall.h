@@ -14,7 +14,7 @@ using std::string;
 
 class Mall
 {
-	string mallID;
+	int mallID;
 	string mallName;
 	Location location;
 	Mall* nextMall;
@@ -22,7 +22,7 @@ class Mall
 	StoresHashTable** storesTable;
 
 public:
-	Mall(string id = "", string name = "", Location loc = { 0,0 }, int storesNum = 0)
+	Mall(int id = 0, string name = "", Location loc = { 0,0 }, int storesNum = 0)
 	{
 		mallID = id;
 		mallName = name;
@@ -32,6 +32,10 @@ public:
 		storesTable = new Store * [storesNum](); // initializes to nullptr
 		firstStore = nullptr;
 	}
+	int getMallID() const { return mallID; }
+	string getMallName() const { return mallName; }
+	Location getLocation() const { return location; }
+	int getStoreCount() const { return storeCount; }
 	
 };
 

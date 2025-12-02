@@ -14,7 +14,7 @@ using std::string;
 
 class Store
 {
-	string storeID;
+	int storeID;
 	string storeName;
 	string mallID;
 	ProductHashTable** productsTable;
@@ -22,7 +22,7 @@ class Store
 	Store* nextStore;
 	
 public:
-	Store(string id = "", string name = "", string mall_id = "", int productsNum = 0)
+	Store(int id = 0, string name = "", string mall_id = "", int productsNum = 0)
 	{
 		storeID = id;
 		storeName = name;
@@ -32,6 +32,10 @@ public:
 		productCount = 0;
 		nextStore = nullptr;
 	}
+	int getStoreID() const { return storeID; }
+	int getStoreName() const { return storeName; }
+	int getMallID() const { return mallID; }
+
 };
 
 #endif
