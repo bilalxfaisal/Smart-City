@@ -45,7 +45,7 @@ inline unsigned int Polynomial_Rolling_Hash_V2(string str)
         hash_value = (hash_value + (c - 'a' + 1) * p_pow) % m;
         p_pow = (p_pow * p) % m;
     }
-    return static_cast<int>(hash_value);
+    return static_cast<unsigned int>(hash_value);
 }
 inline int DJB2_Hash(string& str)
 {
@@ -106,6 +106,7 @@ class Patient;
 class Medicine;
 class Pharmacy;
 class Hospital;
+class Appointment;
 
 // Commercial entities
 class Product;

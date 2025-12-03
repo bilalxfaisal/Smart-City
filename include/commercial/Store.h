@@ -93,26 +93,6 @@ public:
 		}
 	}
 
-	bool buyProduct(string productName, string categoryName)
-	{
-		int index = Polynomial_Rolling_Hash_V1(categoryName);
-		index = index % CatTableSize;
-
-		if (CategoriesTable[index] == nullptr)
-		{
-			cout << "\nNo product of name (" << productName << ") exists in category (" << categoryName << ").";
-			return false;
-		}
-		else
-		{
-			Category* category = CategoriesTable[index];
-			if (category != nullptr)
-			{
-				return category->buyProduct(productName);
-			}
-		}
-		return false;
-	}
 };
 
 #endif

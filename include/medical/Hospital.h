@@ -1,22 +1,171 @@
 #ifndef HOSPITAL_H
 #define HOSPITAL_H
 #include "../utils/Nodes.h"
+#include "Patient.h"
+#include "Doctor.h"
+class Appointment 
+{
+	private:
+	string appointmentId = "";
+	Doctor* docPtr = nullptr;
+	Patient* patPtr = nullptr;
+	string appDate;
+	string appTime;
+public:
+	//FOR HASH TABLE COLLISIONS
+	Appointment* nextAppointment = nullptr;
+	Appointment(Doctor* dPtr = nullptr, Patient* pPtr = nullptr, string date = "", string time = "")
+	{
+		docPtr = dPtr;
+		patPtr = pPtr;
+		appDate = date;
+		appTime = time;
+	}
+	Patient* getPatient()
+	{
+		return patPtr;
+	}
+	Doctor* getDoctor()
+	{
+		return docPtr;
+	}
+};
 class Hospital 
 {
 private:
 	string name;	
-	int id;
+	string id;
+	//HASH TABLE -->DOCTORS
 	Doctor** doctorsArray = nullptr;
 	int doctorCount = 0;
-	int docTableCap = 0;
-
+	int docTableCap =	100;
+	static int patientIdCounter; // Static counter for patient IDs
+	static int doctorIdCounter; // Static counter for patient IDs
+	//PATIENTS
 	Patient** patientsArray = nullptr;
 	int patCount = 0;
-	int PatTableCap = 0;
+	int PatTableCap = 100;
+	//APPOINTMENTS
+	Appointment** appointmentsArray = nullptr;
+	int appointmentCount = 0;
+	int appointmentCap = 100;
 
 	int EmergencyBedNum = 0;
+	string sector = "";	
 	//
 public:
+	void registerPatient(string Nam="", float wt=0)
+	{
+		string Id = "Pt-" + to_string(patientIdCounter++);
+		Patient* newPatient = new Patient(Nam, wt, Id);
+		int index = Polynomial_Rolling_Hash_V2(Id);
+		index %= PatTableCap;
+		//Insert into hash table
+		if (patientsArray[index] == nullptr) 
+		{
+			patientsArray[index] = newPatient;
+		}
+		else
+		{
+			newPatient->nextPatient = 	patientsArray[index];
+			patientsArray[index] = newPatient;
+
+		}
+	}
+	void registerDoctor(string& nam, string& spec)
+	{
+		string Id = "Dr-" + to_string(doctorIdCounter++);
+		Doctor* newDoctor = new Doctor(nam, spec, Id);
+		int index = Polynomial_Rolling_Hash_V2(Id);
+		if(doctorsArray[index] == nullptr)
+		{
+			doctorsArray[index] = newDoctor;
+		}
+		else
+		{
+			newDoctor->nextDoctor = doctorsArray[index];
+			doctorsArray[index] = newDoctor;
+		}
+	}
+	void addAppointment(string& PatientId, string& DoctorId)
+	{
+		//APPOINTMENT ONLY WORKS IF PATIENT AND DOCTOR ARE REGISTERED
+		Patient* patient = findPatientById(PatientId);
+		Doctor* doctor = findDoctorById(DoctorId);
+		if (patient == nullptr || doctor == nullptr) {
+			cerr << "Invalid patient or doctor ID." << endl;
+			return;
+		}
+		Appointment* newAppointment = new Appointment(doctor, patient);
+		string appId = doctor->getId()  + patient->getId();
+		int index = Polynomial_Rolling_Hash_V2(appId) % appointmentCap;
+		if (appointmentsArray[index] == nullptr)
+		{
+				appointmentsArray[index] = newAppointment;
+		}
+		else
+		{
+			newAppointment->nextAppointment = appointmentsArray[index];
+		}
+		// Add the appointment to the hospital's appointment list
+	}
+	Patient* findPatientById(string& patientId)
+	{
+		int index = Polynomial_Rolling_Hash_V2(patientId) % PatTableCap;
+		Patient* current = patientsArray[index];
+		while (current != nullptr) {
+			if (current->getId() == patientId)
+			{
+				return current;
+			}
+			current = current->nextPatient;
+		}
+		return nullptr; // Patient not found
+	}
+
+	Doctor* findDoctorById(string& doctorId)
+	{
+		int index = Polynomial_Rolling_Hash_V2(doctorId) % docTableCap;
+		Doctor* current = doctorsArray[index];
+		while (current != nullptr) {
+			if (current->getId() == doctorId)
+			{
+				return current;
+			}
+			current = current->nextDoctor;
+		}
+		return nullptr; // Doctor not found
+	}
+	void cancelAppointment(string& patientId, string doctorId)
+	{
+		string appId = doctorId + patientId;
+		int index = Polynomial_Rolling_Hash_V2(appId) % appointmentCap;
+		Appointment* current = appointmentsArray[index];
+		Appointment* prev = nullptr;
+		while (current != nullptr) {
+			if (current->getPatient()->getId() == patientId && current->getDoctor()->getId() == doctorId) {
+				if (prev == nullptr) {
+					appointmentsArray[index] = current->nextAppointment;
+				} else {
+					prev->nextAppointment = current->nextAppointment;
+				}
+				delete current;
+				return;
+			}
+			prev = current;
+			current = current->nextAppointment;
+		}
+	}
+
 	
 };
+int Hospital::patientIdCounter = 1;
+int Hospital::doctorIdCounter = 1;
+
+
 #endif // !HOSPITAL_H
+
+//int arrays of indexes in hospital table given to doctor and patient
+//Register a patient
+//Appointment creating checks existing existence
+
