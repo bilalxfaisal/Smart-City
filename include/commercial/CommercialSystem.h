@@ -1,6 +1,13 @@
 #include "../utils/Nodes.h"
+#include "Mall.h"
 #ifndef COMMERCIALSYSTEM_H
 #define	COMMERCIALSYSTEM_H
+#include <iostream>
+using std::string;
+using std::cout;
+using std::cin;
+using std::endl;
+
 class CommercialSystem
 {
 private:
@@ -8,8 +15,82 @@ private:
 	int mallCount;
 	int mallTableSize;
 
-
-
 public:
+
+	CommercialSystem() {
+		mallCount = 0;
+		mallTableSize = 100;
+		mallsTable = new Mall * [mallTableSize]();
+		for (int i = 0; i < mallTableSize; i++) {
+			mallsTable[i] = nullptr;
+		}
+	}
+
+	void addMall(Mall& m1) {
+		Mall* toAdd = new Mall(m1);
+		int index = Polynomial_Rolling_Hash_V1(toAdd->getMallName());
+		index = index % mallTableSize;
+		if (mallsTable[index]) {
+			// chaining
+			toAdd->nextMall = mallsTable[index];
+			mallsTable[index] = toAdd;
+		}
+		else {
+			mallsTable[index] = toAdd;
+			mallCount++;
+		}
+	}
+
+	void deleteMall(string mallName) {
+		int index = Polynomial_Rolling_Hash_V1(mallName);
+		index = index % mallTableSize;
+
+		if (mallsTable[index] == nullptr) return;
+
+		Mall* current = mallsTable[index];
+		Mall* previous = nullptr;
+
+		while (current != nullptr) {
+			if (current->getMallName() == mallName) {
+				if (previous == nullptr) {
+					mallsTable[index] = current->nextMall;
+				}
+				else {
+					previous->nextMall = current->nextMall;
+				}
+				delete current;
+				return;
+			}
+			previous = current;
+			current = current->nextMall;
+		}
+	}
+	void addStoreToMall(string mallName, Store& store) {
+		int index = Polynomial_Rolling_Hash_V1(mallName);
+		index = index % mallTableSize;
+
+		Mall* current = mallsTable[index];
+		while (current != nullptr) {
+			if (current->getMallName() == mallName) {
+				current->addStore(store);
+				return;
+			}
+			current = current->nextMall;
+		}
+	}
+
+	void addProductToStore(string mallName, string storeName, Product& product) {
+		int index = Polynomial_Rolling_Hash_V1(mallName);
+		index = index % mallTableSize;
+
+		Mall* current = mallsTable[index];
+		while (current != nullptr) {
+			if (current->getMallName() == mallName) {
+				current->addProductToStore(storeName, product);
+				return;
+			}
+			current = current->nextMall;
+		}
+	}
 };
 #endif // !COMMERCIALSYSTEM_H

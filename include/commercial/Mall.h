@@ -17,13 +17,12 @@ class Mall
 	int mallID;
 	string mallName;
 	Location location;
-	Mall* nextMall;
 	int storeCount;
 	Store** storesTable;
 	int storeTableSize;
-	Store* firstStore;
 
 public:
+	Mall* nextMall;
 	// constructor
 	Mall(int id = 0, string name = "", Location loc = { 0,0 }, int storesNum = 0)
 	{
@@ -33,8 +32,6 @@ public:
 		nextMall = nullptr;
 		storeCount = 0;
 		storesTable = new Store * [storesNum](); // initializes to nullptr
-		firstStore = nullptr;
-
 		Product** productsTable;
 		int productTableSize;
 		int ProductCap;
@@ -107,9 +104,9 @@ public:
 	bool removeStore(string name)
 	{
 		int index = Polynomial_Rolling_Hash_V1(name);
-		index = index % productTableSize;
+		index = index % storeTableSize;
 
-		if (productsTable[index] == nullptr) return false;
+		if (storesTable[index] == nullptr) return false;
 		else
 		{
 			Store* store = storesTable[index];

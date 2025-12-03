@@ -37,6 +37,7 @@ public:
         productName = product.productName;
         price = product.price;
         soldOut = product.soldOut;
+		next = nullptr;
     }
 	bool isProductSoldOut() const { return soldOut; }
 	int getProductID() const { return productID; }
