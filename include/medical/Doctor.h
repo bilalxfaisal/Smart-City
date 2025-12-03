@@ -21,6 +21,7 @@ public:
 		specialization = spec;
 		 appointmentCount = 0;
 		 appointmentCap = 10;
+
 	}
 	void addAppointment(int indexToBeAdded)
 	{

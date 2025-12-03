@@ -54,6 +54,28 @@ private:
 	string sector = "";	
 	//
 public:
+	Hospital( string nam = "", string Id = "", string sec = "", int emBedNum = 0)
+	{
+		name = nam;
+		id = Id;
+		sector = sec;
+		EmergencyBedNum = emBedNum;
+		doctorsArray = new Doctor * [docTableCap];
+		for (int i = 0; i < docTableCap; i++)
+		{
+			doctorsArray[i] = nullptr;
+		}
+		patientsArray = new Patient * [PatTableCap];
+		for (int i = 0; i < PatTableCap; i++)
+		{
+			patientsArray[i] = nullptr;
+		}
+		appointmentsArray = new Appointment * [appointmentCap];
+		for (int i = 0; i < appointmentCap; i++)
+		{
+			appointmentsArray[i] = nullptr;
+		}
+	}
 	void registerPatient(string Nam="", float wt=0)
 	{
 		string Id = "Pt-" + to_string(patientIdCounter++);
@@ -98,7 +120,10 @@ public:
 		}
 		Appointment* newAppointment = new Appointment(doctor, patient);
 		string appId = doctor->getId()  + patient->getId();
+		
 		int index = Polynomial_Rolling_Hash_V2(appId) % appointmentCap;
+		doctor->addAppointment(index);
+		patient->addAppointment(index);
 		if (appointmentsArray[index] == nullptr)
 		{
 				appointmentsArray[index] = newAppointment;
