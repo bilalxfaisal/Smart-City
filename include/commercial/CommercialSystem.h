@@ -41,7 +41,7 @@ public:
 		}
 	}
 
-	void deleteMall(string mallName) {
+	void deleteMall(string& mallName) {
 		int index = Polynomial_Rolling_Hash_V1(mallName);
 		index = index % mallTableSize;
 
@@ -65,7 +65,7 @@ public:
 			current = current->nextMall;
 		}
 	}
-	void addStoreToMall(string mallName, Store& store) {
+	void addStoreToMall(string& mallName, Store& store) {
 		int index = Polynomial_Rolling_Hash_V1(mallName);
 		index = index % mallTableSize;
 
@@ -79,14 +79,80 @@ public:
 		}
 	}
 
-	void addProductToStore(string mallName, string storeName, Product& product) {
+	void removeStoreFromMall(string& mallName, string& storeName) {
+		int index = Polynomial_Rolling_Hash_V1(mallName);
+		index = index % mallTableSize;
+		Mall* current = mallsTable[index];
+		while (current != nullptr) {
+			if (current->getMallName() == mallName) {
+				current->removeStore(storeName);
+				return;
+			}
+			current = current->nextMall;
+		}
+	}
+
+	void addProductToStore(string& mallName, string& storeName, string& categoryName,  Product& product) {
 		int index = Polynomial_Rolling_Hash_V1(mallName);
 		index = index % mallTableSize;
 
 		Mall* current = mallsTable[index];
 		while (current != nullptr) {
 			if (current->getMallName() == mallName) {
-				current->addProductToStore(storeName, product);
+				current->addProductToStore(storeName, categoryName, product);
+				return;
+			}
+			current = current->nextMall;
+		}
+	}
+
+	void removeProduct(string& mallName, string& storeName, string& categoryName, string& productName) {
+		int index = Polynomial_Rolling_Hash_V1(mallName);
+		index = index % mallTableSize;
+		Mall* current = mallsTable[index];
+		while (current != nullptr) {
+			if (current->getMallName() == mallName) {
+				current->removeProductFromStore(storeName, categoryName, productName);
+				return;
+			}
+			current = current->nextMall;
+		}
+	}
+
+	void findProductInStore(string& mallName, string& storeName, string& category, string& productName) {
+		int index = Polynomial_Rolling_Hash_V1(mallName);
+		index = index % mallTableSize;
+		Mall* current = mallsTable[index];
+		while (current != nullptr) {
+			if (current->getMallName() == mallName) {
+				Product* prod = current->findProductInStore(storeName, category, productName);
+				if (prod) {
+					cout << "Product found: ";
+					prod->displayProduct();
+				}
+				else {
+					cout << "Product not found in the specified store and category." << endl;
+				}
+				return;
+			}
+			current = current->nextMall;
+		}
+	}
+
+	void buyProduct(string& mallName, string& storeName, string& category, string& productName) {
+		int index = Polynomial_Rolling_Hash_V1(mallName);
+		index = index % mallTableSize;
+		Mall* current = mallsTable[index];
+		while (current != nullptr) {
+			if (current->getMallName() == mallName) {
+				Product* success = current->buyProductInStore(storeName, category, productName);
+				if (success) {
+					cout << "Product purchased successfully." << endl;
+					//cout << 
+				}
+				else {
+					cout << "Failed to purchase product. It may be out of stock or not found." << endl;
+				}
 				return;
 			}
 			current = current->nextMall;
