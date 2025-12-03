@@ -74,33 +74,45 @@ public:
 			return storesTable[index];
 	}
 
-	Product* findProductInStore(string storeName, string productName)
+	Product* findProductInStore(string storeName, string catName, string productName)
 	{
 		Store* store = findStoreByName(storeName);
 		if (store != nullptr)
 		{
-			return store->findProductByName(productName);
+			return store->findProductByName(productName, catName);
 		}
 		return nullptr; // Store not found
 	}
 
-	Product* findProductInMall(string productName)
+	void addProductToStore(string storeName, string catName, Product& product)
 	{
-		for (int i = 0; i < storeTableSize; i++)
+		Store* store = findStoreByName(storeName);
+
+		if (store == nullptr)
 		{
-			Store* store = storesTable[i];
-			while (store != nullptr)
-			{
-				Product* product = store->findProductByName(productName);
-				if (product != nullptr)
-				{
-					return product; // Product found
-				}
-				store = store->nextStore;
-			}
+			cout << "\nNo store of name " << storeName << " exists !";
+			return;
 		}
-		return nullptr; // Product not found in any store
+		store->addProduct(catName, product);
 	}
+
+	//Product* findProductInMall(string productName)
+	//{
+	//	for (int i = 0; i < storeTableSize; i++)
+	//	{
+	//		Store* store = storesTable[i];
+	//		while (store != nullptr)
+	//		{
+	//			Product* product = store->findProductByName(productName);
+	//			if (product != nullptr)
+	//			{
+	//				return product; // Product found
+	//			}
+	//			store = store->nextStore;
+	//		}
+	//	}
+	//	return nullptr; // Product not found in any store
+	//}
 
 	bool removeStore(string name)
 	{
@@ -119,6 +131,26 @@ public:
 				return true;
 			}
 		}
+	}
+
+	bool buyProductFromStore(string storeName, string catName, string productName)
+	{
+		Store* store = findStoreByName(storeName);
+		if (store != nullptr)
+		{
+			return store->buyProduct(productName, catName);
+		}
+		return false;
+	}
+
+	bool removeAllProductsFromStore(string storeName, string catName, string productName)
+	{
+		Store* store = findStoreByName(storeName);
+		if (store != nullptr)
+		{
+			return store->removeAllProductsOfName(productName, catName);
+		}
+		return false;
 	}
 
 };

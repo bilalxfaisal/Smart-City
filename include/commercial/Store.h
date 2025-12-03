@@ -92,27 +92,26 @@ public:
 			}
 		}
 	}
-	bool removeProduct(string name)
-	{
-		int index = Polynomial_Rolling_Hash_V1(name);
-		index = index % productsTableSize;
 
-		if (productsTable[index] == nullptr)
+	bool buyProduct(string productName, string categoryName)
+	{
+		int index = Polynomial_Rolling_Hash_V1(categoryName);
+		index = index % CatTableSize;
+
+		if (CategoriesTable[index] == nullptr)
 		{
-			cout << "\nNo product of name (" << name << ") exists";
+			cout << "\nNo product of name (" << productName << ") exists in category (" << categoryName << ").";
 			return false;
 		}
 		else
 		{
-			Product* product = productsTable[index];
-			if (product->getProductName() == name)
+			Category* category = CategoriesTable[index];
+			if (category != nullptr)
 			{
-				productsTable[index] = product->next;
-				delete product;
-				cout << "\nProduct of name (" << name << ") removed successfully.";
-				return true;
+				return category->buyProduct(productName);
 			}
 		}
+		return false;
 	}
 };
 

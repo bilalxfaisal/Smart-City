@@ -77,6 +77,7 @@ public:
         Product* toAdd = new Product(product);
         int index = Polynomial_Rolling_Hash_V1(product.getProductName());
         index = index % productsTableSizeCat;
+
         if (productsTable[index] == nullptr)
             productsTable[index] = toAdd;
         else
@@ -119,6 +120,54 @@ public:
         }
         return nullptr;
     }
+    bool buyProduct(string productName)
+    {
+        int index = Polynomial_Rolling_Hash_V1(productName);
+        index = index % productsTableSizeCat;
+
+        if (productsTable[index] == nullptr)
+        {
+            cout << "\nNo product of name (" << productName << ") exists in category (" << categoryName << ").";
+            return nullptr;
+        }
+        Product* current = productsTable[index];
+        Product* prev = nullptr;
+        bool found = false;
+        while (current != nullptr)
+        {
+            if (current->getProductName() == productName)
+            {
+                found = true;
+                if (current->getQuantity() > 1)
+                {
+                    current->removeOne;
+                    return true;
+                }
+                else 
+                {
+                    if (prev == nullptr)
+                    {
+                        productsTable[index] = current->next;
+                        delete current;
+                        current = productsTable[index];
+                        return true;
+                    }
+                    else
+                    {
+                        prev->next = current->next;
+                        delete current;
+                        current = prev->next;
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                prev = current;
+                current = current->next;
+            }
+        }
+    }
     bool removeAllProductsByName(string productName) 
     {
         int index = Polynomial_Rolling_Hash_V1(productName);
@@ -136,27 +185,17 @@ public:
             if (current->getProductName() == productName) 
             {
                 found = true;
-                // Product being removed as not the last one
-                if (current->getQuantity() > 1)
-                    current->removeOne();
-                // Product being removed is the last one 
+                if (prev == nullptr)
+                {
+                    productsTable[index] = current->next;
+                    delete current;
+                    current = productsTable[index];
+                }
                 else
                 {
-                    if (prev == nullptr)
-                    {
-                        else
-                        {
-                            productsTable[index] = current->next;
-                            delete current;
-                            current = productsTable[index];
-                        }
-                    }
-                    else
-                    {
-                        prev->next = current->next;
-                        delete current;
-                        current = prev->next;
-                    }
+                    prev->next = current->next;
+                    delete current;
+                    current = prev->next;
                 }
             } 
             else 
