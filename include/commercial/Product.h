@@ -16,6 +16,7 @@ class Product
     int productID;
     string productName;
     float price;
+    int quantity = 0;
     
 
 public:
@@ -28,7 +29,6 @@ public:
         price = pr;
 		soldOut = false;
         next = nullptr;
-		string Category;
     }
     // copy constructor
     Product(Product& product)
@@ -48,7 +48,10 @@ public:
     {
         cout << "\nID: " << productID << " | Name: " << productName << " | Price: " << price;
     }
-
+    void addOneMore() { quantity++; if (quantity > 0) soldOut = false; }
+	void addQuantity(int qty) { quantity += qty; if (quantity > 0) soldOut = false; }
+    int getQuantity() { return quantity; }
+    void removeOne() { if (quantity > 1) quantity - ; }
 };
 
 class Category
@@ -58,6 +61,7 @@ class Category
 	Product** productsTable;
     int productCountCat;
     int productsTableSizeCat;
+
 public:
     Category(string name = "", int productsNum = 10)
     {
@@ -77,8 +81,25 @@ public:
             productsTable[index] = toAdd;
         else
         {
-            toAdd->next = productsTable[index];
-            productsTable[index] = toAdd;
+            // same product comes again then increase it's quantity
+            if (productsTable[index]->getProductName == toAdd->getProductName())
+            {
+                productsTable[index]->addOneMore();
+            }
+            else
+            {
+                Product* curr = productsTable[index];
+                while (curr->next) 
+                { 
+                    if (curr->getProductName() == toAdd->getProductName())
+                    {
+                        curr->addOneMore();
+                        return;
+                    }
+                    curr = curr->next; 
+                }
+                curr->next = toAdd;
+            }
         }
 	}
     Product* findProductByName(string name)
@@ -115,17 +136,27 @@ public:
             if (current->getProductName() == productName) 
             {
                 found = true;
-                if (prev == nullptr) 
+                // Product being removed as not the last one
+                if (current->getQuantity() > 1)
+                    current->removeOne();
+                // Product being removed is the last one 
+                else
                 {
-                    productsTable[index] = current->next;
-                    delete current;
-                    current = productsTable[index];
-                } 
-                else 
-                {
-                    prev->next = current->next;
-                    delete current;
-                    current = prev->next;
+                    if (prev == nullptr)
+                    {
+                        else
+                        {
+                            productsTable[index] = current->next;
+                            delete current;
+                            current = productsTable[index];
+                        }
+                    }
+                    else
+                    {
+                        prev->next = current->next;
+                        delete current;
+                        current = prev->next;
+                    }
                 }
             } 
             else 

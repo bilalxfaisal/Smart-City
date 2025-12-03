@@ -59,8 +59,9 @@ public:
 			storesTable[index] = toAdd;
 		else
 		{
-			toAdd->nextStore = storesTable[index];
-			storesTable[index] = toAdd;
+			Store* curr = storesTable[index];
+			while (curr->nextStore) { curr = curr->nextStore; }
+			curr->nextStore = toAdd;
 		}
 	}
 	Store* findStoreByName(string name)

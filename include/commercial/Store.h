@@ -20,10 +20,9 @@ class Store
 	Category** CategoriesTable;
 	int CatTableSize = 0;
 	int CatTableCount = 0;
+	int productsTableSize = 10;
 
 
-	
-	
 public:
 	Store* nextStore;
 	Store(int id = 0, string name = "", string mall_id = "", int catNum = 10)
