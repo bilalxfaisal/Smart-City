@@ -14,13 +14,13 @@ private:
 public:
 	//FOR HASH TABLE COLLISIONS
 	Doctor* nextDoctor = nullptr;
-	Doctor(string nam = "", string spec = "", int Id = 0)
+	Doctor(const string& nam = "", const string& spec = "", const string& Id = "")
 	{
 		name = nam;
 		id = Id;
 		specialization = spec;
-		 appointmentCount = 0;
-		 appointmentCap = 10;
+		appointmentCount = 0;
+		appointmentCap = 10;
 
 	}
 	void addAppointment(int indexToBeAdded)
@@ -52,6 +52,9 @@ public:
 	 {
 		 return name;
 	 }
-
+	 string getSpecialization()
+	 {
+		 return specialization;
+	 }
 };
 #endif // ! DOCTOR_H

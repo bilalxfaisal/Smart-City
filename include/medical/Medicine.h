@@ -38,11 +38,11 @@ class Medicine
 				return false;
 			}
 		}
-		string getName() 
+		string getName() const
 		{
 			return name;
 		}
-		string getFormulation() 
+		string getFormulation() const
 		{
 			return formulation;
 		}

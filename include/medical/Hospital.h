@@ -54,6 +54,7 @@ private:
 	string sector = "";	
 	//
 public:
+	Hospital* nextHospital = nullptr; // For chaining in hash table
 	Hospital( string nam = "", string Id = "", string sec = "", int emBedNum = 0)
 	{
 		name = nam;
@@ -94,7 +95,7 @@ public:
 
 		}
 	}
-	void registerDoctor(string& nam, string& spec)
+	void registerDoctor(const string& nam, const string& spec)
 	{
 		string Id = "Dr-" + to_string(doctorIdCounter++);
 		Doctor* newDoctor = new Doctor(nam, spec, Id);
@@ -182,7 +183,31 @@ public:
 		}
 	}
 
-	
+	string getName()
+	{
+		return name;
+	}
+
+	void removeDoctorById(const string& doctorId)
+	{
+		int index = Polynomial_Rolling_Hash_V2(doctorId) % docTableCap;
+		Doctor* current = doctorsArray[index];
+		Doctor* previous = nullptr;
+		while (current != nullptr) {
+			if (current->getId() == doctorId) {
+				if (previous == nullptr) {
+					doctorsArray[index] = current->nextDoctor;
+				}
+				else {
+					previous->nextDoctor = current->nextDoctor;
+				}
+				delete current;
+				return;
+			}
+			previous = current;
+			current = current->nextDoctor;
+		}
+	}
 };
 int Hospital::patientIdCounter = 1;
 int Hospital::doctorIdCounter = 1;

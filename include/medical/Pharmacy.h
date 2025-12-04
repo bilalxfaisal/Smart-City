@@ -9,21 +9,25 @@ class Pharmacy
 	string id;
 	Medicine** medsFormulaBasedTable;
 	Medicine** medsNameBasedTable;
+	int currMedCount = 0;
+	int medTableSize;
 public:
+	Pharmacy* nextPharmacy = nullptr; // For chaining in hash table
 	Pharmacy(string n, string loc, string i) : name(n), location(loc), id(i)
 	{
-		medsFormulaBasedTable = new Medicine*[101]; 
-		medsNameBasedTable = new Medicine*[101];
+		medTableSize = 101;
+		medsFormulaBasedTable = new Medicine*[medTableSize](); 
+		medsNameBasedTable = new Medicine*[medTableSize]();
 	}
 	~Pharmacy() {
 		delete[] medsFormulaBasedTable;
 		delete[] medsNameBasedTable;
 	}
-	void addMedicine(Medicine& med)
+	void addMedicine(const Medicine& med)
 	{
 		Medicine* new_med = new Medicine(med);
 		// Add medicine to formula-based table
-		int index = Polynomial_Rolling_Hash_V2(med.getFormulation()) % 101;
+		int index = Polynomial_Rolling_Hash_V2(med.getFormulation()) % medTableSize;
 		if (medsFormulaBasedTable[index] != nullptr)
 		{
 
@@ -35,7 +39,7 @@ public:
 			medsFormulaBasedTable[index] = new_med;
 		}
 		// Add medicine to name-based table
-		index = Polynomial_Rolling_Hash_V2(med.getName()) % 101;
+		index = Polynomial_Rolling_Hash_V2(med.getName()) % medTableSize;
 		if (medsNameBasedTable[index] != nullptr)
 		{
 			new_med->nextMedicine = medsNameBasedTable[index];
@@ -47,55 +51,58 @@ public:
 		}
 		
 	}
-		void searchMedByFormula(string& formula) 
+	void searchMedByFormula(string& formula) 
+	{
+		int index = Polynomial_Rolling_Hash_V2(formula);
+		index %= 101;
+		if (medsFormulaBasedTable[index] == nullptr) 
 		{
-			int index = Polynomial_Rolling_Hash_V2(formula);
-			index %= 101;
-			if (medsFormulaBasedTable[index] == nullptr) 
-			{
-				cout << "No medicine found with formulation: " << formula << endl;
-			}
-			else
-			{
-				Medicine* current = medsFormulaBasedTable[index];
-				while (current != nullptr) 
-				{
-					if (current->getFormulation() == formula)
-					{
-						current->DisplayInfo();
-						return;
-					}
-					current = current->nextMedicine;
-				}
-				cout << "No medicine found with formulation: " << formula << endl;
-			}
-
+			cout << "No medicine found with formulation: " << formula << endl;
 		}
-		void searchMedByName(string& name)
+		else
 		{
-			int index = Polynomial_Rolling_Hash_V2(name);
-			index %= 101;
-			if (medsNameBasedTable[index] == nullptr) 
+			Medicine* current = medsFormulaBasedTable[index];
+			while (current != nullptr) 
 			{
-				cout << "No medicine found with name: " << name << endl;
-			}
-			else
-			{
-				Medicine* current = medsNameBasedTable[index];
-				while (current != nullptr) 
+				if (current->getFormulation() == formula)
 				{
-					if (current->getName() == name)
-					{
-						current->DisplayInfo();
-						return;
-					}
-					current = current->nextMedicine;
+					current->DisplayInfo();
+					return;
 				}
-				cout << "No medicine found with name: " << name << endl;
+				current = current->nextMedicine;
 			}
+			cout << "No medicine found with formulation: " << formula << endl;
 		}
-
 
 	}
+	void searchMedByName(string& name)
+	{
+		int index = Polynomial_Rolling_Hash_V2(name);
+		index %= 101;
+		if (medsNameBasedTable[index] == nullptr) 
+		{
+			cout << "No medicine found with name: " << name << endl;
+		}
+		else
+		{
+			Medicine* current = medsNameBasedTable[index];
+			while (current != nullptr) 
+			{
+				if (current->getName() == name)
+				{
+					current->DisplayInfo();
+					return;
+				}
+				current = current->nextMedicine;
+			}
+			cout << "No medicine found with name: " << name << endl;
+		}
+	}
+
+	string getName() 
+	{
+		return name;
+	}
+
 };
 #endif // !PHARMACY_H

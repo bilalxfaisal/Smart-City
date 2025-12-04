@@ -112,7 +112,7 @@ public:
 		Mall* current = mallsTable[index];
 		while (current != nullptr) {
 			if (current->getMallName() == mallName) {
-				current->removeProductFromStore(storeName, categoryName, productName);
+				current->removeAllProductsFromStore(storeName, categoryName, productName);
 				return;
 			}
 			current = current->nextMall;
@@ -145,7 +145,7 @@ public:
 		Mall* current = mallsTable[index];
 		while (current != nullptr) {
 			if (current->getMallName() == mallName) {
-				Product* success = current->buyProductInStore(storeName, category, productName);
+				bool success = current->buyProductFromStore(storeName, category, productName);
 				if (success) {
 					cout << "Product purchased successfully." << endl;
 					//cout << 
