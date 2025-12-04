@@ -41,8 +41,16 @@ public:
 	void removePharmacy(const string& pharmacyName);
 	void addDoctorToHospital(const string& hospitalName, Doctor& d1);
 	void removeDoctorFromHospital(const string& hospitalName, const string& doctorId);
+	void addPatientToHospital(const string& hospitalName, Patient& p1);
+	void removePatientFromHospital(const string& hospitalName, const string& patientId);
 	void addMedicineToPharmacy(const string& pharmaName, Medicine& med);
-	void removeMedicineFromPharmacy(const string& pharmaName, const string& medName);
+	void removeMedicineByName(const string& pharmaName, const string& medName);
+	void removeMedicineByFormulation(const string& pharmaName, const string& medName);
+	void searchMedicineByName(const string& pharmaName, const string& medName);
+	void searchMedicineByFormulation(const string& pharmaName, const string& medFormulation);
+	void searchHospitalByName(const string& hospitalName);
+	void searchPharmacyByName(const string& pharmacyName);
+	void searchPatientByName(const string& patientId);
 };
 
 void MedicalSystem::addHospital(Hospital& h1) {
@@ -160,5 +168,107 @@ void MedicalSystem::addMedicineToPharmacy(const string& pharmaName, Medicine& me
 	}
 }
 
+void MedicalSystem::removeMedicineByName(const string& pharmaName, const string& medName) {
+	int index = Polynomial_Rolling_Hash_V1(pharmaName);
+	index = index % pharmaciesTableSize;
+	Pharmacy* current = pharmaciesTable[index];
+	while (current) {
 
+		if (current->getName() == pharmaName) {
+			current->removeMedicineByName(medName);
+			return;
+		}
+		current = current->nextPharmacy;
+	}
+}
+
+void MedicalSystem::removeMedicineByFormulation(const string& pharmaName, const string& medFormulation) {
+	int index = Polynomial_Rolling_Hash_V1(pharmaName);
+	index = index % pharmaciesTableSize;
+	Pharmacy* current = pharmaciesTable[index];
+	while (current) {
+		if (current->getName() == pharmaName) {
+			current->removeMedicineByFormula(medFormulation);
+			return;
+		}
+		current = current->nextPharmacy;
+	}
+}
+
+
+void MedicalSystem::searchMedicineByName(const string& pharmaName, const string& medName) {
+	int index = Polynomial_Rolling_Hash_V1(pharmaName);	
+	index = index % pharmaciesTableSize;
+	Pharmacy* current = pharmaciesTable[index];
+	while (current) {
+		if (current->getName() == pharmaName) {
+			current->searchMedByName(medName);
+			return;
+		}
+		current = current->nextPharmacy;
+	}
+}
+
+void MedicalSystem::searchMedicineByFormulation(const string& pharmaName, const string& medFormulation) {
+	int index = Polynomial_Rolling_Hash_V1(pharmaName);
+	index = index % pharmaciesTableSize;
+	Pharmacy* current = pharmaciesTable[index];
+	while (current) {
+		if (current->getName() == pharmaName) {
+			current->searchMedByFormula(medFormulation);
+			return;
+		}
+		current = current->nextPharmacy;
+	}
+}
+
+void MedicalSystem::searchHospitalByName(const string& hospitalName) {
+	int index = Polynomial_Rolling_Hash_V1(hospitalName);
+	index = index % hospitalTableSize;
+	Hospital* current = hospitalsTable[index];
+	while (current) {
+		if (current->getName() == hospitalName) {
+			cout << "Hospital found: " << hospitalName << endl;
+			return;
+		}
+		current = current->nextHospital;
+	}
+}
+
+void MedicalSystem::searchPharmacyByName(const string& pharmacyName) {
+	int index = Polynomial_Rolling_Hash_V1(pharmacyName);
+	index = index % pharmaciesTableSize;
+	Pharmacy* current = pharmaciesTable[index];
+	while (current) {
+		if (current->getName() == pharmacyName) {
+			cout << "Pharmacy found: " << pharmacyName << endl;
+			return;
+		}
+		current = current->nextPharmacy;
+	}
+}
+
+void MedicalSystem::addPatientToHospital(const string& hospitalName, Patient& p1) {
+	int index = Polynomial_Rolling_Hash_V1(hospitalName);
+	index = index % hospitalTableSize;
+	Hospital* current = hospitalsTable[index];
+	while (current != nullptr) {
+		if (current->getName() == hospitalName) {
+			current->registerPatient(p1.getName());
+			return;
+		}
+		current = current->nextHospital;
+	}
+}
+
+void MedicalSystem::removePatientFromHospital(const string& hospitalName, const string& patientId) {
+	int index = Polynomial_Rolling_Hash_V1(hospitalName);
+	index = index % hospitalTableSize;
+	Hospital* current = hospitalsTable[index];
+	while (current) {
+		if (current->getName() == hospitalName) {
+
+		}
+	}
+}
 #endif

@@ -51,7 +51,7 @@ public:
 		}
 		
 	}
-	void searchMedByFormula(string& formula) 
+	void searchMedByFormula(const string& formula) 
 	{
 		int index = Polynomial_Rolling_Hash_V2(formula);
 		index %= 101;
@@ -75,7 +75,7 @@ public:
 		}
 
 	}
-	void searchMedByName(string& name)
+	void searchMedByName(const string& name)
 	{
 		int index = Polynomial_Rolling_Hash_V2(name);
 		index %= 101;
@@ -98,7 +98,7 @@ public:
 			cout << "No medicine found with name: " << name << endl;
 		}
 	}
-	bool removeMedicineByName(string& name) 
+	bool removeMedicineByName(const string& name) 
 	{
 		int index = Polynomial_Rolling_Hash_V2(name) % medTableSize;
 		Medicine* current = medsNameBasedTable[index];
@@ -123,7 +123,7 @@ public:
 		}
 		return false;
 	}
-	bool removeMedicineByFormula(string& formula) 
+	bool removeMedicineByFormula(const string& formula) 
 	{
 		int index = Polynomial_Rolling_Hash_V2(formula) % medTableSize;
 		Medicine* current = medsFormulaBasedTable[index];

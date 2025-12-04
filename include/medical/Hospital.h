@@ -3,6 +3,12 @@
 #include "../utils/Nodes.h"
 #include "Patient.h"
 #include "Doctor.h"
+#include <iostream>
+using std::string;
+using std::cout;
+using std::cin;
+using std::endl;
+
 class Appointment 
 {
 	private:
@@ -76,25 +82,35 @@ public:
 		{
 			appointmentsArray[i] = nullptr;
 		}
+		srand(time(0));
 	}
-	void registerPatient(string Nam="", float wt=0)
+	void registerPatient(string Nam = "", float wt = 0)
 	{
+		// If weight not provided, generate random weight
+		if (wt == 0)
+		{
+			// Random float between 40 and 120 (example realistic range)
+			wt = 40 + (rand() % 81);
+		}
+
 		string Id = "Pt-" + to_string(patientIdCounter++);
 		Patient* newPatient = new Patient(Nam, wt, Id);
+
 		int index = Polynomial_Rolling_Hash_V2(Id);
 		index %= PatTableCap;
-		//Insert into hash table
-		if (patientsArray[index] == nullptr) 
+
+		// Insert into hash table
+		if (patientsArray[index] == nullptr)
 		{
 			patientsArray[index] = newPatient;
 		}
 		else
 		{
-			newPatient->nextPatient = 	patientsArray[index];
+			newPatient->nextPatient = patientsArray[index];
 			patientsArray[index] = newPatient;
-
 		}
 	}
+
 	void registerDoctor(const string& nam, const string& spec)
 	{
 		string Id = "Dr-" + to_string(doctorIdCounter++);
@@ -116,7 +132,7 @@ public:
 		Patient* patient = findPatientById(PatientId);
 		Doctor* doctor = findDoctorById(DoctorId);
 		if (patient == nullptr || doctor == nullptr) {
-			cerr << "Invalid patient or doctor ID." << endl;
+			cout << "Invalid patient or doctor ID." << endl;
 			return;
 		}
 		Appointment* newAppointment = new Appointment(doctor, patient);
