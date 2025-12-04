@@ -198,7 +198,31 @@ public:
 			current = current->nextAppointment;
 		}
 	}
-
+	void removePatientById(const string& patientId)
+	{
+		int index = Polynomial_Rolling_Hash_V2(patientId) % PatTableCap;
+		Patient* current = patientsArray[index];
+		Patient* previous = nullptr;
+		while (current != nullptr) 
+		{
+			if (current->getId() == patientId) {
+				if (previous == nullptr) {
+					patientsArray[index] = current->nextPatient;
+				}
+				else {
+					previous->nextPatient = current->nextPatient;
+				}
+				delete current;
+				return;
+			}
+			previous = current;
+			current = current->nextPatient;
+		}
+	}
+	int getEmergencyBedNum() const
+	{
+		return EmergencyBedNum;
+	}
 	string getName()
 	{
 		return name;
@@ -224,9 +248,19 @@ public:
 			current = current->nextDoctor;
 		}
 	}
+
 };
 int Hospital::patientIdCounter = 1;
 int Hospital::doctorIdCounter = 1;
+int compareHospitals(void* hospital1, void* hospital2) //true if hospital 1 
+{
+	Hospital* h1 = static_cast<Hospital*> (hospital1);
+	Hospital* h2 = static_cast<Hospital*>(hospital2);
+	return(h2->getEmergencyBedNum() < h1->getEmergencyBedNum());
+
+
+}
+
 
 
 #endif // !HOSPITAL_H

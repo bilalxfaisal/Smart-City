@@ -137,7 +137,10 @@ private:
                 swap(index, parent);
                 index = parent;
             }
-            else break;
+            else
+            {
+                break;
+            }
         }
     }
 
