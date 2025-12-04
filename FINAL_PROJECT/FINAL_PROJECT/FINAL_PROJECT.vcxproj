@@ -143,6 +143,7 @@
     <ClInclude Include="..\..\include\education\SchoolMaxHeap.h" />
     <ClInclude Include="..\..\include\education\SchoolTree.h" />
     <ClInclude Include="..\..\include\education\Student.h" />
+    <ClInclude Include="..\..\include\facilities\PublicFacility.h" />
     <ClInclude Include="..\..\include\medical\Doctor.h" />
     <ClInclude Include="..\..\include\medical\DoctorHashTable.h" />
     <ClInclude Include="..\..\include\medical\Hospital.h" />

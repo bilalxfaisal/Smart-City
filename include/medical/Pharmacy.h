@@ -98,7 +98,56 @@ public:
 			cout << "No medicine found with name: " << name << endl;
 		}
 	}
-
+	bool removeMedicineByName(string& name) 
+	{
+		int index = Polynomial_Rolling_Hash_V2(name) % medTableSize;
+		Medicine* current = medsNameBasedTable[index];
+		Medicine* prev = nullptr;
+		while (current != nullptr) 
+		{
+			if (current->getName() == name) 
+			{
+				if (prev == nullptr) 
+				{
+					medsNameBasedTable[index] = current->nextMedicine;
+				}
+				else 
+				{
+					prev->nextMedicine = current->nextMedicine;
+				}
+				delete current;
+				return true;
+			}
+			prev = current;
+			current = current->nextMedicine;
+		}
+		return false;
+	}
+	bool removeMedicineByFormula(string& formula) 
+	{
+		int index = Polynomial_Rolling_Hash_V2(formula) % medTableSize;
+		Medicine* current = medsFormulaBasedTable[index];
+		Medicine* prev = nullptr;
+		while (current != nullptr) 
+		{
+			if (current->getFormulation() == formula) 
+			{
+				if (prev == nullptr) 
+				{
+					medsFormulaBasedTable[index] = current->nextMedicine;
+				}
+				else 
+				{
+					prev->nextMedicine = current->nextMedicine;
+				}
+				delete current;
+				return true;
+			}
+			prev = current;
+			current = current->nextMedicine;
+		}
+		return false;
+	}
 	string getName() 
 	{
 		return name;
