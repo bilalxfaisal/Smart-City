@@ -1,6 +1,6 @@
 #include "../utils/Nodes.h"
 #ifndef PATIENT_H
-#define PATIENT_H'
+#define PATIENT_H
 using std::string;
 
 class Patient
