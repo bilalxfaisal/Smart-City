@@ -50,7 +50,8 @@ public:
 	void searchMedicineByFormulation(const string& pharmaName, const string& medFormulation);
 	void searchHospitalByName(const string& hospitalName);
 	void searchPharmacyByName(const string& pharmacyName);
-	void searchPatientByName(const string& patientId);
+	void searchPatientByID(const string& patientId);
+	void searchDoctorByID(const string& doctorId);
 };
 
 void MedicalSystem::addHospital(Hospital& h1) {
@@ -269,6 +270,32 @@ void MedicalSystem::removePatientFromHospital(const string& hospitalName, const 
 		if (current->getName() == hospitalName) {
 
 		}
+	}
+}
+
+void MedicalSystem::searchPatientByID(const string& patientId) {
+	int index = Polynomial_Rolling_Hash_V1(patientId);
+	index = index % hospitalTableSize;
+	Hospital* current = hospitalsTable[index];
+	while (current) {
+		if (current->getName() == patientId) {
+			current->findPatientById(patientId);
+			return;
+		}
+		current = current->nextHospital;
+	}
+}
+
+void MedicalSystem::searchDoctorByID(const string& doctorId) {
+	int index = Polynomial_Rolling_Hash_V1(doctorId);
+	index = index % hospitalTableSize;
+	Hospital* current = hospitalsTable[index];
+	while (current) {
+		if (current->getName() == doctorId) {
+			current->findDoctorById(doctorId);
+			return;
+		}
+		current = current->nextHospital;
 	}
 }
 #endif
