@@ -57,12 +57,13 @@ public:
 class Category
 {
     string categoryName;
-    Category* nextCategory;
+    
 	Product** productsTable;
     int productCountCat;
     int productsTableSizeCat;
 
 public:
+    Category* nextCategory;
     Category(string name = "", int productsNum = 10)
     {
         categoryName = name;

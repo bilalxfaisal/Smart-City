@@ -154,6 +154,14 @@
     <ClInclude Include="..\..\include\medical\MedicineHashTable.h" />
     <ClInclude Include="..\..\include\medical\Patient.h" />
     <ClInclude Include="..\..\include\medical\Pharmacy.h" />
+    <ClInclude Include="..\..\include\population\Citizen.h" />
+    <ClInclude Include="..\..\include\population\CitizenHashTable.h" />
+    <ClInclude Include="..\..\include\population\Family.h" />
+    <ClInclude Include="..\..\include\population\House.h" />
+    <ClInclude Include="..\..\include\population\PopulationSystem.h" />
+    <ClInclude Include="..\..\include\population\PopulationTree.h" />
+    <ClInclude Include="..\..\include\population\Sector.h" />
+    <ClInclude Include="..\..\include\population\Street.h" />
     <ClInclude Include="..\..\include\transport\Bus.h" />
     <ClInclude Include="..\..\include\transport\BusHashTable.h" />
     <ClInclude Include="..\..\include\transport\BusRoute.h" />

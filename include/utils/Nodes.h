@@ -6,9 +6,9 @@
 #include <iostream>
 using std::string;
 using std::cout;
-//String Keys
-#include <string>
+
 using namespace std;
+
 
 inline unsigned int Polynomial_Rolling_Hash_V1(const string& str) 
 {

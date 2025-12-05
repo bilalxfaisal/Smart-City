@@ -33,16 +33,50 @@ public:
             busHashTable[i] = nullptr;
         }
     }
+    void resizeBusTable()
+    {
+		int newSize = busTableSize * 2;
+        Bus** newTable = new Bus * [newSize];
+        for (int i = 0; i < newSize; i++)
+            newTable[i] = nullptr;
+        // Rehash all buses
+        for (int i = 0; i < busTableSize; i++) {
+            Bus* curr = busHashTable[i];
+            while (curr) {
+                Bus* nextBus = curr->next;
+                int index = Polynomial_Rolling_Hash_V1(curr->getID());
+                index = index % newSize;
+                if (newTable[index] == nullptr) {
+                    newTable[index] = curr;
+                    curr->next = nullptr;
+                }
+                else {
+                    // collision handling via linked List
+                    curr->next = newTable[index];
+                    newTable[index] = curr;
+                }
+                curr = nextBus;
+            }
+        }
+        delete[] busHashTable;
+        busHashTable = newTable;
+		busTableSize = newSize;
 
+
+    }
     void addBus(Bus& b1)
     {
+        if (busTableSize < currBuses + 1) {
+            resizeBusTable();
+        }
         Bus* toAdd = new Bus(b1);
         int index = Polynomial_Rolling_Hash_V1(b1.getID());
         index = index % busTableSize;
         if (busHashTable[index] == nullptr) {
             busHashTable[index] = toAdd;
         }
-        else {
+        else
+        {
             // collision handling via linked List
 			toAdd->next = busHashTable[index];
             busHashTable[index] = toAdd;
@@ -102,6 +136,7 @@ public:
         }
 		cout << "Bus " << BusToMove->getID() << " not found in company " << name << endl;
     }
+
 
 	// if exists ok, else return null
     Bus* getBusOnIndex(int index) {

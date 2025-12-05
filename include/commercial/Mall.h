@@ -48,9 +48,39 @@ public:
 	string getMallName() const { return mallName; }
 	Location getLocation() const { return location; }
 	int getStoreCount() const { return storeCount; }
-	
+	void resizeStoreMap()
+	{
+		int newSize = storeTableSize * 2;
+		Store** newTable = new Store * [newSize]();
+		for (int i = 0; i < newSize; i++) {
+			newTable[i] = nullptr;
+		}
+		for (int i = 0; i < storeTableSize; i++) {
+			Store* current = storesTable[i];
+			while (current != nullptr) {
+				Store* nextStore = current->nextStore;
+				int index = Polynomial_Rolling_Hash_V1(current->getStoreName()) % newSize;
+				if (newTable[index]) {
+					current->nextStore = newTable[index];
+					newTable[index] = current;
+				}
+				else {
+					current->nextStore = nullptr;
+					newTable[index] = current;
+				}
+				current = nextStore;
+			}
+		}
+		delete[] storesTable;
+		storesTable = newTable;
+		storeTableSize = newSize;
+	}
 	void addStore(Store& store)
 	{
+		if (storeCount >= storeTableSize)
+		{
+			resizeStoreMap();
+		}
 		Store* toAdd = new Store(store);
 		int index = Polynomial_Rolling_Hash_V1(store.getStoreName());
 		index = index % storeTableSize;

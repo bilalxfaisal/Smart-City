@@ -16,6 +16,9 @@ class MedicalSystem
 	int hospitalTableSize;
 	Hospital** hospitalsTable;
 
+	//Max heap
+	MaxHeap hospitalHeap = MaxHeap(100, compareHospitals);
+
 	int pharmaciesCount;
 	int pharmaciesTableSize;
 	Pharmacy** pharmaciesTable;
@@ -51,9 +54,14 @@ public:
 	void searchHospitalByName(const string& hospitalName);
 	void searchPharmacyByName(const string& pharmacyName);
 	void searchPatientByName(const string& patientId);
+	void resizeHospitalMap();
 };
 
-void MedicalSystem::addHospital(Hospital& h1) {
+void MedicalSystem::addHospital(Hospital& h1)
+{
+	if (hospitalCount >= hospitalTableSize) {
+		resizeHospitalMap();
+	}
 	Hospital* toAdd = new Hospital(h1);
 	int index = Polynomial_Rolling_Hash_V1(toAdd->getName());
 	index = index % hospitalTableSize;
@@ -270,5 +278,33 @@ void MedicalSystem::removePatientFromHospital(const string& hospitalName, const 
 
 		}
 	}
+}
+
+void MedicalSystem::resizeHospitalMap()
+{
+	int newSize = hospitalTableSize * 2;
+	Hospital** newTable = new Hospital * [newSize]();
+	for (int i = 0; i < newSize; i++) {
+		newTable[i] = nullptr;
+	}
+	for (int i = 0; i < hospitalTableSize; i++) {
+		Hospital* current = hospitalsTable[i];
+		while (current != nullptr) {
+			Hospital* nextHospital = current->nextHospital;
+			int index = Polynomial_Rolling_Hash_V1(current->getName()) % newSize;
+			if (newTable[index]) {
+				current->nextHospital = newTable[index];
+				newTable[index] = current;
+			}
+			else {
+				current->nextHospital = nullptr;
+				newTable[index] = current;
+			}
+			current = nextHospital;
+		}
+	}
+	delete[] hospitalsTable;
+	hospitalsTable = newTable;
+	hospitalTableSize = newSize;
 }
 #endif

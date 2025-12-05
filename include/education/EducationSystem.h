@@ -45,9 +45,34 @@ public:
 		heapArr = new School * [heapCapacity]; // array of pointers
 	}
 
+	//RESIZING TEM
+	void resizeSchoolHashTable() {
+		int newSize = totalSchools * 2;
+		School** newTable = new School * [newSize];
+		for (int i = 0; i < newSize; i++)
+			newTable[i] = nullptr;
+		// Rehash all schools
+		for (int i = 0; i < totalSchools; i++) {
+			School* curr = schoolHashTable[i];
+			while (curr) {
+				School* next = curr->nextSibling;
+				int index = Polynomial_Rolling_Hash_V1(curr->schoolID) % newSize;
+				curr->nextSibling = newTable[index];
+				newTable[index] = curr;
+				curr = next;
+			}
+		}
+		delete[] schoolHashTable;
+		schoolHashTable = newTable;
+		totalSchools = newSize;
+	}
 	// THIS METHOD SHALL AND SHALL ONLY GET A SCHOOL OBJECT WHICH HAS NO KIDS
 	// ADDING KIDS MUST BE DONE SEPARATELY
-	void addSchool(School& newSchool) {
+	void addSchool(School& newSchool)
+ {
+		if (currSchools >= totalSchools) {
+			resizeSchoolHashTable();
+		}
 		School* toAdd = new School(newSchool);
 
 		// getting index using the hashFunction

@@ -47,9 +47,39 @@ public:
 	int getStoreID() const { return storeID; }
 	string getStoreName() const { return storeName; }
 	string getMallID() const { return mallID; }
-
+	void resizeCategoryMap()
+	{
+		int newSize = CatTableSize * 2;
+		Category** newTable = new Category * [newSize]();
+		for (int i = 0; i < newSize; i++) {
+			newTable[i] = nullptr;
+		}
+		for (int i = 0; i < CatTableSize; i++) {
+			Category* current = CategoriesTable[i];
+			while (current != nullptr) {
+				Category* nextCat = current->nextCategory;
+				int index = Polynomial_Rolling_Hash_V1(current->getCategoryName()) % newSize;
+				if (newTable[index]) {
+					current->nextCategory = newTable[index];
+					newTable[index] = current;
+				}
+				else {
+					current->nextCategory = nullptr;
+					newTable[index] = current;
+				}
+				current = nextCat;
+			}
+		}
+		delete[] CategoriesTable;
+		CategoriesTable = newTable;
+		CatTableSize = newSize;
+	}
 	void addProduct(string categoryName, Product& product)
 	{
+		if (CatTableCount >= CatTableSize)
+		{
+			resizeCategoryMap();
+		}
 		Product* toAdd = new Product(product);
 
 		int index = Polynomial_Rolling_Hash_V1(categoryName);

@@ -2,156 +2,192 @@
 #define PHARMACY_H
 #include "../utils/Nodes.h"
 #include "Medicine.h"
-class Pharmacy 
+
+class Pharmacy
 {
-	string name;
-	string location;
-	string id;
-	Medicine** medsFormulaBasedTable;
-	Medicine** medsNameBasedTable;
-	int currMedCount = 0;
-	int medTableSize;
+    string name;
+    string location;
+    string id;
+
+    Medicine** medsFormulaBasedTable;
+    Medicine** medsNameBasedTable;
+
+    int currMedCount_Form = 0;
+    int medTableSize_Form;
+
+    int currMedCount_Name = 0;
+    int medTableSize_Name;
+
 public:
-	Pharmacy* nextPharmacy = nullptr; // For chaining in hash table
-	Pharmacy(string n, string loc, string i) : name(n), location(loc), id(i)
-	{
-		medTableSize = 101;
-		medsFormulaBasedTable = new Medicine*[medTableSize](); 
-		medsNameBasedTable = new Medicine*[medTableSize]();
-	}
-	~Pharmacy() {
-		delete[] medsFormulaBasedTable;
-		delete[] medsNameBasedTable;
-	}
-	void addMedicine(const Medicine& med)
-	{
-		Medicine* new_med = new Medicine(med);
-		// Add medicine to formula-based table
-		int index = Polynomial_Rolling_Hash_V2(med.getFormulation()) % medTableSize;
-		if (medsFormulaBasedTable[index] != nullptr)
-		{
+    Pharmacy* nextPharmacy = nullptr;
 
-			new_med->nextMedicine = medsFormulaBasedTable[index];
-			medsFormulaBasedTable[index] = new_med;
-		}
-		else
-		{
-			medsFormulaBasedTable[index] = new_med;
-		}
-		// Add medicine to name-based table
-		index = Polynomial_Rolling_Hash_V2(med.getName()) % medTableSize;
-		if (medsNameBasedTable[index] != nullptr)
-		{
-			new_med->nextMedicine = medsNameBasedTable[index];
-			medsNameBasedTable[index] = new_med;
-		}
-		else
-		{
-			medsNameBasedTable[index] = new_med;
-		}
-		
-	}
-	void searchMedByFormula(const string& formula) 
-	{
-		int index = Polynomial_Rolling_Hash_V2(formula);
-		index %= 101;
-		if (medsFormulaBasedTable[index] == nullptr) 
-		{
-			cout << "No medicine found with formulation: " << formula << endl;
-		}
-		else
-		{
-			Medicine* current = medsFormulaBasedTable[index];
-			while (current != nullptr) 
-			{
-				if (current->getFormulation() == formula)
-				{
-					current->DisplayInfo();
-					return;
-				}
-				current = current->nextMedicine;
-			}
-			cout << "No medicine found with formulation: " << formula << endl;
-		}
+    Pharmacy(string n, string loc, string i)
+        : name(n), location(loc), id(i)
+    {
+        medTableSize_Form = 101;
+        medTableSize_Name = 101;
 
-	}
-	void searchMedByName(const string& name)
-	{
-		int index = Polynomial_Rolling_Hash_V2(name);
-		index %= 101;
-		if (medsNameBasedTable[index] == nullptr) 
-		{
-			cout << "No medicine found with name: " << name << endl;
-		}
-		else
-		{
-			Medicine* current = medsNameBasedTable[index];
-			while (current != nullptr) 
-			{
-				if (current->getName() == name)
-				{
-					current->DisplayInfo();
-					return;
-				}
-				current = current->nextMedicine;
-			}
-			cout << "No medicine found with name: " << name << endl;
-		}
-	}
-	bool removeMedicineByName(const string& name) 
-	{
-		int index = Polynomial_Rolling_Hash_V2(name) % medTableSize;
-		Medicine* current = medsNameBasedTable[index];
-		Medicine* prev = nullptr;
-		while (current != nullptr) 
-		{
-			if (current->getName() == name) 
-			{
-				if (prev == nullptr) 
-				{
-					medsNameBasedTable[index] = current->nextMedicine;
-				}
-				else 
-				{
-					prev->nextMedicine = current->nextMedicine;
-				}
-				delete current;
-				return true;
-			}
-			prev = current;
-			current = current->nextMedicine;
-		}
-		return false;
-	}
-	bool removeMedicineByFormula(const string& formula) 
-	{
-		int index = Polynomial_Rolling_Hash_V2(formula) % medTableSize;
-		Medicine* current = medsFormulaBasedTable[index];
-		Medicine* prev = nullptr;
-		while (current != nullptr) 
-		{
-			if (current->getFormulation() == formula) 
-			{
-				if (prev == nullptr) 
-				{
-					medsFormulaBasedTable[index] = current->nextMedicine;
-				}
-				else 
-				{
-					prev->nextMedicine = current->nextMedicine;
-				}
-				delete current;
-				return true;
-			}
-			prev = current;
-			current = current->nextMedicine;
-		}
-		return false;
-	}
-	string getName() 
-	{
-		return name;
-	}
+        medsFormulaBasedTable = new Medicine * [medTableSize_Form]();
+        medsNameBasedTable = new Medicine * [medTableSize_Name]();
+    }
 
+    ~Pharmacy() {
+        delete[] medsFormulaBasedTable;
+        delete[] medsNameBasedTable;
+    }
+
+    void resizeMedsFormulaTable()
+    {
+        int newSize = medTableSize_Form * 2 + 1;
+        Medicine** newTable = new Medicine * [newSize]();
+
+        for (int i = 0; i < medTableSize_Form; i++) {
+            Medicine* curr = medsFormulaBasedTable[i];
+            while (curr) {
+                Medicine* next = curr->nextMedicine;
+
+                int idx = Polynomial_Rolling_Hash_V2(curr->getFormulation()) % newSize;
+                curr->nextMedicine = newTable[idx];
+                newTable[idx] = curr;
+
+                curr = next;
+            }
+        }
+
+        delete[] medsFormulaBasedTable;
+        medsFormulaBasedTable = newTable;
+        medTableSize_Form = newSize;
+    }
+
+    void resizeMedsTable()
+    {
+        int newSize = medTableSize_Name * 2 + 1;
+        Medicine** newTable = new Medicine * [newSize]();
+
+        for (int i = 0; i < medTableSize_Name; i++) {
+            Medicine* curr = medsNameBasedTable[i];
+            while (curr) {
+                Medicine* next = curr->nextMedicine;
+
+                int idx = Polynomial_Rolling_Hash_V2(curr->getName()) % newSize;
+                curr->nextMedicine = newTable[idx];
+                newTable[idx] = curr;
+
+                curr = next;
+            }
+        }
+
+        delete[] medsNameBasedTable;
+        medsNameBasedTable = newTable;
+        medTableSize_Name = newSize;
+    }
+
+    void addMedicine(const Medicine& med)
+    {
+        if (currMedCount_Form>= medTableSize_Form)
+            resizeMedsFormulaTable();
+
+        if (currMedCount_Name >= medTableSize_Name)
+            resizeMedsTable();
+
+        Medicine* medForm = new Medicine(med);
+        Medicine* medName = new Medicine(med);
+
+        int indexForm = Polynomial_Rolling_Hash_V2(med.getFormulation()) % medTableSize_Form;
+        medForm->nextMedicine = medsFormulaBasedTable[indexForm];
+        medsFormulaBasedTable[indexForm] = medForm;
+        currMedCount_Form++;
+
+        int indexName = Polynomial_Rolling_Hash_V2(med.getName()) % medTableSize_Name;
+        medName->nextMedicine = medsNameBasedTable[indexName];
+        medsNameBasedTable[indexName] = medName;
+        currMedCount_Name++;
+    }
+
+    void searchMedByFormula(const string& formula)
+    {
+        int index = Polynomial_Rolling_Hash_V2(formula) % medTableSize_Form;
+
+        Medicine* current = medsFormulaBasedTable[index];
+        while (current) {
+            if (current->getFormulation() == formula) {
+                current->DisplayInfo();
+                return;
+            }
+            current = current->nextMedicine;
+        }
+
+        cout << "No medicine found with formulation: " << formula << endl;
+    }
+
+    void searchMedByName(const string& name)
+    {
+        int index = Polynomial_Rolling_Hash_V2(name) % medTableSize_Name;
+
+        Medicine* current = medsNameBasedTable[index];
+        while (current) {
+            if (current->getName() == name) {
+                current->DisplayInfo();
+                return;
+            }
+            current = current->nextMedicine;
+        }
+
+        cout << "No medicine found with name: " << name << endl;
+    }
+
+    bool removeMedicineByName(const string& name)
+    {
+        int index = Polynomial_Rolling_Hash_V2(name) % medTableSize_Name;
+        Medicine* current = medsNameBasedTable[index];
+        Medicine* prev = nullptr;
+
+        while (current) {
+            if (current->getName() == name) {
+                if (prev == nullptr)
+                    medsNameBasedTable[index] = current->nextMedicine;
+                else
+                    prev->nextMedicine = current->nextMedicine;
+
+                delete current;
+                currMedCount_Name--;
+                return true;
+            }
+            prev = current;
+            current = current->nextMedicine;
+        }
+
+        return false;
+    }
+
+    bool removeMedicineByFormula(const string& formula)
+    {
+        int index = Polynomial_Rolling_Hash_V2(formula) % medTableSize_Form;
+        Medicine* current = medsFormulaBasedTable[index];
+        Medicine* prev = nullptr;
+
+        while (current) {
+            if (current->getFormulation() == formula) {
+                if (prev == nullptr)
+                    medsFormulaBasedTable[index] = current->nextMedicine;
+                else
+                    prev->nextMedicine = current->nextMedicine;
+
+                delete current;
+                currMedCount_Form--;
+                return true;
+            }
+            prev = current;
+            current = current->nextMedicine;
+        }
+
+        return false;
+    }
+
+    string getName()
+    {
+        return name;
+    }
 };
-#endif // !PHARMACY_H
+
+#endif

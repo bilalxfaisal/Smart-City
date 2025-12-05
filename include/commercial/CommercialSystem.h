@@ -25,8 +25,37 @@ public:
 			mallsTable[i] = nullptr;
 		}
 	}
-
+	void resizeMallMap() 
+	{
+		int newSize = mallTableSize * 2;
+		Mall** newTable = new Mall * [newSize]();
+		for (int i = 0; i < newSize; i++) {
+			newTable[i] = nullptr;
+		}
+		for (int i = 0; i < mallTableSize; i++) {
+			Mall* current = mallsTable[i];
+			while (current != nullptr) {
+				Mall* nextMall = current->nextMall;
+				int index = Polynomial_Rolling_Hash_V1(current->getMallName()) % newSize;
+				if (newTable[index]) {
+					current->nextMall = newTable[index];
+					newTable[index] = current;
+				}
+				else {
+					current->nextMall = nullptr;
+					newTable[index] = current;
+				}
+				current = nextMall;
+			}
+		}
+		delete[] mallsTable;
+		mallsTable = newTable;
+		mallTableSize = newSize;
+	}
 	void addMall(Mall& m1) {
+		if (mallCount >= mallTableSize) {
+			resizeMallMap();
+		}
 		Mall* toAdd = new Mall(m1);
 		int index = Polynomial_Rolling_Hash_V1(toAdd->getMallName());
 		index = index % mallTableSize;

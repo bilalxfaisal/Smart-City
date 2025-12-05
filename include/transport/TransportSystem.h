@@ -49,9 +49,34 @@ public:
 		currRoutes = 0;
 		busStopsCount = 0;
 	}
+	void resizeTransportCompTable() {
+		int newSize = companyTableSize * 2;
+		TransportCompany** newTable = new TransportCompany * [newSize];
+		for (int i = 0; i < newSize; i++)
+			newTable[i] = nullptr;
 
-	void addTransportCompany(TransportCompany& t1) 
+		// Rehash all companies
+		for (int i = 0; i < companyTableSize; i++) {
+			TransportCompany* curr = companyHashTable[i];
+			while (curr) {
+				TransportCompany* next = curr->nextCompany;
+				int index = Polynomial_Rolling_Hash_V1(curr->name) % newSize;
+				curr->nextCompany = newTable[index];
+				newTable[index] = curr;
+				curr = next;
+			}
+		}
+
+		delete[] companyHashTable;
+		companyHashTable = newTable;
+		companyTableSize = newSize;
+	}
+	void addTransportCompany(TransportCompany& t1)
 	{
+		if (currCompanies == companyTableSize)
+		{
+			resizeTransportCompTable();
+		}
 		TransportCompany* toAdd = new TransportCompany(t1);
 		int index = Polynomial_Rolling_Hash_V1(t1.name);
 		index = index % companyTableSize;
@@ -65,8 +90,32 @@ public:
 			// done
 		}
 	}
-
-	void addBusRoute(BusRoute& br) {
+	void resizeRoutesTable() {
+		int newSize = routesTableSize * 2;
+		BusRoute** newTable = new BusRoute * [newSize];
+		for (int i = 0; i < newSize; i++)
+			newTable[i] = nullptr;
+		// Rehash all routes
+		for (int i = 0; i < routesTableSize; i++) {
+			BusRoute* curr = routeHashTable[i];
+			while (curr) {
+				BusRoute* next = curr->nextRoute;
+				int index = Polynomial_Rolling_Hash_V1(curr->getRouteName()) % newSize;
+				curr->nextRoute = newTable[index];
+				newTable[index] = curr;
+				curr = next;
+			}
+		}
+		delete[] routeHashTable;
+		routeHashTable = newTable;
+		routesTableSize = newSize;
+	}
+	void addBusRoute(BusRoute& br) 
+	{
+		if (currRoutes == routesTableSize)
+		{
+			resizeRoutesTable();
+		}
 		BusRoute* toAdd = new BusRoute(br);
 		string nameget = br.getRouteName();
 		int index = Polynomial_Rolling_Hash_V1(nameget);
