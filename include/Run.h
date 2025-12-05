@@ -1,6 +1,10 @@
 #pragma once
 #include "../Smart-City-DS-Project/include/transport/TransportSystem.h" 
 #include "../Smart-City-DS-Project/include/commercial/CommercialSystem.h"
+#include "../Smart-City-DS-Project/include/education/EducationSystem.h"
+#include "../Smart-City-DS-Project/include/medical/MedicalSystem.h"
+#include "../Smart-City-DS-Project/include/facilities/FacilitySystem.h"
+#include "../Smart-City-DS-Project/include/population/PopulationSystem.h"
 #include <iostream>
 #include <cstdlib>
 #include <string>
@@ -14,9 +18,9 @@ void waitForEnter()
 
 void showMainMenu(int& choice);
 void simulateBasedOnMainChoice(int ch);
-void runTransportSystem(TransportSystem& transport);
-void runCommercialSystem(CommercialSystem& commercial);
-
+void runTransportSystem(TransportSystem&);
+void runCommercialSystem(CommercialSystem&);
+void runEducationSystem(EducationSystem&);
 
 // Read helpers
 string readLine(const string& prompt)
@@ -50,6 +54,7 @@ void showMainMenu(int& choice)
     cout << "3. Medical System\n";
     cout << "4. Population System\n";
     cout << "5. Transport System\n";
+    cout << "6. Public Facility\n";
     cout << "0. Exit\n";
     cout << "\nEnter choice: ";
     cin >> ch;
@@ -88,39 +93,226 @@ int showCommercialMenu()
     cin >> ch;
     return ch;
 }
+int showEducationMenu()
+{
+    int ch;
+    cout << "\n====== EDUCATION SYSTEM MENU ======\n";
+    cout << "1. Add School\n";
+    cout << "2. Add Department\n";
+    cout << "3. Add Faculty Member\n";
+    cout << "4. Add Class\n";
+    cout << "5. Add Student\n";
+    cout << "6. Add Subject\n";
+    cout << "7. Remove Student By Name\n";
+    cout << "8. Remove Student By ID\n";
+    cout << "9. Remove Faculty Member\n";
+    cout << "10. Display Students in Class\n";
+    cout << "11. Display All Students in School\n";
+    cout << "12. Find Student\n";
+    cout << "0. Exit\n";
+    cout << "Enter choice: ";
+    cin >> ch;
+    return ch;
+}
 
 void simulateBasedOnMainChoice(int ch)
 {
     CommercialSystem commercial;
     TransportSystem transport;
+    EducationSystem education(20);
+    MedicalSystem medical;
+    FacilitySystem facility;
+
 
     int choice = ch;
 
     switch (choice)
     {
-    case 1:
-    {
-        runCommercialSystem(commercial);
-        break;
-    }
-    case 2:
-    {
-         //runEducationSystem(transport);
-        break;
-    }
-    case 3:
-        break;
-    case 4:
-        break;
-    case 5:
-		runTransportSystem(transport);
-        break;
-    default:
-        cout << "Invalid choice. Exiting...\n";
-        break;
+	    case 1: // Commercial System
+        {
+            runCommercialSystem(commercial);
+            break;
+        }
+	    case 2: // Education System
+        {
+            runEducationSystem(education);
+            break;
+        }
+	    case 3: // Medical System
+        {
+            // runMedicalSystem(medical);
+            break;
+        }
+	    case 4: // Population System
+        {
+            // runPopulationSystem(population);
+            break;
+        }
+	    case 5: // Transport System
+        {
+            runTransportSystem(transport);
+            break;
+        }
+	    case 6: // Public Facility
+        {
+            // runFacilitySystem(facility);
+            break;
+        }
+        default:
+        {
+            cout << "Invalid choice. Exiting...\n";
+            break;
+        }
     }
 }
 
+void runEducationSystem(EducationSystem& education)
+{
+    while (true)
+    {
+        system("cls");
+
+        int choice = showEducationMenu();
+        cin.ignore();
+
+        if (choice == 0)
+        {
+            cout << "Exiting...\n";
+            break;
+        }
+        switch (choice)
+        {
+        case 1: // Add School
+        {
+            cout << "\n=== Add School ===\n";
+            string name = readLine("Enter School name: ");
+            string id = readLine("Enter School ID: ");
+            string sector = readLine("Enter sector name: ");
+            int campus = readInt("Enter the campus number: ");
+            School school(id, name, sector, campus);
+            education.addSchool(school);
+            cout << "School '" << name << "' added succesfully !";
+            break;
+        }
+        case 2: // Add Department
+        {
+            cout << "\n=== Add Department ===\n";
+            string schoolID = readLine("Enter School ID: ");
+            string deptName = readLine("Enter Department name: ");
+            string deptID = readLine("Enter Department ID: ");
+            Department dept(deptName, deptID);
+            if (education.addDepartment(schoolID, dept))
+                cout << "Department '" << deptName << "' successfully added in school with ID '" << schoolID << "' ! ";
+            else
+                cout << "Error! Department '" << deptName << "' can't be added !";
+            break;
+        }
+        case 3: // Add Faculty Member
+        {
+            cout << "\n=== Add Faculty Member ===\n";
+            string schoolID = readLine("Enter School ID: ");
+            string facID = readLine("Enter Faculty Member ID: ");
+            string facName = readLine("Enter Faculty Member name: ");
+            string spec = readLine("Enter Faculty specialization: ");
+            Faculty fac(facID, facName, spec);
+            if (education.addFaculty(schoolID, fac))
+                cout << "Faculty Member '" << facName << "' successfullty added in school with ID '" << schoolID << "' !";
+            else
+                cout << "Error! Faculty Member '" << facName << "' can't be added !";
+            break;
+        }
+        case 4: // Add Class
+        {
+            cout << "\n=== Add Class ===\n";
+            string schoolID = readLine("Enter School ID: ");
+            string depID = readLine("Enter Department ID: ");
+            string className = readLine("Enter Class name: ");
+            string classID = readLine("Enter Class ID: ");
+            Class cl(className, classID);
+            if (education.addClass(schoolID, depID, cl))
+                cout << "Class '" << className << "' successfullty added in school with ID '" << schoolID << "' !";
+            else
+                cout << "Error! Class '" << className << "' can't be added !";
+            break;
+        }
+        case 5: // Add Student
+        {
+            cout << "\n=== Add Student ===\n";
+            string schoolID = readLine("Enter School ID: ");
+            string depID = readLine("Enter Department ID: ");
+            string classID = readLine("Enter Class ID: ");
+            string name = readLine("Enter Student name: ");
+            string id = readLine("Enter Student ID: ");
+            int age = readInt("Enter Student age: ");
+            Student student(id, name, age);
+            if (education.addStudent(student, schoolID, depID, classID))
+                cout << "Student '" << name << "' successfullty added in Class 'with ID " << classID << "' !";
+            else
+                cout << "Error! Student '" << name << "' can't be added !";
+            break;
+        }
+        case 6: // Add Subject
+        {
+            cout << "\n=== Add Subject ===\n";
+            string schoolID = readLine("Enter School ID: ");
+            string name = readLine("Enter Subject name: ");
+            if (education.addSubject(schoolID, name))
+                cout << "Subject '" << name << "' successfullty added in School with ID '" << schoolID << "' !";
+            break;
+        }
+        case 7: // Remove Student By Name
+        {
+            cout << "\n=== Remove Student by Name ===\n";
+            string schoolID = readLine("Enter School ID: ");
+            string depID = readLine("Enter Department ID: ");
+            string classID = readLine("Enter Class name: ");
+            string name = readLine("Enter Student name: ");
+            if (education.removeStudentByName(schoolID, depID, classID, name))
+                cout << "Student with Name '" << name << "' removed successfully !";
+            break;
+        }
+        case 8: // Remove Student By ID
+        {
+            cout << "\n=== Remove Student by ID ===\n";
+            string schoolID = readLine("Enter School ID: ");
+            string depID = readLine("Enter Department ID: ");
+            string classID = readLine("Enter Class name: ");
+            string id = readLine("Enter Student ID: ");
+            if (education.removeStudentByID(schoolID, depID, classID, id))
+                cout << "Student with ID '" << id << "' removed successfully !";
+            break;
+        }
+        case 9: // Remove Faculty
+        {
+            cout << "\n=== Remove Faculty Member ===\n";
+            string schoolID = readLine("Enter School ID: ");
+            string facName = readLine("Enter Faculty Member name: ");
+            if (education.removeFacultyByName(schoolID, facName))
+                cout << "Faculty Member '" << facName << "' removed successfully !";
+            break;
+        }
+        case 10: // Display Students in Class
+        {
+            cout << "\n=== Displaying Students in Class ===\n";
+            string schoolID = readLine("Enter School ID: ");
+            string deptID = readLine("Enter Department ID: ");
+            string classID = readLine("Enter Class ID: ");
+            education.displayStudentsInClass(schoolID, deptID, classID);
+            break;
+        }
+        case 11: // Display All Students in School
+        {
+            cout << "\n=== Displaying All Students in School ===\n";
+            string schoolID = readLine("Enter School ID: ");
+            education.displayStudentsInSchool(schoolID);
+            break;
+        }
+        default:
+            break;
+        }
+        waitForEnter();
+    }
+}
 void runTransportSystem(TransportSystem& transport)
 {
     while (true)

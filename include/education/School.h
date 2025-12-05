@@ -41,10 +41,14 @@ public:
 	void addSubject(const string& subject);
 	bool addFaculty(const Faculty& fac);
 	bool addClassToDepartment(const string& deptID, const Class& cls);
+	bool removeStudentByName(const string& classId, const string& deptId, const string& studentId);
+	bool removeStudentByID(const string& classId, const string& deptId, const string& studentId);
+	bool removeFacultyByName(const string& facName);
 
 	bool AddStudent(string classId, string deptId, Student student);
 	bool addDepartment(Department& dept);
 	void display();
+	void displayStudentsInClass(string, string);
 };
 
 
@@ -92,7 +96,8 @@ bool School::addFaculty(const Faculty& fac)
 		FacultyHead = toAdd;
 		return true;
 	}
-	else {
+	else 
+	{
 		// adding to head for ease cuz why not meri jaan why not
 		toAdd->next = FacultyHead;
 		FacultyHead = toAdd;
@@ -107,7 +112,6 @@ bool School::addClassToDepartment(const string& deptID, const Class& cls) {
 			return true;
 		}
 		temp = temp->nextSibling;
-		cout << "Added a class to department " << deptID << endl;
 	}
 	return false;
 
@@ -150,7 +154,8 @@ bool School::addDepartment(Department& dept)
 	return false;
 }
 
-void School::display() {
+void School::display() 
+{
 	Department* temp = Bacha;
 	while (temp) {
 		cout << "Department ID: " << temp->deptID << " | ";
@@ -158,6 +163,93 @@ void School::display() {
 		temp->display();
 		temp = temp->nextSibling;
 	}
+}
+void School::displayStudentsInClass(string classId, string deptId)
+{
+	Department* temp = Bacha;
+	while (temp) 
+	{
+		if (temp->deptID == deptId) {
+			break;
+		}
+		temp = temp->nextSibling;
+	}
+	while (temp) 
+	{
+		Class* cls = temp->findClassByID(classId);
+		if (cls) {
+			cls->printStudentsInClass();
+			return;
+		}
+		temp = temp->nextSibling;
+	}
+	cout << "Could not find class " << classId << " in department " << deptId << endl;
+	return;
+}
+bool School::removeStudentByName(const string& classId, const string& deptId, const string& studentName) 
+{
+	Department* temp = Bacha;
+	while (temp) 
+	{
+		if (temp->deptID == deptId) {
+			break;
+		}
+		temp = temp->nextSibling;
+	}
+	while (temp) 
+	{
+		Class* cls = temp->findClassByID(classId);
+		if (cls) {
+			return cls->deleteStudentByName(studentName);
+		}
+		temp = temp->nextSibling;
+	}
+	cout << "Could not find student " << studentName << " in class " << classId << " of department " << deptId << endl;
+	return false;
+}
+
+bool School::removeStudentByID(const string& classId, const string& deptId, const string& studentId)
+{
+	Department* temp = Bacha;
+	while (temp)
+	{
+		if (temp->deptID == deptId) {
+			break;
+		}
+		temp = temp->nextSibling;
+	}
+	while (temp)
+	{
+		Class* cls = temp->findClassByID(classId);
+		if (cls) {
+			return cls->deleteStudentbyID(studentId);
+		}
+		temp = temp->nextSibling;
+	}
+	cout << "Could not find student with ID " << studentId << " in class " << classId << " of department " << deptId << endl;
+	return false;
+}
+bool School::removeFacultyByName(const string& facName) 
+{
+	Faculty* temp = FacultyHead;
+	Faculty* prev = nullptr;
+	while (temp != nullptr) 
+	{
+		if (temp->name == facName) 
+		{
+			// Found the faculty -> delete and return true
+			if (prev == nullptr)
+				FacultyHead = temp->next;  // deleting head
+			else
+				prev->next = temp->next;
+			delete temp;
+			return true;  // deletion successful
+		}
+		prev = temp;
+		temp = temp->next;
+	}
+	cout << "Faculty with name " << facName << " not found in School " << schoolName << endl;
+	return false; // no faculty found
 }
 
 #endif

@@ -6,6 +6,7 @@
 #include <string>
 using std::string;
 
+<<<<<<< Updated upstream
 class Sector
 {
 private:
@@ -44,6 +45,18 @@ private:
         tableSize = newSize;
     }
 
+=======
+class Sector 
+{
+	Location topLeft;
+	string name;
+	int rowID;
+	int colID;
+	int size; // size of the sector (assuming square sectors for simplicity)
+	Street** streets; 
+	int streetCount;
+	int streetTableSize;
+>>>>>>> Stashed changes
 public:
     //FOR CHAINING IN HASH FUNC
     Sector* nextSector=nullptr;

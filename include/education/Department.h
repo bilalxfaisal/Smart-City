@@ -18,8 +18,10 @@ public:
     Class* Bacha;
     Department* nextSibling;
 
-    Department()
+    Department(string name = " ", string id = " ")
     {
+		deptID = id;
+		deptName = name;
         Bacha = nullptr;
         nextSibling = nullptr;
     }
@@ -116,6 +118,31 @@ public:
             temp = temp->nextSibling;
         }
     }
+
+    bool removeStudentByName(string classID, string studentID) 
+    {
+        Class* cls = findClassByID(classID);
+        if (cls) 
+        {
+            return cls->deleteStudentbyID(studentID);
+        }
+        else {
+            cout << "Class with ID " << classID << " not found in Department " << deptName << endl;
+            return false;
+        }
+	}
+    bool removeStudentByID(string classID, string studentName) 
+    {
+        Class* cls = findClassByID(classID);
+        if (cls) 
+        {
+            return cls->deleteStudentByName(studentName);
+        }
+        else {
+            cout << "Class with ID " << classID << " not found in Department " << deptName << endl;
+            return false;
+        }
+	}
 };
 
 

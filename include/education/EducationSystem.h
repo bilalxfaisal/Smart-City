@@ -186,21 +186,6 @@ public:
 		return false;
 	}
 
-	bool addFaculty(string& destSchool, Faculty& f1) {
-		School* toAdd = nullptr;
-		int index = Polynomial_Rolling_Hash_V1(destSchool);
-		index = index % totalSchools;
-
-		toAdd = schoolHashTable[index];
-		if (toAdd == nullptr) {
-			return false;
-		}
-		else {
-			return toAdd->addFaculty(f1);
-		}
-		return false;
-	}
-
 	void display() {
 		School* temp = schools;
 		cout << "Displaying all schools in the Education System:" << endl;
@@ -209,6 +194,126 @@ public:
 			temp->display();
 			temp = temp->nextSibling;
 		}
+	}
+	void displayStudentsInClass(const string& schoolId, const string& deptId, const string& classId) 
+	{
+		School* toDisplayFrom = nullptr;
+		int index = Polynomial_Rolling_Hash_V1(schoolId);
+		index = index % totalSchools;
+		toDisplayFrom = schoolHashTable[index];
+		if (toDisplayFrom == nullptr) 
+		{
+			cout << "School with ID " << schoolId << " not found." << endl;
+			return; // school not found
+		}
+		else {
+			 toDisplayFrom->displayStudentsInClass(classId, deptId);
+			 return;
+		}
+		cout << "Could not display students in class " << classId << " in department " << deptId << " of school " << schoolId << endl;
+		return;
+	}
+	void displayStudentsInSchool(const string& schoolId) 
+	{
+		School* toDisplayFrom = nullptr;
+		int index = Polynomial_Rolling_Hash_V1(schoolId);
+		index = index % totalSchools;
+		toDisplayFrom = schoolHashTable[index];
+		if (toDisplayFrom == nullptr) 
+		{
+			cout << "School with ID " << schoolId << " not found." << endl;
+			return; // school not found
+		}
+		else {
+			 toDisplayFrom->display();
+			 return;
+		}
+		cout << "Could not display students in school " << schoolId << endl;
+		return;
+	}
+	bool removeStudentByID(const string& schoolId, const string& deptId, const string& classId, const string& studentID) 
+	{
+		School* toRemoveFrom = nullptr;
+		int index = Polynomial_Rolling_Hash_V1(schoolId);
+		index = index % totalSchools;
+		toRemoveFrom = schoolHashTable[index];
+		if (toRemoveFrom == nullptr) {
+			cout << "School with ID " << schoolId << " not found." << endl;
+			return false; // school not found
+		}
+		else {
+			 return toRemoveFrom->removeStudentByID(classId, deptId, studentID);
+		}
+		cout << "Could not remove student with ID " << studentID << " from class " << classId << " in department " << deptId << " of school " << schoolId << endl;
+		return false;
+	}
+	bool removeStudentByName(const string& schoolId, const string& deptId, const string& classId, const string& studentName)
+	{
+		School* toRemoveFrom = nullptr;
+		int index = Polynomial_Rolling_Hash_V1(schoolId);
+		index = index % totalSchools;
+		toRemoveFrom = schoolHashTable[index];
+		if (toRemoveFrom == nullptr) 
+		{
+			cout << "School with ID " << schoolId << " not found." << endl;
+			return false; // school not found
+		}
+		else {
+			return toRemoveFrom->removeStudentByName(classId, deptId, studentName);
+		}
+		cout << "Could not remove student with name " << studentName << " from class " << classId << " in department " << deptId << " of school " << schoolId << endl;
+		return false;
+	}
+	bool addFaculty(string& destSchool, Faculty& f1) 
+	{
+		School* toAdd = nullptr;
+		int index = Polynomial_Rolling_Hash_V1(destSchool);
+		index = index % totalSchools;
+		toAdd = schoolHashTable[index];
+		if (toAdd == nullptr) 
+		{
+			cout << "School with ID " << destSchool << " not found." << endl;
+			return false;
+		}
+		else {
+			return toAdd->addFaculty(f1);
+		}
+		cout << "Could not add faculty to school with ID " << destSchool << endl;
+		return false;
+	}
+	bool addSubject(string& destSchool, const string& subjectName) 
+	{
+		School* toAdd = nullptr;
+		int index = Polynomial_Rolling_Hash_V1(destSchool);
+		index = index % totalSchools;
+		toAdd = schoolHashTable[index];
+		if (toAdd == nullptr) 
+		{
+			cout << "School with ID " << destSchool << " not found." << endl;
+			return false;
+		}
+		else {
+			toAdd->addSubject(subjectName);
+			return true;
+		}
+		cout << "Could not add subject to school with ID " << destSchool << endl;
+		return false;
+	}
+	bool removeFacultyByName(const string& schoolId, const string& facName) 
+	{
+		School* toRemoveFrom = nullptr;
+		int index = Polynomial_Rolling_Hash_V1(schoolId);
+		index = index % totalSchools;
+		toRemoveFrom = schoolHashTable[index];
+		if (toRemoveFrom == nullptr) {
+			cout << "School with ID " << schoolId << " not found." << endl;
+			return false; // school not found
+		}
+		else {
+			 return toRemoveFrom->removeFacultyByName(facName);
+		}
+		cout << "Could not remove faculty member with name " << facName << " from school " << schoolId << endl;
+		return false;
 	}
 };
 

@@ -17,8 +17,10 @@ public:
 	Student* Bacha;
 	Class* nextSibling;
 
-	Class()
+	Class(string name = " ", string id = " ")
 	{
+		classID = id;
+		className = name;
 		Bacha = nullptr;
 		nextSibling = nullptr;
 	}
@@ -32,8 +34,8 @@ public:
 	Student* searchStudentByName(string name);
 	int getStudentCount();
 	void printStudentsInClass();
-	void deleteStudentbyID(string studentID);
-	void deleteStudentByName(string name);
+	bool deleteStudentbyID(string studentID);
+	bool deleteStudentByName(string name);
 	bool addStudent(const Student& stu);
 	void display();
 };
@@ -111,7 +113,7 @@ void Class::printStudentsInClass()
 //		switchStudentPlaces(student1, student2);
 //	}
 //}
-void Class::deleteStudentbyID(string studentID)
+bool Class::deleteStudentbyID(string studentID)
 {
 	Student* temp = Bacha;
 	Student* prev = nullptr;
@@ -120,7 +122,11 @@ void Class::deleteStudentbyID(string studentID)
 		prev = temp;
 		temp = temp->next;
 	}
-	if (temp == nullptr) return; // Student not found
+	if (temp == nullptr) 
+	{
+		cout << "Student with ID " << studentID << " not found in class " << className << endl;
+		return false; // Student not found
+	}
 	if (prev == nullptr)
 	{
 		Bacha = temp->next; // Deleting the first student
@@ -130,8 +136,9 @@ void Class::deleteStudentbyID(string studentID)
 		prev->next = temp->next; // Bypass the deleted student
 	}
 	delete temp; // Free memory
+	return true;
 }
-void Class::deleteStudentByName(string name)
+bool Class::deleteStudentByName(string name)
 {
 	Student* temp = Bacha;
 	Student* prev = nullptr;
@@ -140,23 +147,24 @@ void Class::deleteStudentByName(string name)
 	{
 		if (temp->name == name)
 		{
-			Student* toDelete = temp;
-
+			// Found the student -> delete and return true
 			if (prev == nullptr)
 				Bacha = temp->next;  // deleting head
 			else
 				prev->next = temp->next;
 
-			temp = temp->next;
-			delete toDelete;
+			delete temp;
+			return true;  // deletion successful
 		}
-		else
-		{
-			prev = temp;
-			temp = temp->next;
-		}
+
+		prev = temp;
+		temp = temp->next;
 	}
+
+	cout << "Student with name " << name << " not found in class " << className << endl;
+	return false; // no student found
 }
+
 
 
 bool Class::addStudent(const Student& stu)
