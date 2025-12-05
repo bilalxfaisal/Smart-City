@@ -1,35 +1,54 @@
-#ifndef  HOUSE_H
+#ifndef HOUSE_H
 #define HOUSE_H
-#include "../utils/Nodes.h"
+
 #include "Family.h"
-class House 
+#include <string>
+using std::string;
+
+class House
 {
 private:
-	Family* family;
-	int houseNum;
-	int streetNum;
-	string sector;
+    Family family;
+    int houseNum;
+    int streetNum;
+    string sector;
+
 public:
-	//HASH TABLE OF HOUSES BASED ON ADDRESS
-	House* nextHouse = nullptr;
+    House* nextHouse = nullptr;
 
-	House(int hn, int sn, string sec) 
-	{
-		family = new Family;
-		houseNum = hn;
-		streetNum = sn;
-		sector = sec;
+    House(int h=0, int s=0, string sec="")
+        : houseNum(h), streetNum(s), sector(sec)
+    {
+    }
 
-	}
-	void addMember(Citizen* parent, Citizen* newMember)
-	{
-		family->insertMember(parent, newMember);
-		
-	}
-	void removeMember(Citizen* parent, Citizen* toRemove)
-	{
-		family->removeMember(parent, toRemove);
-	}
+    House(const House& other)
+        : family(),
+        houseNum(other.houseNum),
+        streetNum(other.streetNum),
+        sector(other.sector),
+        nextHouse(nullptr)
+    {
+    }
+
+    void addMember(Citizen& c)
+    {
+        family.insertMember(c);
+    }
+
+    bool searchCitizen(const string& cnic) const
+    {
+        return family.containsCitizen(cnic);
+    }
+
+    int getHouseNum() const { return houseNum; }
+    int getStreetNum() const { return streetNum; }
+    string getSector()  const { return sector; }
+    void printHouse() const
+    {
+        cout << "House " << houseNum << "\n";
+        family.printFamily();
+    }
 
 };
-#endif // ! HOUSE_H
+
+#endif

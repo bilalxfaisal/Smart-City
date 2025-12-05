@@ -1,93 +1,78 @@
-#include "../utils/Nodes.h"
-#include "House.h"
 #ifndef STREET_H
 #define STREET_H
 
-#include <iostream>
-using std::cout;
-using std::endl;
+#include "House.h"
+#include <string>
 using std::string;
-using std::cin;
 
-class Street {
-	string name;
-	int id;
-	House* housesHead = nullptr;
+class Street
+{
+private:
+    int id;
+    string name;
+    House* housesHead = nullptr;
+
 public:
-	Street* nextStreet = nullptr;
-	Street(string name, int id) {
-		this->name = name;
-		this->id = id;
-	}
-	void addHouse(House& house) {
-		House* newHouse = new House(house);
-		if (housesHead == nullptr) {
-			housesHead = newHouse;
-		}
-		else {
-			House* current = housesHead;
-			while (current->nextHouse != nullptr) {
-				current = current->nextHouse;
-			}
-			current->nextHouse = newHouse;
-		}
-	}
-	void removeHouse(int houseNum) {
-		if (housesHead == nullptr) {
-			return;
-		}
-		if (housesHead->getHouseNum() == houseNum) {
-			House* toDelete = housesHead;
-			housesHead = housesHead->nextHouse;
-			delete toDelete;
-			return;
-		}
-		House* current = housesHead;
-		while (current->nextHouse != nullptr && current->nextHouse->getHouseNum() != houseNum) {
-			current = current->nextHouse;
-		}
-		if (current->nextHouse != nullptr) {
-			House* toDelete = current->nextHouse;
-			current->nextHouse = current->nextHouse->nextHouse;
-			delete toDelete;
-		}
-	}
+    Street* nextStreet = nullptr;
 
-	void addCitizenToHouse(int houseNum, Citizen& c1) {
-		House* current = housesHead;
-		while (current) {
-			if (current->getHouseNum() == houseNum) {
-				current->addMember(nullptr, c1); // Assuming nullptr as parent for simplicity
-				return;
-			}
-			current = current->nextHouse;
-		}
-	}
+    Street(string n, int i) : 
+        name(n), id(i) {}
 
-	bool searchHouse(int houseNum) {
-		House* current = housesHead;
-		while (current) {
-			if (current->getHouseNum() == houseNum) {
-				return true;
-			}
-			current = current->nextHouse;
-		}
-		return false;
-	}
+    void addHouse(House& h)
+    {
+        House* nh = new House(h);
+        if (!housesHead)
+        {
+            housesHead = nh;
+            return;
+        }
+        House* cur = housesHead;
+        while (cur->nextHouse)
+            cur = cur->nextHouse;
+        cur->nextHouse = nh;
+    }
 
-	bool searchCitizenInHouse(int houseNum, string cnic) {
-		House* current = housesHead;
-		while (current) {
-			if (current->getHouseNum() == houseNum) {
-				return current->searchCitizen(cnic);
-			}
-			current = current->nextHouse;
-		}
-		return false;
-	}
-	int getID() const {
-		return id;
-	}
+    void addCitizenToHouse(int hnum, Citizen& c)
+    {
+        House* cur = housesHead;
+        while (cur)
+        {
+            if (cur->getHouseNum() == hnum)
+            {
+                cur->addMember(c);
+                return;
+            }
+            cur = cur->nextHouse;
+        }
+    }
+
+    bool searchInHouse(int hnum, const string& cnic)
+    {
+        House* cur = housesHead;
+        while (cur)
+        {
+            if (cur->getHouseNum() == hnum)
+            {
+                return cur->searchCitizen(cnic);
+            }
+            cur = cur->nextHouse;
+        }
+        return false;
+    }
+
+    int getID() const { return id; }
+    void printStreet() const
+    {
+        cout << "  Street ID: " << id << "\n";
+        House* cur = housesHead;
+        while (cur)
+        {
+            cout << "    House " << cur->getHouseNum() << "\n";
+            cur->printHouse();
+            cur = cur->nextHouse;
+        }
+    }
+
 };
 
-#endif 
+#endif
