@@ -151,7 +151,7 @@ public:
 		}
 		// Add the appointment to the hospital's appointment list
 	}
-	Patient* findPatientById(string& patientId)
+	Patient* findPatientById(const string& patientId)
 	{
 		int index = Polynomial_Rolling_Hash_V2(patientId) % PatTableCap;
 		Patient* current = patientsArray[index];
@@ -165,7 +165,7 @@ public:
 		return nullptr; // Patient not found
 	}
 
-	Doctor* findDoctorById(string& doctorId)
+	Doctor* findDoctorById(const string& doctorId)
 	{
 		int index = Polynomial_Rolling_Hash_V2(doctorId) % docTableCap;
 		Doctor* current = doctorsArray[index];
