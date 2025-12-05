@@ -1,10 +1,15 @@
+<<<<<<< Updated upstream
 #include "../Smart-City-DS-Project/include/utils/Stack_Heap_nMORE.h"
 #include "../Smart-City-DS-Project/include/utils/Nodes.h"
 #include "../Smart-City-DS-Project/include/medical/Hospital.h"
+=======
+#include "../Smart-City-DS-Project/include/Run.h"
+>>>>>>> Stashed changes
 #include <iostream>
 #include <string>
 using namespace std;
 
+<<<<<<< Updated upstream
 int main() 
 {
 	Hospital* h1 = new Hospital("City Hospital", "H001", "General", 50);
@@ -30,3 +35,13 @@ int main()
 
    
 
+=======
+int main()
+{
+    int mainMenuCh = 0;
+    showMainMenu(mainMenuCh);
+    simulateBasedOnMainChoice(mainMenuCh);
+
+    return 0;
+}
+>>>>>>> Stashed changes

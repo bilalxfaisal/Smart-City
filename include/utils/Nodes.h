@@ -85,6 +85,7 @@ class TransportCompany;
 struct Location {
     int x;
     int y;
+    Location(int x = 0, int y = 0) : x(x), y(y) {}
 };
 
 // Education entities

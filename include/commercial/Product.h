@@ -51,18 +51,25 @@ public:
     void addOneMore() { quantity++; if (quantity > 0) soldOut = false; }
 	void addQuantity(int qty) { quantity += qty; if (quantity > 0) soldOut = false; }
     int getQuantity() { return quantity; }
-    void removeOne() { if (quantity > 1) quantity - ; }
+    void removeOne() { if (quantity > 1) quantity--; }
 };
 
 class Category
 {
     string categoryName;
+<<<<<<< Updated upstream
     
+=======
+>>>>>>> Stashed changes
 	Product** productsTable;
     int productCountCat;
     int productsTableSizeCat;
 
 public:
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
     Category* nextCategory;
     Category(string name = "", int productsNum = 10)
     {
@@ -72,7 +79,8 @@ public:
         productsTable = new Product * [productsNum](); // initializes to nullptr
         productCountCat = 0;
         productsTableSizeCat = productsNum;
-}
+    }
+	string getCategoryName() const { return categoryName; }
     void addProductToCategory(Product& product)
     {
         Product* toAdd = new Product(product);
@@ -84,7 +92,7 @@ public:
         else
         {
             // same product comes again then increase it's quantity
-            if (productsTable[index]->getProductName == toAdd->getProductName())
+            if (productsTable[index]->getProductName() == toAdd->getProductName())
             {
                 productsTable[index]->addOneMore();
             }
@@ -129,7 +137,7 @@ public:
         if (productsTable[index] == nullptr)
         {
             cout << "\nNo product of name (" << productName << ") exists in category (" << categoryName << ").";
-            return nullptr;
+            return false;
         }
         Product* current = productsTable[index];
         Product* prev = nullptr;
@@ -141,7 +149,7 @@ public:
                 found = true;
                 if (current->getQuantity() > 1)
                 {
-                    current->removeOne;
+                    current->removeOne();
                     return true;
                 }
                 else 
@@ -169,11 +177,48 @@ public:
             }
         }
     }
-    bool removeAllProductsByName(string productName) 
+    bool removeProductByName(string productName)
     {
         int index = Polynomial_Rolling_Hash_V1(productName);
         index = index % productsTableSizeCat;
-        if (productsTable[index] == nullptr) 
+        if (productsTable[index] == nullptr)
+        {
+            cout << "\nNo product of name (" << productName << ") exists in category (" << categoryName << ").";
+            return false;
+        }
+        Product* current = productsTable[index];
+        Product* prev = nullptr;
+        while (current != nullptr)
+        {
+            if (current->getProductName() == productName)
+            {
+                if (prev == nullptr)
+                {
+                    productsTable[index] = current->next;
+                    delete current;
+                    return true;
+                }
+                else
+                {
+                    prev->next = current->next;
+                    delete current;
+                    return true;
+                }
+            }
+            else
+            {
+                prev = current;
+                current = current->next;
+            }
+        }
+        cout << "\nNo product of name (" << productName << ") exists in category (" << categoryName << ").";
+		return false;
+    }
+    bool removeAllProductsByName(string productName)
+    {
+        int index = Polynomial_Rolling_Hash_V1(productName);
+        index = index % productsTableSizeCat;
+        if (productsTable[index] == nullptr)
         {
             cout << "\nNo product of name (" << productName << ") exists in category (" << categoryName << ").";
             return false;
@@ -181,9 +226,9 @@ public:
         Product* current = productsTable[index];
         Product* prev = nullptr;
         bool found = false;
-        while (current != nullptr) 
+        while (current != nullptr)
         {
-            if (current->getProductName() == productName) 
+            if (current->getProductName() == productName)
             {
                 found = true;
                 if (prev == nullptr)
@@ -198,19 +243,33 @@ public:
                     delete current;
                     current = prev->next;
                 }
-            } 
-            else 
+            }
+            else
             {
                 prev = current;
                 current = current->next;
             }
         }
-        if (!found) 
+        if (!found)
         {
             cout << "\nNo product of name (" << productName << ") exists in category (" << categoryName << ").";
             return false;
         }
-		return true;
+        return true;
+    }
+    void displayProducts()
+    {
+        int n = productsTableSizeCat;
+
+        for (int i = 0; i < n; i++)
+        {
+            Product* product = productsTable[i];
+            while (product != nullptr)
+            {
+                product->displayProduct();
+                product = product->next;
+            }
+        }
     }
 	string getCategoryName() const { return categoryName; }
 

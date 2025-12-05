@@ -24,13 +24,13 @@ class Mall
 public:
 	Mall* nextMall;
 	// constructor
-	Mall(int id = 0, string name = "", Location loc = { 0,0 }, int storesNum = 0)
+	Mall(int id = 0, string name = "", Location loc = { 0,0 }, int storesNum = 10)
 	{
 		mallID = id;
 		mallName = name;
 		location = loc;
 		nextMall = nullptr;
-		storeCount = 0;
+		storeTableSize = storesNum;
 		storesTable = new Store * [storesNum](); // initializes to nullptr
 		Product** productsTable;
 		int productTableSize;
@@ -48,6 +48,7 @@ public:
 	string getMallName() const { return mallName; }
 	Location getLocation() const { return location; }
 	int getStoreCount() const { return storeCount; }
+<<<<<<< Updated upstream
 	void resizeStoreMap()
 	{
 		int newSize = storeTableSize * 2;
@@ -75,6 +76,9 @@ public:
 		storesTable = newTable;
 		storeTableSize = newSize;
 	}
+=======
+
+>>>>>>> Stashed changes
 	void addStore(Store& store)
 	{
 		if (storeCount >= storeTableSize)
@@ -111,19 +115,30 @@ public:
 		{
 			return store->findProductByName(productName, catName);
 		}
+		cout << "\nNo store of name " << storeName << " exists !";
 		return nullptr; // Store not found
 	}
 
-	void addProductToStore(string storeName, string catName, Product& product)
+	bool addProductToStore(string storeName, string catName, Product& product)
 	{
 		Store* store = findStoreByName(storeName);
 
 		if (store == nullptr)
 		{
 			cout << "\nNo store of name " << storeName << " exists !";
-			return;
+			return false;
 		}
-		store->addProduct(catName, product);
+		return store->addProduct(catName, product);
+	}
+	bool addCategoryToStore(string storeName, string catName)
+	{
+		Store* store = findStoreByName(storeName);
+		if (store == nullptr)
+		{
+			cout << "\nNo store of name " << storeName << " exists !";
+			return false;
+		}
+		return store->addCategory(catName);
 	}
 
 	//Product* findProductInMall(string productName)
@@ -144,12 +159,25 @@ public:
 	//	return nullptr; // Product not found in any store
 	//}
 
+	bool removeProductFromStore(string storeName, string catName, string productName)
+	{
+		Store* store = findStoreByName(storeName);
+		if (store != nullptr)
+		{
+			return store->removeProductByName(productName, catName);
+		}
+		cout << "\nNo store of name " << storeName << " exists !";
+		return false;
+	}
 	bool removeStore(string name)
 	{
 		int index = Polynomial_Rolling_Hash_V1(name);
 		index = index % storeTableSize;
 
-		if (storesTable[index] == nullptr) return false;
+		if (storesTable[index] == nullptr) 
+		{
+			return false;
+		}
 		else
 		{
 			Store* store = storesTable[index];
@@ -182,6 +210,44 @@ public:
 		}
 		return false;
 	}
+
+	void displayProductsInStore(string storeName)
+	{
+		Store* store = findStoreByName(storeName);
+		if (store != nullptr)
+		{
+			if (store->getStoreName() == storeName)
+			{
+				cout << "\nProducts in store (" << storeName << "):";
+				store->displayAllProductsInStore();
+				return;
+			}
+			store = store->nextStore;
+		}
+		else
+		{
+			cout << "\nNo store of name (" << storeName << ") exists.";
+		}
+	}
+	void displayProductsInStoreFromCategory(string storeName, string catName)
+	{
+		Store* store = findStoreByName(storeName);
+		if (store != nullptr)
+		{
+			if (store->getStoreName() == storeName)
+			{
+				cout << "\nProducts in store (" << storeName << ") in category (" << catName << "):";
+				store->displayProductsInCategory(catName);
+				return;
+			}
+			store = store->nextStore;
+		}
+		else
+		{
+			cout << "\nNo store of name (" << storeName << ") exists.";
+		}
+	}
+
 
 };
 
