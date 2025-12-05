@@ -21,6 +21,7 @@ void simulateBasedOnMainChoice(int ch);
 void runTransportSystem(TransportSystem&);
 void runCommercialSystem(CommercialSystem&);
 void runEducationSystem(EducationSystem&);
+void runMedicalSystem(MedicalSystem&);
 
 // Read helpers
 string readLine(const string& prompt)
@@ -38,6 +39,19 @@ int readInt(const string& prompt)
         string s = readLine(prompt);
         try {
             return stoi(s);
+        }
+        catch (...) {
+            cout << "Invalid input. Try again.\n";
+        }
+    }
+}
+float readFloat(const string& prompt)
+{
+    while (true)
+    {
+        string s = readLine(prompt);
+        try {
+            return stof(s);
         }
         catch (...) {
             cout << "Invalid input. Try again.\n";
@@ -617,100 +631,159 @@ void runMedicalSystem(MedicalSystem& medical)
         switch (choice)
         {
         case 1: // Add Hospital
+        {
             cout << "\n=== Add Hospital ===\n";
-            // TODO: Get hospital name, address, etc.
-            // TODO: medical.addHospital(h);
+            string name = readLine("Enter hospital name: ");
+            string id = readLine("Enter hospital ID: ");
+            string sec = readLine("Enter sector: ");
+            int bedNum = readInt("Enter number of beds: ");
+            Hospital hospital(name, id, sec, bedNum);
+            medical.addHospital(hospital);
             break;
+        }
 
         case 2: // Remove Hospital
+        {
             cout << "\n=== Remove Hospital ===\n";
-            // TODO: Ask hospital name
-            // TODO: medical.removeHospital(name);
+            string name = readLine("Enter hospital name: ");
+            medical.removeHospital(name);
             break;
+        }
 
         case 3: // Add Pharmacy
+        {
             cout << "\n=== Add Pharmacy ===\n";
-            // TODO: Ask pharmacy details
-            // TODO: medical.addPharmacy(p);
+            string name = readLine("Enter pharmacy name: ");
+            string location = readLine("Enter pharmacy location: ");
+            string id = readLine("Enter pharmacy id: ");
+            string loc = readLine("Enter location: ");
+            Pharmacy pharmacy(name, loc, id);
+            medical.addPharmacy(pharmacy);
             break;
+        }
 
         case 4: // Remove Pharmacy
+        {
             cout << "\n=== Remove Pharmacy ===\n";
-            // TODO: Ask pharmacy name
-            // TODO: medical.removePharmacy(name);
+            string name = readLine("Enter pharmacy name: ");
+            medical.removePharmacy(name);
             break;
+        }
 
         case 5: // Add Doctor To Hospital
+        {
             cout << "\n=== Add Doctor To Hospital ===\n";
-            // TODO: Ask hospital name + doctor info
-            // TODO: medical.addDoctorToHospital(hosName, doctorObj);
+            string hosName = readLine("Enter hospital name: ");
+            string name = readLine("Enter doctor's name: ");
+            string id = readLine("Enter doctor's ID: ");
+            string spec = readLine("Enter doctor's specialization: ");
+            Doctor doc(name, spec, id);
+            medical.addDoctorToHospital(hosName, doc);
             break;
+        }
 
         case 6: // Remove Doctor From Hospital
+        {
             cout << "\n=== Remove Doctor From Hospital ===\n";
-            // TODO: Ask hospital name + doctor ID
-            // TODO: medical.removeDoctorFromHospital(hosName, docID);
+            string hosName = readLine("Enter hospital name: ");
+            string id = readLine("Enter doctor's ID: ");
+            medical.removeDoctorFromHospital(hosName, id);
             break;
+        }
 
         case 7: // Add Patient To Hospital
+        {
             cout << "\n=== Add Patient To Hospital ===\n";
-            // TODO: Ask hospital name + patient info
-            // TODO: medical.addPatientToHospital(hosName, patientObj);
+            string hosName = readLine("Enter hospital name: ");
+            string name = readLine("Enter patient's name: ");
+            string id = readLine("Enter patient's ID: ");
+            float weight = readFloat("Enter patient's weight: ");
+            Patient pat(name, weight, id);
+            medical.addPatientToHospital(hosName, pat);
             break;
+        }
 
         case 8: // Remove Patient From Hospital
+        {
             cout << "\n=== Remove Patient From Hospital ===\n";
-            // TODO: Ask hospital name + patient ID
-            // TODO: medical.removePatientFromHospital(hosName, patientID);
+            string hosName = readLine("Enter hospital name: ");
+            string id = readLine("Enter patient's ID: ");
+            medical.removePatientFromHospital(hosName, id);
             break;
+        }
 
         case 9: // Add Medicine To Pharmacy
+        {
             cout << "\n=== Add Medicine To Pharmacy ===\n";
-            // TODO: Ask pharmacy name + medicine info
-            // TODO: medical.addMedicineToPharmacy(pharmaName, medicineObj);
+            string pharmName = readLine("Enter pharmacy name: ");
+            string name = readLine("Enter medicine name: ");
+            string form = readLine("Enter medicine formulation: ");
+            int quan = readInt("Enter medicine quantity: ");
+            float price = readFloat("Enter medicine quantity: ");
+            Medicine med(name, form, quan, price);
+            medical.addMedicineToPharmacy(pharmName, med);
             break;
+        }
 
         case 10: // Remove Medicine By Name
+        {
             cout << "\n=== Remove Medicine By Name ===\n";
-            // TODO: Ask pharmacy name + med name
-            // TODO: medical.removeMedicineByName(pharmaName, medName);
+            string pharmName = readLine("Enter pharmacy name: ");
+            string name = readLine("Enter medicine name: ");
+            medical.removeMedicineByName(pharmName, name);
             break;
+        }
 
         case 11: // Remove Medicine By Formulation
+        {
             cout << "\n=== Remove Medicine By Formulation ===\n";
-            // TODO: Ask pharmacy name + formulation
-            // TODO: medical.removeMedicineByFormulation(pharmaName, formulation);
+            string pharmName = readLine("Enter pharmacy name: ");
+            string form = readLine("Enter medicine formulation: ");
+            medical.removeMedicineByFormulation(pharmName, form);
             break;
+        }
 
         case 12: // Search Medicine By Name
+        {
             cout << "\n=== Search Medicine By Name ===\n";
-            // TODO: Ask pharmacy name + med name
-            // TODO: medical.searchMedicineByName(pharmaName, medName);
+            string pharmName = readLine("Enter pharmacy name: ");
+            string name = readLine("Enter medicine name: ");
+            medical.searchMedicineByName(pharmName, name);
             break;
+        }
 
         case 13: // Search Medicine By Formulation
+        {
             cout << "\n=== Search Medicine By Formulation ===\n";
-            // TODO: Ask pharmacy name + formulation
-            // TODO: medical.searchMedicineByFormulation(pharmaName, formulation);
+            string pharmName = readLine("Enter pharmacy name: ");
+            string form = readLine("Enter medicine formulation: ");
+            medical.searchMedicineByFormulation(pharmName, form);
             break;
+        }
 
         case 14: // Search Hospital By Name
+        {
             cout << "\n=== Search Hospital By Name ===\n";
-            // TODO: Ask hospital name
-            // TODO: medical.searchHospitalByName(name);
+            string hosName = readLine("Enter hospital name: ");
+            medical.searchHospitalByName(hosName);
             break;
+        }
 
         case 15: // Search Pharmacy By Name
+        {
             cout << "\n=== Search Pharmacy By Name ===\n";
-            // TODO: Ask pharmacy name
-            // TODO: medical.searchPharmacyByName(name);
+            string pharmName = readLine("Enter pharmacy name: ");
+            medical.searchPharmacyByName(pharmName);
             break;
+        }
 
         case 16: // Search Patient By Name
+        {
             cout << "\n=== Search Patient By Name ===\n";
-            // TODO: Ask patient name/ID
-            // TODO: medical.searchPatientByName(patientName);
+            string id = readLine("Enter patient's ID: ");
+            medical.searchPatientByID(id);
             break;
+        }
 
         default:
             cout << "\nInvalid choice! Try again.\n";

@@ -53,7 +53,7 @@ public:
 	void searchMedicineByFormulation(const string& pharmaName, const string& medFormulation);
 	void searchHospitalByName(const string& hospitalName);
 	void searchPharmacyByName(const string& pharmacyName);
-	void searchPatientByName(const string& patientId);
+	void searchPatientByID(const string& patientId);
 	void resizeHospitalMap();
 };
 
@@ -308,5 +308,23 @@ void MedicalSystem::resizeHospitalMap()
 	delete[] hospitalsTable;
 	hospitalsTable = newTable;
 	hospitalTableSize = newSize;
+}
+void MedicalSystem::searchPatientByID(const string& patientId)
+{
+	bool found = false;
+	for (int i = 0; i < hospitalTableSize; ++i) {
+		Hospital* current = hospitalsTable[i];
+		while (current != nullptr) {
+			Patient* p = current->findPatientById(patientId);
+			if (p != nullptr) {
+				cout << "Patient found: ID: " << p->getId()
+					<< " Name: " << p->getName()
+					<< " in Hospital: " << current->getName() << endl;
+				return; // stop at first match
+			}
+			current = current->nextHospital;
+		}
+	}
+	cout << "Patient not found: " << patientId << endl;
 }
 #endif
