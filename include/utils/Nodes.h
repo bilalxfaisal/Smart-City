@@ -86,6 +86,9 @@ struct Location {
     int x;
     int y;
     Location(int x = 0, int y = 0) : x(x), y(y) {}
+    void display() const {
+        cout << "(" << x << ", " << y << ")";
+	}
 };
 
 // Education entities
