@@ -114,6 +114,31 @@ int showEducationMenu()
     cin >> ch;
     return ch;
 }
+int showMedicalSystemMenu()
+{
+    int ch;
+    cout << "\n====== MEDICAL SYSTEM MENU ======\n";
+    cout << "1. Add Hospital\n";
+    cout << "2. Remove Hospital\n";
+    cout << "3. Add Pharmacy\n";
+    cout << "4. Remove Pharmacy\n";
+    cout << "5. Add Doctor To Hospital\n";
+    cout << "6. Remove Doctor From Hospital\n";
+    cout << "7. Add Patient To Hospital\n";
+    cout << "8. Remove Patient From Hospital\n";
+    cout << "9. Add Medicine To Pharmacy\n";
+    cout << "10. Remove Medicine By Name\n";
+    cout << "11. Remove Medicine By Formulation\n";
+    cout << "12. Search Medicine By Name\n";
+    cout << "13. Search Medicine By Formulation\n";
+    cout << "14. Search Hospital By Name\n";
+    cout << "15. Search Pharmacy By Name\n";
+    cout << "16. Search Patient By Name\n";
+    cout << "0. Exit\n";
+    cout << "Enter choice: ";
+    cin >> ch;
+    return ch;
+}
 
 void simulateBasedOnMainChoice(int ch)
 {
@@ -140,7 +165,7 @@ void simulateBasedOnMainChoice(int ch)
         }
 	    case 3: // Medical System
         {
-            // runMedicalSystem(medical);
+            runMedicalSystem(medical);
             break;
         }
 	    case 4: // Population System
@@ -313,6 +338,7 @@ void runEducationSystem(EducationSystem& education)
         waitForEnter();
     }
 }
+
 void runTransportSystem(TransportSystem& transport)
 {
     while (true)
@@ -569,5 +595,128 @@ void runCommercialSystem(CommercialSystem& commercial)
         }
 		waitForEnter();
 
+    }
+}
+
+
+void runMedicalSystem(MedicalSystem& medical)
+{
+    while (true)
+    {
+        system("cls");
+
+        int choice = showMedicalSystemMenu();
+        cin.ignore();
+
+        if (choice == 0)
+        {
+            cout << "Exiting Medical System...\n";
+            break;
+        }
+
+        switch (choice)
+        {
+        case 1: // Add Hospital
+            cout << "\n=== Add Hospital ===\n";
+            // TODO: Get hospital name, address, etc.
+            // TODO: medical.addHospital(h);
+            break;
+
+        case 2: // Remove Hospital
+            cout << "\n=== Remove Hospital ===\n";
+            // TODO: Ask hospital name
+            // TODO: medical.removeHospital(name);
+            break;
+
+        case 3: // Add Pharmacy
+            cout << "\n=== Add Pharmacy ===\n";
+            // TODO: Ask pharmacy details
+            // TODO: medical.addPharmacy(p);
+            break;
+
+        case 4: // Remove Pharmacy
+            cout << "\n=== Remove Pharmacy ===\n";
+            // TODO: Ask pharmacy name
+            // TODO: medical.removePharmacy(name);
+            break;
+
+        case 5: // Add Doctor To Hospital
+            cout << "\n=== Add Doctor To Hospital ===\n";
+            // TODO: Ask hospital name + doctor info
+            // TODO: medical.addDoctorToHospital(hosName, doctorObj);
+            break;
+
+        case 6: // Remove Doctor From Hospital
+            cout << "\n=== Remove Doctor From Hospital ===\n";
+            // TODO: Ask hospital name + doctor ID
+            // TODO: medical.removeDoctorFromHospital(hosName, docID);
+            break;
+
+        case 7: // Add Patient To Hospital
+            cout << "\n=== Add Patient To Hospital ===\n";
+            // TODO: Ask hospital name + patient info
+            // TODO: medical.addPatientToHospital(hosName, patientObj);
+            break;
+
+        case 8: // Remove Patient From Hospital
+            cout << "\n=== Remove Patient From Hospital ===\n";
+            // TODO: Ask hospital name + patient ID
+            // TODO: medical.removePatientFromHospital(hosName, patientID);
+            break;
+
+        case 9: // Add Medicine To Pharmacy
+            cout << "\n=== Add Medicine To Pharmacy ===\n";
+            // TODO: Ask pharmacy name + medicine info
+            // TODO: medical.addMedicineToPharmacy(pharmaName, medicineObj);
+            break;
+
+        case 10: // Remove Medicine By Name
+            cout << "\n=== Remove Medicine By Name ===\n";
+            // TODO: Ask pharmacy name + med name
+            // TODO: medical.removeMedicineByName(pharmaName, medName);
+            break;
+
+        case 11: // Remove Medicine By Formulation
+            cout << "\n=== Remove Medicine By Formulation ===\n";
+            // TODO: Ask pharmacy name + formulation
+            // TODO: medical.removeMedicineByFormulation(pharmaName, formulation);
+            break;
+
+        case 12: // Search Medicine By Name
+            cout << "\n=== Search Medicine By Name ===\n";
+            // TODO: Ask pharmacy name + med name
+            // TODO: medical.searchMedicineByName(pharmaName, medName);
+            break;
+
+        case 13: // Search Medicine By Formulation
+            cout << "\n=== Search Medicine By Formulation ===\n";
+            // TODO: Ask pharmacy name + formulation
+            // TODO: medical.searchMedicineByFormulation(pharmaName, formulation);
+            break;
+
+        case 14: // Search Hospital By Name
+            cout << "\n=== Search Hospital By Name ===\n";
+            // TODO: Ask hospital name
+            // TODO: medical.searchHospitalByName(name);
+            break;
+
+        case 15: // Search Pharmacy By Name
+            cout << "\n=== Search Pharmacy By Name ===\n";
+            // TODO: Ask pharmacy name
+            // TODO: medical.searchPharmacyByName(name);
+            break;
+
+        case 16: // Search Patient By Name
+            cout << "\n=== Search Patient By Name ===\n";
+            // TODO: Ask patient name/ID
+            // TODO: medical.searchPatientByName(patientName);
+            break;
+
+        default:
+            cout << "\nInvalid choice! Try again.\n";
+            break;
+        }
+
+        waitForEnter();
     }
 }
