@@ -10,9 +10,9 @@ int main()
 	Hospital* h1 = new Hospital("City Hospital", "H001", "General", 50);
 	Hospital* h2 = new Hospital("Hadiah Hospital", "H002", "Specialized", 50);
 	Hospital* h3 = new Hospital("Hashim Hospital", "H003", "Specialized", 20);
-	Hospital* h4 = new Hospital("Marium Hospital", "H004", "Specialized", 10);
+	Hospital* h4 = new Hospital("Maryum Hospital", "H004", "Specialized", 10);
 	Hospital* h5 = new Hospital("FAST NU", "H005", "Specialized", 90);
-	Hospital* h6 = new Hospital("LKKKK", "H006", "Specialized", 130);
+	Hospital* h6 = new Hospital("MMMMMmMMm^", "H006", "Specialized", 130);
 	Hospital* h7 = new Hospital("OIJSDJFO", "H007", "Specialized", 10);
 	MaxHeap hospitalHeap(10, compareHospitals);
 	hospitalHeap.insert((h1));

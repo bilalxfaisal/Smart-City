@@ -212,6 +212,8 @@ public:
         }
 		return true;
     }
+	string getCategoryName() const { return categoryName; }
+
 
 };
 
