@@ -275,8 +275,10 @@ void MedicalSystem::removePatientFromHospital(const string& hospitalName, const 
 	Hospital* current = hospitalsTable[index];
 	while (current) {
 		if (current->getName() == hospitalName) {
-
+			current->removePatientById(patientId);
+			return;
 		}
+		current = current->nextHospital;
 	}
 }
 
