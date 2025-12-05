@@ -48,7 +48,6 @@ public:
 	string getMallName() const { return mallName; }
 	Location getLocation() const { return location; }
 	int getStoreCount() const { return storeCount; }
-<<<<<<< Updated upstream
 	void resizeStoreMap()
 	{
 		int newSize = storeTableSize * 2;
@@ -76,9 +75,6 @@ public:
 		storesTable = newTable;
 		storeTableSize = newSize;
 	}
-=======
-
->>>>>>> Stashed changes
 	void addStore(Store& store)
 	{
 		if (storeCount >= storeTableSize)

@@ -57,19 +57,11 @@ public:
 class Category
 {
     string categoryName;
-<<<<<<< Updated upstream
-    
-=======
->>>>>>> Stashed changes
 	Product** productsTable;
     int productCountCat;
     int productsTableSizeCat;
 
 public:
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
     Category* nextCategory;
     Category(string name = "", int productsNum = 10)
     {
@@ -271,7 +263,6 @@ public:
             }
         }
     }
-	string getCategoryName() const { return categoryName; }
 
 
 };

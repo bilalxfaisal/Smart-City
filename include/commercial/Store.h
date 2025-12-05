@@ -48,7 +48,6 @@ public:
 	int getStoreID() const { return storeID; }
 	string getStoreName() const { return storeName; }
 	string getMallID() const { return mallID; }
-<<<<<<< Updated upstream
 	void resizeCategoryMap()
 	{
 		int newSize = CatTableSize * 2;
@@ -76,11 +75,7 @@ public:
 		CategoriesTable = newTable;
 		CatTableSize = newSize;
 	}
-	void addProduct(string categoryName, Product& product)
-=======
-
 	bool addProduct(string categoryName, Product& product)
->>>>>>> Stashed changes
 	{
 		if (CatTableCount >= CatTableSize)
 		{
