@@ -19,6 +19,9 @@ private:
     int colID;
     int size; // size of the sector (assuming square sectors for simplicity)
     int streetTableSize;
+    string* importantLocations;
+    int impLocCap = 10;
+    int impLocCount = 0;
 
     void resize()
     {
@@ -43,6 +46,17 @@ private:
         streets = nm;
         tableSize = newSize;
     }
+    void impLocArrayResize() 
+    {
+        impLocCap *= 2;
+        string* newLocArr = new string[impLocCap];
+        for (int i = 0; i < impLocCount; i++)
+        {
+            newLocArr[i] = importantLocations[i];
+        }
+        delete[] importantLocations;
+        importantLocations = newLocArr;
+    }
 public:
     //FOR CHAINING IN HASH FUNC
     Sector* nextSector = nullptr;
@@ -54,6 +68,9 @@ public:
     }
     Sector() = default;
 
+        }
+        return false;
+    }
     string getName() const { return name; }
     Street* getStreetByID(int id)
     {

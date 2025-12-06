@@ -12,6 +12,7 @@ private:
     int houseNum;
     int streetNum;
     string sector;
+    Location houseLocation;
 
 public:
     House* nextHouse = nullptr;

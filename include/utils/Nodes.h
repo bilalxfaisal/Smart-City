@@ -84,22 +84,37 @@ class Bus;
 class BusRoute;
 class RouteStack;
 class TransportCompany;
-struct Edge {
+struct  Location;
+
+struct Edge 
+{
     float weight;
 	Edge* nextEdge = nullptr;
 	Location* destination = nullptr;
 	Edge(float w = 0.0f, Location* dest = nullptr) : weight(w), destination(dest), nextEdge(nullptr) {}
 };
-struct Location {
+struct Location 
+{
     int x;
     int y;
-    Location(int x = 0, int y = 0) : x(x), y(y) {}
+    string name;      // Added name for debugging (e.g., "PIMS", "Corner D5-TL")
+    string type;      // "School" or "Intersection"
+    //FOR DIJXTRAS
+    bool visited = false;
+    Location* parent = nullptr;
+    float minDist = 0.0f;
+    Location* next = nullptr;   // For the global list of all locations
+    Edge* adjList = nullptr;    // Head of the adjacency list (neighbors)
+
+    Location(int x = 0, int y = 0, string n = "", string t = "")
+        : x(x), y(y), name(n), type(t) {
+    }
+
     void display() const {
-        cout << "(" << x << ", " << y << ")";
-	}
-	Location* next = nullptr;
-	Edge* adjList = nullptr;
+        cout << "[" << name << "] (" << x << ", " << y << ")";
+    }
 };
+
 
 // Education entities
 class Student;

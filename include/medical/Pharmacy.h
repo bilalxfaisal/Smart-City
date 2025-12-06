@@ -6,7 +6,7 @@
 class Pharmacy
 {
     string name;
-    string location;
+    Location pharmacyLocation;
     string id;
 
     Medicine** medsFormulaBasedTable;

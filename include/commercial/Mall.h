@@ -16,7 +16,7 @@ class Mall
 {
 	int mallID;
 	string mallName;
-	Location location;
+	Location mallLocation;
 	int storeCount;
 	Store** storesTable;
 	int storeTableSize;
@@ -28,7 +28,7 @@ public:
 	{
 		mallID = id;
 		mallName = name;
-		location = loc;
+		mallLocation = loc;
 		nextMall = nullptr;
 		storeTableSize = storesNum;
 		storesTable = new Store * [storesNum](); // initializes to nullptr
@@ -46,7 +46,7 @@ public:
 	}*/
 	int getMallID() const { return mallID; }
 	string getMallName() const { return mallName; }
-	Location getLocation() const { return location; }
+	Location getLocation() const { return mallLocation; }
 	int getStoreCount() const { return storeCount; }
 	void resizeStoreMap()
 	{

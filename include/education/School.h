@@ -24,6 +24,7 @@ public:
 	Department* Bacha;
 	Faculty* FacultyHead; // n-ary tree of faculties
 	School* nextSibling;  // n-ary trees
+	Location schoolLocation;
 
 	School()
 	{

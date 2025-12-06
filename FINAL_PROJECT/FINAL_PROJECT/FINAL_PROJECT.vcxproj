@@ -188,6 +188,7 @@
     <ClInclude Include="..\..\include\transport\TransportCompany.h" />
     <ClInclude Include="..\..\include\transport\TransportGraph.h" />
     <ClInclude Include="..\..\include\transport\TransportSystem.h" />
+    <ClInclude Include="..\..\include\utils\LocationManager.h" />
     <ClInclude Include="..\..\include\utils\Nodes.h" />
     <ClInclude Include="..\..\include\visualizer\visualizer.h" />
   </ItemGroup>

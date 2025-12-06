@@ -3,5 +3,6 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
+  <Folder Name="/Solution Items/" />
   <Project Path="FINAL_PROJECT/FINAL_PROJECT.vcxproj" Id="e82d44d5-7500-46d1-b936-77a01b0f1f7e" />
 </Solution>

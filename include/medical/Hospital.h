@@ -58,6 +58,7 @@ private:
 
 	int EmergencyBedNum = 0;
 	string sector = "";	
+	Location hospitalLocation;
 	//
 public:
 	Hospital* nextHospital = nullptr; // For chaining in hash table
