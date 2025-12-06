@@ -1,51 +1,52 @@
 #include "SFML/Graphics.hpp"
 #include "../utils/Nodes.h"
-#include "../population/Sector.h"
-
-
-/// <summary>
-/// id = 0  for universal node
-/// </summary>
-
-
-
 
 class Visualizer {
 private:
-    static const int ROWS = 7;
-    static const int COLS = 8;
+    static const int ROWS = 7;          // D to J
+    static const int COLS = 8;          // 5 to 12
     static const int SECTOR_SIZE = 90;
     static const int START_X = 80;
     static const int START_Y = 50;
+    static const int WINDOW_WIDTH = 900;
+    static const int WINDOW_HEIGHT = 700;
+    static const int ZOOMED_AREA_SIZE = 600;
 
-    Sector** sectors;
+    bool isZoomedIn = false;
+    int zoomedRow = -1;
+    int zoomedCol = -1;
 
-    // head of all Locations
-    Location* location;
+    Location* location; // head of all Locations
 
-    char getRowLetter(int r) const { return 'D' + r; }
+    char getRowLetter(int r) const { return static_cast<char>('D' + r); }
     int getColNumber(int c) const { return 5 + c; }
 
     std::string getSectorName(int r, int c) const {
-        std::string name = std::string(1, getRowLetter(r)) + "-" + std::to_string(getColNumber(c));
-        return name;
+        return std::string(1, getRowLetter(r)) + "-" + std::to_string(getColNumber(c));
+    }
+
+    // Helper to get sector bounds
+    void getSectorBounds(int row, int col, float& left, float& top, float& right, float& bottom) const {
+        left = START_X + col * SECTOR_SIZE;
+        top = START_Y + row * SECTOR_SIZE;
+        right = left + SECTOR_SIZE;
+        bottom = top + SECTOR_SIZE;
+    }
+
+    // Check if a location is within a sector
+    bool isInSector(Location* loc, int row, int col) const {
+        float left, top, right, bottom;
+        getSectorBounds(row, col, left, top, right, bottom);
+        return loc->x >= left && loc->x <= right && loc->y >= top && loc->y <= bottom;
     }
 
 public:
     Visualizer() {
-        sectors = new Sector * [ROWS];
-        for (int r = 0; r < ROWS; ++r) {
-            sectors[r] = new Sector[COLS];
-            for (int c = 0; c < COLS; ++c) {
-                sectors[r][c].setName(getSectorName(r, c));
-            }
-        }
         location = nullptr;
     }
 
     ~Visualizer() {
-        for (int r = 0; r < ROWS; ++r) delete[] sectors[r];
-        delete[] sectors;
+        // Cleanup handled elsewhere
     }
 
     void drawGrid(sf::RenderWindow& window) {
@@ -69,7 +70,7 @@ public:
             window.draw(line, 2, sf::Lines);
         }
 
-        // Corner dots at intersections
+        // Corner dots (intersections)
         sf::CircleShape dot(4);
         dot.setFillColor(sf::Color::Green);
         for (int r = 0; r <= ROWS; ++r) {
@@ -91,7 +92,7 @@ public:
 
         for (int r = 0; r < ROWS; ++r) {
             for (int c = 0; c < COLS; ++c) {
-                text.setString(sectors[r][c].getName());
+                text.setString(getSectorName(r, c));
                 text.setPosition(
                     START_X + c * SECTOR_SIZE + 5,
                     START_Y + r * SECTOR_SIZE + (SECTOR_SIZE - 20) / 2
@@ -101,36 +102,17 @@ public:
         }
     }
 
-    void draw(sf::RenderWindow& window, const sf::Font& font) {
-        drawGrid(window);
-        drawLabels(window, font);
-    }
-
-    void addLocationHead(Location& loc) {
-        Location* newLoc = new Location(loc);
-    }
-
-    void deleteLocationHead() {
-        location = nullptr;
-    }
-
-    void showAllLocations(sf::RenderWindow& window) const {
-        Location* curr = location;
-        while (curr)
-        {
-            displayNode(window, curr);
-            displayEdges(window, curr);
-        }
-    }
     void displayNode(sf::RenderWindow& window, Location* loc) const {
         sf::CircleShape circle(4);
-        const sf::Color orange(255, 165, 0);
-        if (loc->ID == 1) circle.setFillColor(sf::Color::Red);
-        else if (loc->ID == 2) circle.setFillColor(sf::Color::Blue);
-        else if (loc->ID == 3) circle.setFillColor(sf::Color::Yellow);
-        else if (loc->ID == 4) circle.setFillColor(sf::Color::Cyan);
-        else if (loc->ID == 5) circle.setFillColor(sf::Color::Magenta);
-        else circle.setFillColor(orange);
+
+        // Different colors for different types
+        if (loc->type == "Intersection") {
+            circle.setFillColor(sf::Color::Green);
+        }
+        else {
+            const sf::Color orange(255, 165, 0);
+            circle.setFillColor(orange);
+        }
 
         circle.setOrigin(4, 4);
         circle.setPosition(static_cast<float>(loc->x), static_cast<float>(loc->y));
@@ -138,13 +120,221 @@ public:
     }
 
     void displayEdges(sf::RenderWindow& window, Location* loc) const {
-		sf::Vertex EdgeLine[2];
-		EdgeLine[0].position = sf::Vector2f(float(loc->x), float(loc->y));
-		Edge* dest = loc->adjList;
+        sf::Vertex EdgeLine[2];
+        EdgeLine[0].position = sf::Vector2f(static_cast<float>(loc->x), static_cast<float>(loc->y));
+        EdgeLine[0].color = sf::Color(220, 220, 220);
+
+        Edge* dest = loc->adjList;
         while (dest) {
-            EdgeLine[1].position = sf::Vector2f(float(dest->destination->x), float(dest->destination->y));
+            EdgeLine[1].position = sf::Vector2f(
+                static_cast<float>(dest->destination->x),
+                static_cast<float>(dest->destination->y)
+            );
+            EdgeLine[1].color = sf::Color(220, 220, 220);
             window.draw(EdgeLine, 2, sf::Lines);
-			dest = dest->nextEdge;
+            dest = dest->nextEdge;
+        }
+    }
+
+    void showAllLocations(sf::RenderWindow& window) const {
+        Location* curr = location;
+        while (curr) {
+            displayEdges(window, curr);
+            curr = curr->next;
+        }
+
+        // Draw nodes on top of edges
+        curr = location;
+        while (curr) {
+            displayNode(window, curr);
+            curr = curr->next;
+        }
+    }
+
+    void setLocationHead(Location* head) {
+        location = head;
+    }
+
+    Location* getLocationHead() const {
+        return location;
+    }
+
+    void run() {
+        // Create SFML window
+        sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Islamabad Sector Visualizer");
+        window.setFramerateLimit(60);
+
+        // Load font
+        sf::Font font;
+        if (!font.loadFromFile("C:/Windows/Fonts/arial.ttf")) {
+            if (!font.loadFromFile("arial.ttf")) {
+                return; // Can't run without font
+            }
+        }
+
+        // Main loop
+        while (window.isOpen()) {
+            sf::Event event;
+            bool hasEvent = false;
+
+            while (window.pollEvent(event)) {
+                hasEvent = true;
+                if (event.type == sf::Event::Closed) {
+                    window.close();
+                }
+
+                // Handle zoom in/out
+                handleInput(event);
+            }
+
+            // Draw frame
+            draw(window, font);
+            window.display();
+        }
+    }
+
+    void handleInput(const sf::Event& event) {
+        if (event.type == sf::Event::MouseButtonPressed) {
+            if (event.mouseButton.button == sf::Mouse::Left && !isZoomedIn) {
+                int clickX = event.mouseButton.x;
+                int clickY = event.mouseButton.y;
+                int col = (clickX - START_X) / SECTOR_SIZE;
+                int row = (clickY - START_Y) / SECTOR_SIZE;
+                if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
+                    zoomedRow = row;
+                    zoomedCol = col;
+                    isZoomedIn = true;
+                }
+            }
+            else if (event.mouseButton.button == sf::Mouse::Right && isZoomedIn) {
+                isZoomedIn = false;
+            }
+        }
+    }
+
+    void draw(sf::RenderWindow& window, const sf::Font& font) {
+        window.clear(sf::Color::Black);
+
+        if (isZoomedIn) {
+            // ===== ZOOMED VIEW USING sf::View =====
+
+            // Calculate center of the clicked sector
+            float sectorCenterX = START_X + zoomedCol * SECTOR_SIZE + SECTOR_SIZE / 2.0f;
+            float sectorCenterY = START_Y + zoomedRow * SECTOR_SIZE + SECTOR_SIZE / 2.0f;
+
+            // Create a view centered on the sector
+            sf::View zoomedView;
+            zoomedView.setCenter(sectorCenterX, sectorCenterY);
+
+            // Set view size to show just the sector (with a bit of padding)
+            float viewWidth = SECTOR_SIZE * 1.1f;  // 10% padding
+            float viewHeight = SECTOR_SIZE * 1.1f;
+            zoomedView.setSize(viewWidth, viewHeight);
+
+            // Set viewport to fill the window
+            zoomedView.setViewport(sf::FloatRect(0.f, 0.f, 1.f, 1.f));
+
+            // Apply the view
+            window.setView(zoomedView);
+
+            // Get sector bounds for filtering
+            float origLeft, origTop, origRight, origBottom;
+            getSectorBounds(zoomedRow, zoomedCol, origLeft, origTop, origRight, origBottom);
+
+            // Draw sector boundary box
+            sf::RectangleShape boundary(sf::Vector2f(SECTOR_SIZE, SECTOR_SIZE));
+            boundary.setPosition(origLeft, origTop);
+            boundary.setFillColor(sf::Color::Transparent);
+            boundary.setOutlineColor(sf::Color::White);
+            boundary.setOutlineThickness(1);
+            window.draw(boundary);
+
+            // Draw edges (only within this sector)
+            Location* curr = location;
+            while (curr) {
+                if (isInSector(curr, zoomedRow, zoomedCol)) {
+                    Edge* edge = curr->adjList;
+                    while (edge) {
+                        Location* dest = edge->destination;
+                        if (isInSector(dest, zoomedRow, zoomedCol)) {
+                            sf::Vertex line[] = {
+                                sf::Vertex(sf::Vector2f(curr->x, curr->y), sf::Color(200, 200, 200)),
+                                sf::Vertex(sf::Vector2f(dest->x, dest->y), sf::Color(200, 200, 200))
+                            };
+                            window.draw(line, 2, sf::Lines);
+                        }
+                        edge = edge->nextEdge;
+                    }
+                }
+                curr = curr->next;
+            }
+
+            // Draw nodes (only within this sector)
+            curr = location;
+            while (curr) {
+                if (isInSector(curr, zoomedRow, zoomedCol)) {
+                    sf::CircleShape circle(2); // Size relative to world coordinates
+                    circle.setOrigin(2, 2);
+
+                    if (curr->type == "Intersection") {
+                        circle.setFillColor(sf::Color::Green);
+                    }
+                    else {
+                        circle.setFillColor(sf::Color(255, 165, 0));
+                    }
+
+                    circle.setPosition(curr->x, curr->y);
+                    window.draw(circle);
+
+                    // Draw location name
+                    sf::Text nameText;
+                    nameText.setFont(font);
+                    nameText.setString(curr->name);
+                    nameText.setCharacterSize(8); // Smaller for world coordinates
+                    nameText.setFillColor(sf::Color::White);
+                    nameText.setPosition(curr->x + 3, curr->y - 4);
+                    window.draw(nameText);
+                }
+                curr = curr->next;
+            }
+
+            // Reset to default view for UI elements
+            window.setView(window.getDefaultView());
+
+            // Draw UI elements in screen space
+            sf::Text label;
+            label.setFont(font);
+            label.setString("Sector: " + getSectorName(zoomedRow, zoomedCol));
+            label.setCharacterSize(28);
+            label.setFillColor(sf::Color::White);
+            label.setPosition(20, 10);
+            window.draw(label);
+
+            sf::Text instruction;
+            instruction.setFont(font);
+            instruction.setString("Right-click to zoom out");
+            instruction.setCharacterSize(14);
+            instruction.setFillColor(sf::Color(180, 180, 180));
+            instruction.setPosition(20, WINDOW_HEIGHT - 40);
+            window.draw(instruction);
+        }
+        else {
+            // ===== FULL VIEW =====
+            // Use default view
+            window.setView(window.getDefaultView());
+
+            drawGrid(window);
+            drawLabels(window, font);
+            showAllLocations(window);
+
+            // Instructions
+            sf::Text instruction;
+            instruction.setFont(font);
+            instruction.setString("Left-click a sector to zoom in");
+            instruction.setCharacterSize(14);
+            instruction.setFillColor(sf::Color(180, 180, 180));
+            instruction.setPosition(START_X, WINDOW_HEIGHT - 40);
+            window.draw(instruction);
         }
     }
 };

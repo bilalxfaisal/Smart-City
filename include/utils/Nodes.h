@@ -113,6 +113,11 @@ struct Location
     void display() const {
         cout << "[" << name << "] (" << x << ", " << y << ")";
     }
+    void addEdge(Location* dest, float weight) {
+        Edge* newEdge = new Edge(weight, dest);
+        newEdge->nextEdge = adjList;
+        adjList = newEdge;
+    }
 };
 
 

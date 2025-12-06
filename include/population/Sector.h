@@ -77,6 +77,7 @@ public:
 
 
     }
+    Sector() = default;
     void addImpLoc(string& newS)
     {
         if (impLocCount >= impLocCap)
@@ -153,6 +154,11 @@ public:
                 s = s->nextStreet;
             }
         }
-    }
+        cout << "Street not found\n";
+	}
+
+	void setName(const string& n) { name = n; }
+	void setTopLeft(int x, int y) { topLeft = Location(x, y); }
+    Location getTopLeft() const { return topLeft; }
 };
 #endif
