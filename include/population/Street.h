@@ -72,6 +72,21 @@ public:
             cur = cur->nextHouse;
         }
     }
+    void printHouse(int houseNum) const
+    {
+        House* cur = housesHead;
+        while (cur)
+        {
+            if (cur->getHouseNum() == houseNum)
+            {
+                cout << "   House " << cur->getHouseNum() << ": \n";
+                cur->printHouse();
+                return;
+            }
+            cur = cur->nextHouse;
+        }
+        cout << "House " << houseNum << " not found on this street.\n";
+	}
 
 };
 

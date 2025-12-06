@@ -33,9 +33,7 @@ using namespace std;
 
 int main()
 {
-    int mainMenuCh = 0;
-    showMainMenu(mainMenuCh);
-    simulateBasedOnMainChoice(mainMenuCh);
+    runTheCitySystem();
 
     return 0;
 }

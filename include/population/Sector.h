@@ -20,12 +20,6 @@ private:
     int size; // size of the sector (assuming square sectors for simplicity)
     int streetTableSize;
 
-    int hashInt(int k) const
-    {
-        if (k < 0) k = -k;
-        return k % tableSize;
-    }
-
     void resize()
     {
         int newSize = tableSize * 2;
@@ -60,6 +54,23 @@ public:
     }
 
     string getName() const { return name; }
+    Street* getStreetByID(int id)
+    {
+        int idx = hashInt(id);
+        Street* cur = streets[idx];
+        while (cur)
+        {
+            if (cur->getID() == id)
+                return cur;
+            cur = cur->nextStreet;
+        }
+        return nullptr;
+	}
+    int hashInt(int k) const
+    {
+        if (k < 0) k = -k;
+        return k % tableSize;
+    }
 
     void addStreet(Street& st)
     {
@@ -115,5 +126,26 @@ public:
             }
         }
     }
+    void printHouseInStreet(int streetID, int houseNum) 
+    {
+        Street* cur = getStreetByID(streetID);
+        if (!cur) 
+        {
+            cout << "Street not found\n";
+            return;
+        }
+        cur->printHouse(houseNum);
+    }
+
+    void printStreetHouses(int streetID) 
+    {
+        Street* cur = getStreetByID(streetID);
+        if (cur)
+        {
+            cur->printStreet();
+            return;
+        }
+        cout << "Street not found\n";
+	}
 };
 #endif

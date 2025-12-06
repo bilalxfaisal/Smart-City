@@ -45,7 +45,7 @@ public:
     string getSector()  const { return sector; }
     void printHouse() const
     {
-        cout << "House " << houseNum << "\n";
+        cout << "House " << houseNum << " : \n";
         family.printFamily();
     }
 

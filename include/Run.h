@@ -12,16 +12,27 @@ using namespace std;
 
 void waitForEnter()
 {
-    cout << "\nPress ENTER to continue...";
+    cout << "\nPress ENTER to continue...\n";
     cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
+// FUNCTION DECLARATIONS
+
+void runTheCitySystem();
 void showMainMenu(int& choice);
+int showTransportMenu();
+int showCommercialMenu();
+int showEducationMenu();
+int showMedicalSystemMenu();
+int showFacilityMenu();
+int showPopulationMenu();
 void simulateBasedOnMainChoice(int ch);
 void runTransportSystem(TransportSystem&);
 void runCommercialSystem(CommercialSystem&);
 void runEducationSystem(EducationSystem&);
 void runMedicalSystem(MedicalSystem&);
+void runFacilitySystem(FacilitySystem&);
+void runPopulationSystem(PopulationSystem&);
 
 // Read helpers
 string readLine(const string& prompt)
@@ -59,6 +70,20 @@ float readFloat(const string& prompt)
     }
 }
 
+// FUNCION DEFINITIONS
+
+void runTheCitySystem()
+{
+    int mainMenuCh = 0;
+    do {
+        system("cls");
+        showMainMenu(mainMenuCh);
+        if (mainMenuCh != 0) {
+            simulateBasedOnMainChoice(mainMenuCh);
+        }
+    } while (mainMenuCh != 0);
+	cout << "Exiting Smart City System. Goodbye!\n";
+}
 void showMainMenu(int& choice)
 {
     int ch;
@@ -69,7 +94,7 @@ void showMainMenu(int& choice)
     cout << "4. Population System\n";
     cout << "5. Transport System\n";
     cout << "6. Public Facility\n";
-    cout << "0. Exit\n";
+    cout << "0. Exit to main menu\n";
     cout << "\nEnter choice: ";
     cin >> ch;
     choice = ch;
@@ -85,7 +110,7 @@ int showTransportMenu()
     cout << "5. Simulate Bus Movement\n";
     cout << "6. Display Transport Company Status\n";
     cout << "7. Show Routes\n";
-    cout << "0. Exit\n";
+    cout << "0. Exit to main menu\n";
     cout << "Enter choice: ";
     cin >> ch;
     return ch;
@@ -102,7 +127,7 @@ int showCommercialMenu()
     cout << "6. Display Products in Store from Category\n";
 	cout << "7. Search Product in Store\n";
     cout << "8. Buy Product\n";
-    cout << "0. Exit\n";
+    cout << "0. Exit to main menu\n";
     cout << "Enter choice: ";
     cin >> ch;
     return ch;
@@ -123,7 +148,7 @@ int showEducationMenu()
     cout << "10. Display Students in Class\n";
     cout << "11. Display All Students in School\n";
     cout << "12. Find Student\n";
-    cout << "0. Exit\n";
+    cout << "0. Exit to main menu\n";
     cout << "Enter choice: ";
     cin >> ch;
     return ch;
@@ -148,7 +173,41 @@ int showMedicalSystemMenu()
     cout << "14. Search Hospital By Name\n";
     cout << "15. Search Pharmacy By Name\n";
     cout << "16. Search Patient By Name\n";
-    cout << "0. Exit\n";
+    cout << "0. Exit to main menu\n";
+    cout << "Enter choice: ";
+    cin >> ch;
+    return ch;
+}
+int showFacilityMenu()
+{
+    int ch;
+    cout << "\n====== FACILITY SYSTEM MENU ======\n";
+    cout << "1. Add Mosque\n";
+    cout << "2. Add Park\n";
+    cout << "3. Add Water Cooler\n";
+    cout << "4. Display All Mosques\n";
+    cout << "5. Display All Parks\n";
+    cout << "6. Display All Water Coolers\n";
+    cout << "0. Exit to main menu\n";
+    cout << "Enter choice: ";
+    cin >> ch;
+    return ch;
+}
+int showPopulationMenu()
+{
+    int ch;
+    cout << "\n====== POPULATION SYSTEM MENU ======\n";
+	cout << "1. Add Sector\n";
+	cout << "2. Add Street\n";
+	cout << "3. Add House\n";
+	cout << "4. Add Citizen\n";
+	cout << "5. Search Individual by CNIC\n";
+	cout << "6. Age Distribution Report\n";
+	cout << "7. Occupation Summary Report\n";
+    cout << "8. Population Density Report\n";
+    cout << "9. Display Memebers of a House\n";
+	cout << "10. Display Houses in a Street\n";
+    cout << "0. Exit to main menu\n";
     cout << "Enter choice: ";
     cin >> ch;
     return ch;
@@ -161,7 +220,7 @@ void simulateBasedOnMainChoice(int ch)
     EducationSystem education(20);
     MedicalSystem medical;
     FacilitySystem facility;
-
+	PopulationSystem population;
 
     int choice = ch;
 
@@ -184,7 +243,7 @@ void simulateBasedOnMainChoice(int ch)
         }
 	    case 4: // Population System
         {
-            // runPopulationSystem(population);
+            runPopulationSystem(population);
             break;
         }
 	    case 5: // Transport System
@@ -194,7 +253,7 @@ void simulateBasedOnMainChoice(int ch)
         }
 	    case 6: // Public Facility
         {
-            // runFacilitySystem(facility);
+            runFacilitySystem(facility);
             break;
         }
         default:
@@ -790,6 +849,186 @@ void runMedicalSystem(MedicalSystem& medical)
             break;
         }
 
+        waitForEnter();
+    }
+}
+
+void runFacilitySystem(FacilitySystem& facility)
+{
+    while (true)
+    {
+        system("cls");
+        int choice = showFacilityMenu();
+        cin.ignore();
+
+        if (choice == 0)
+        {
+            cout << "Exiting Facility System...\n";
+            break;
+        }
+        switch (choice)
+        {
+        case 1: // Add Mosque
+        {
+            int x, y;
+            cout << "\n=== Add Mosque ===\n";
+            string name = readLine("Enter mosque name: ");
+            cout << "Enter mosque location (x, y): ";
+            cin >> x >> y;
+            Mosque mosque(Location(x, y), name);
+            facility.addMosque(mosque);
+            break;
+        }
+        case 2: // Add Park
+        {
+            int x, y;
+            cout << "\n=== Add Park ===\n";
+            string name = readLine("Enter park name: ");
+            cout << "Enter park location (x, y): ";
+            cin >> x >> y;
+            Park park(Location(x, y), name);
+            facility.addPark(park);
+            break;
+        }
+        case 3: // Add Water Cooler
+        {
+            int x, y;
+            cout << "\n=== Add Water Cooler ===\n";
+			string name = readLine("Enter water cooler name: ");
+			cout << "Enter water cooler location (x, y): ";
+            cin >> x >> y;
+			WaterCooler cooler(Location(x, y), name);
+            facility.addWaterCooler(cooler);
+            break;
+        }
+        case 4: // Display All Mosques
+        {
+            cout << "\n=== Display All Mosques ===\n";
+            facility.displayAllMosques();
+            break;
+        }
+        case 5: // Display All Parks
+        {
+            cout << "\n=== Display All Parks ===\n";
+            facility.displayAllParks();
+            break;
+        }
+        case 6: // Display All Water Coolers
+        {
+            cout << "\n=== Display All Water Coolers ===\n";
+            facility.displayAllWaterCoolers();
+            break;
+        }
+        default:
+            cout << "\nInvalid choice! Try again.\n";
+            break;
+        }
+        waitForEnter();
+    }
+}
+void runPopulationSystem(PopulationSystem& population)
+{
+    while (true)
+    {
+        system("cls");
+        int choice = showPopulationMenu();
+        cin.ignore();
+
+        if (choice == 0)
+        {
+            cout << "Exiting Population System...\n";
+            break;
+        }
+        switch (choice)
+        {
+        case 1: // Add Sector
+        {
+            cout << "\n=== Add Sector ===\n";
+            string name = readLine("Enter sector name: ");
+            Sector sector(name);
+            population.addSector(sector);
+            break;
+        }
+        case 2: // Add Street
+        {
+            cout << "\n=== Add Street ===\n";
+            string sectorName = readLine("Enter sector name: ");
+            string streetName = readLine("Enter street name: ");
+			int streetID = readInt("Enter street ID: ");
+            Street street(streetName, streetID);
+			population.addStreet(street, sectorName);
+            break;
+        }
+        case 3: // Add House
+        {
+            cout << "\n=== Add House ===\n";
+            string sectorName = readLine("Enter sector name: ");
+            int streetNo = readInt("Enter street number: ");
+            int houseNumber = readInt("Enter house number: ");
+            House house(houseNumber, streetNo, sectorName);
+            population.addHouse(house, sectorName, streetNo);
+            break;
+        }
+        case 4: // Add Citizen
+        {
+            cout << "\n=== Add Citizen ===\n";
+            string cnic = readLine("Enter CNIC: ");
+            string name = readLine("Enter name: ");
+            int age = readInt("Enter age: ");
+            string sector = readLine("Enter sector name: ");
+            int streetNo = readInt("Enter street number: ");
+            int houseNo = readInt("Enter house number: ");
+            string occupation = readLine("Enter occupation: ");
+            Citizen citizen(cnic, name, age, sector, streetNo, houseNo, occupation);
+            population.addCitizen(citizen, sector, streetNo, houseNo);
+            break;
+        }
+        case 5: // Search Individual by CNIC
+        {
+            cout << "\n=== Search Individual by CNIC ===\n";
+            string cnic = readLine("Enter CNIC: ");
+            population.searchIndividual(cnic);
+            break;
+        }
+        case 6: // Age Distribution Report
+        {
+            cout << "\n=== Age Distribution Report ===\n";
+            population.reportAgeDistribution();
+            break;
+        }
+        case 7: // Occupation Summary Report
+        {
+            cout << "\n=== Occupation Summary Report ===\n";
+            population.reportOccupationSummary();
+            break;
+        }
+        case 8: // Population Density Report
+        {
+            cout << "\n=== Population Density Report ===\n";
+            population.reportPopulationDensity();
+            break;
+        }
+        case 9: // Display Members of a House
+        {
+            cout << "\n=== Display Members of a House ===\n";
+            string sectorName = readLine("Enter sector name: ");
+            int streetNo = readInt("Enter street number: ");
+            int houseNo = readInt("Enter house number: ");
+            population.displayMembersOfHouse(sectorName, streetNo, houseNo);
+            break;
+		}
+        case 10: // Display Houses in a Street
+        {
+            cout << "\n=== Display Houses in a Street ===\n";
+            string sectorName = readLine("Enter sector name: ");
+            int streetNo = readInt("Enter street number: ");
+            population.displayHousesInStreet(sectorName, streetNo);
+            break;
+		}
+        default:
+            cout << "\nInvalid choice! Try again.\n";
+            break;
+        }
         waitForEnter();
     }
 }

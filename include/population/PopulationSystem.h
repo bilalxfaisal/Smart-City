@@ -8,7 +8,7 @@ using std::string;
 using std::cout;
 using std::endl;
 
-class populationSystem
+class PopulationSystem
 {
 private:
     Sector** sectorMap;
@@ -87,7 +87,7 @@ private:
     }
 
 public:
-    populationSystem()
+    PopulationSystem()
     {
         sectorMap = new Sector * [sectorCap];
         citizenMap = new Citizen * [citizenCap];
@@ -244,6 +244,26 @@ public:
                 s = s->nextSector;
             }
         }
+    }
+    void displayMembersOfHouse(string sectorName, int streetID, int houseNum)
+    {
+        Sector* s = findSector(sectorName);
+        if (!s) 
+        {
+            cout << "Sector not found\n";
+            return;
+		}
+		s->printHouseInStreet(streetID, houseNum);
+    }
+    void displayHousesInStreet(string sectorName, int streetID)
+    {
+        Sector* s = findSector(sectorName);
+        if (!s)
+        {
+            cout << "Sector not found\n";
+            return;
+        }
+        s->printStreetHouses(streetID);
     }
 };
 

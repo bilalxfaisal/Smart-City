@@ -77,6 +77,8 @@ unsigned int GoldenHashInt(unsigned int key,
 // ==================== FORWARD DECLARATIONS ====================
 
 // Transport entities
+struct Edge;
+struct Location;
 class BusStop;
 class Bus;
 class BusRoute;
