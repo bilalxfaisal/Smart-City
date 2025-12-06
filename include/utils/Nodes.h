@@ -82,6 +82,12 @@ class Bus;
 class BusRoute;
 class RouteStack;
 class TransportCompany;
+struct Edge {
+    float weight;
+	Edge* nextEdge = nullptr;
+	Location* destination = nullptr;
+	Edge(float w = 0.0f, Location* dest = nullptr) : weight(w), destination(dest), nextEdge(nullptr) {}
+};
 struct Location {
     int x;
     int y;
@@ -89,6 +95,8 @@ struct Location {
     void display() const {
         cout << "(" << x << ", " << y << ")";
 	}
+	Location* next = nullptr;
+	Edge* adjList = nullptr;
 };
 
 // Education entities
