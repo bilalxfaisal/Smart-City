@@ -52,6 +52,7 @@ public:
         streets = new Street * [tableSize];
         for (int i = 0; i < tableSize; i++) streets[i] = nullptr;
     }
+    Sector() = default;
 
     string getName() const { return name; }
     Street* getStreetByID(int id)
@@ -147,5 +148,7 @@ public:
         }
         cout << "Street not found\n";
 	}
+
+	void setName(const string& n) { name = n; }
 };
 #endif

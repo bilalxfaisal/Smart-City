@@ -58,3 +58,5 @@ Thumbs.db
 cmake-build-*/
 CMakeCache.txt
 CMakeFiles/
+
+/FINAL_PROJECT/include/SFML/
