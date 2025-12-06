@@ -23,6 +23,13 @@ private:
     int impLocCap = 10;
     int impLocCount = 0;
 
+
+    int hashInt(int k) const
+    {
+        if (k < 0) k = -k;
+        return k % tableSize;
+    }
+
     void resize()
     {
         int newSize = tableSize * 2;
@@ -46,7 +53,7 @@ private:
         streets = nm;
         tableSize = newSize;
     }
-    void impLocArrayResize() 
+    void impLocArrayResize()
     {
         impLocCap *= 2;
         string* newLocArr = new string[impLocCap];
@@ -64,31 +71,34 @@ public:
     Sector(string n) : name(n)
     {
         streets = new Street * [tableSize];
-        for (int i = 0; i < tableSize; i++) streets[i] = nullptr;
+        for (int i = 0; i < tableSize; i++)
+            streets[i] = nullptr;
+        importantLocations = new string[impLocCap];
+
+
     }
-    Sector() = default;
+    void addImpLoc(string& newS)
+    {
+        if (impLocCount >= impLocCap)
+        {
+            impLocArrayResize();
+        }
+        importantLocations[impLocCount] = newS;
+        impLocCount++;
+    }
+    bool searchLoc(string& strin)
+    {
+        for (int i = 0; i < impLocCount; i++)
+        {
+            if (importantLocations[i] == strin)
+            {
+                return true;
+            }
 
         }
         return false;
     }
     string getName() const { return name; }
-    Street* getStreetByID(int id)
-    {
-        int idx = hashInt(id);
-        Street* cur = streets[idx];
-        while (cur)
-        {
-            if (cur->getID() == id)
-                return cur;
-            cur = cur->nextStreet;
-        }
-        return nullptr;
-	}
-    int hashInt(int k) const
-    {
-        if (k < 0) k = -k;
-        return k % tableSize;
-    }
 
     void addStreet(Street& st)
     {
@@ -144,28 +154,5 @@ public:
             }
         }
     }
-    void printHouseInStreet(int streetID, int houseNum) 
-    {
-        Street* cur = getStreetByID(streetID);
-        if (!cur) 
-        {
-            cout << "Street not found\n";
-            return;
-        }
-        cur->printHouse(houseNum);
-    }
-
-    void printStreetHouses(int streetID) 
-    {
-        Street* cur = getStreetByID(streetID);
-        if (cur)
-        {
-            cur->printStreet();
-            return;
-        }
-        cout << "Street not found\n";
-	}
-
-	void setName(const string& n) { name = n; }
 };
 #endif
