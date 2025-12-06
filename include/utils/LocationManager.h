@@ -104,7 +104,10 @@ private:
     Location* getOrCreateNode(int x, int y, string type)
     {
         Location* existing = findLocationAt(x, y);
-        if (existing) return existing;
+        if (existing) 
+        {
+            return existing;
+        }
 
         string name = "Corner_" + to_string(x) + "_" + to_string(y);
         Location* newNode = new Location(x, y, name, type);
@@ -212,9 +215,11 @@ public:
     }
 
     // Helper to manually add tags to sectors
-    void addTagToSector(string sectorName, string tag) {
+    void addTagToSector(string sectorName, string tag)
+    {
         for (int i = 0; i < sectorCount; i++) {
-            if (sectors[i]->getName() == sectorName) {
+            if (sectors[i]->getName() == sectorName)
+            {
                 sectors[i]->addImpLoc(tag);
                 return;
             }
@@ -346,7 +351,7 @@ public:
     }
 
     // ---------------------------------------------------------
-    // UPDATED: addToCityGrid with Tag Lookup (No Vectors)
+    // addToCityGrid 
     // ---------------------------------------------------------
     void addToCityGrid(string name, string sectorOrTag, string type) {
 

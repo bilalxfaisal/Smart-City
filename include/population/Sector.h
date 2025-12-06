@@ -23,6 +23,9 @@ private:
     int impLocCap = 10;
     int impLocCount = 0;
 
+    //For heat map
+    int PopulationCount;
+    
 
     int hashInt(int k) const
     {
@@ -160,5 +163,50 @@ public:
 	void setName(const string& n) { name = n; }
 	void setTopLeft(int x, int y) { topLeft = Location(x, y); }
     Location getTopLeft() const { return topLeft; }
+    int calculatePopulation() 
+    {
+        PopulationCount = 0;
+        for (int i = 0; i < streetTableSize; i++) 
+        {
+            Street* s = streets[i];
+            while (s) 
+            {
+                PopulationCount += s->calculateStreetPopulation();
+                s = s->nextStreet;
+            }
+        }
+        return PopulationCount;
+    }
+    void printStreetHouses(int streetId) 
+    {
+        int idx = hashInt(streetId);
+
+            Street* s = streets[idx];
+            while (s)
+            {
+                s->printStreet();
+                s = s->nextStreet;
+            }
+        
+    }
+    void printHouseInStreet(int street, int houseNum) 
+    {
+        int idx = hashInt(street);
+
+        Street* s = streets[idx];
+        House* h = s->getHouseHead();
+        while (h)
+        {
+            if (h->getHouseNum() == houseNum) 
+            {
+                h->printHouse();
+                return;
+
+            }
+            h = h->nextHouse;
+        }
+        cout << "House Or Street Not found. \n";
+    }
+
 };
 #endif

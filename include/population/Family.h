@@ -76,7 +76,18 @@ public:
     {
         printRec(familyHead, 3);
     }
-
+    int RecCalculation(Citizen* node)
+    {
+        if (node == nullptr) 
+        {
+            return 0;
+        }
+        return 1 + RecCalculation(node->firstChild) + RecCalculation(node->nextSibling);
+    }
+    int calculateMemberNum() 
+    {
+        return RecCalculation(familyHead);
+    }
 };
 
 #endif

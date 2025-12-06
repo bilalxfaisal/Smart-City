@@ -8,7 +8,7 @@ using std::string;
 class House
 {
 private:
-    Family family;
+   
     int houseNum;
     int streetNum;
     string sector;
@@ -16,7 +16,7 @@ private:
 
 public:
     House* nextHouse = nullptr;
-
+    Family family;
     House(int h=0, int s=0, string sec="")
         : houseNum(h), streetNum(s), sector(sec)
     {

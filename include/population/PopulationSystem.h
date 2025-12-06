@@ -18,6 +18,8 @@ private:
     Citizen** citizenMap;
     int citizenCap = 10;
     int citizenCount = 0;
+    int maxPopulationPerSector = 0;
+    int minPopulationPerSector = 0;
 
     int hashStr(const string& s, int mod) const
     {
@@ -265,6 +267,37 @@ public:
         }
         s->printStreetHouses(streetID);
     }
+    void GetMinMaxPop()
+    {
+        if (sectorCount == 0)
+        {
+            minPopulationPerSector = 0;
+            maxPopulationPerSector = 0;
+            return;
+        }
+
+        int minPop = INT_MAX;  // Start with maximum possible value
+        int maxPop = INT_MIN;  // Start with minimum possible value
+
+        for (int i = 0; i < sectorCap; i++)
+        {
+            Sector* sec = sectorMap[i];
+
+            while (sec != nullptr)
+            {
+                int pop = sec->calculatePopulation();
+
+                if (pop < minPop) minPop = pop;
+                if (pop > maxPop) maxPop = pop;
+
+                sec = sec->nextSector;
+            }
+        }
+
+        minPopulationPerSector = minPop;
+        maxPopulationPerSector = maxPop;
+    }
+
 };
 
 #endif

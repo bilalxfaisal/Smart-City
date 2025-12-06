@@ -87,7 +87,21 @@ public:
         }
         cout << "House " << houseNum << " not found on this street.\n";
 	}
-
+    int calculateStreetPopulation() 
+    {
+        int total = 0;
+        House* temp = housesHead;
+        while (temp) 
+        {
+            total += temp->family.calculateMemberNum();
+            temp = temp->nextHouse;
+        }
+        return total;
+    }
+    House* getHouseHead() 
+    {
+        return housesHead;
+    }
 };
 
 #endif
