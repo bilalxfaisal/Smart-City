@@ -55,20 +55,21 @@ private:
 	Appointment** appointmentsArray = nullptr;
 	int appointmentCount = 0;
 	int appointmentCap = 100;
-
+	string specialization = "";
 	int EmergencyBedNum = 0;
 	string sector = "";	
 	Location hospitalLocation;
 	//
 public:
 	Hospital* nextHospital = nullptr; // For chaining in hash table
-	Hospital( string nam = "", string Id = "", string sec = "", int emBedNum = 0)
+	Hospital( string nam = "", string Id = "", string sec = "", int emBedNum = 0, string specs="")
 	{
 		name = nam;
 		id = Id;
 		sector = sec;
 		EmergencyBedNum = emBedNum;
 		doctorsArray = new Doctor * [docTableCap];
+		specialization = specs;
 		for (int i = 0; i < docTableCap; i++)
 		{
 			doctorsArray[i] = nullptr;
@@ -84,6 +85,15 @@ public:
 			appointmentsArray[i] = nullptr;
 		}
 		srand(time(0));
+	}
+	void setHospitalDetails(string nam = "", string Id = "", string sec = "", int emBedNum = 0, string specs = "")
+	{
+		name = nam;
+		id = Id;
+		sector = sec;
+		EmergencyBedNum = emBedNum;
+
+		specialization = specs;
 	}
 	void registerPatient(string Nam = "", float wt = 0)
 	{
@@ -248,6 +258,10 @@ public:
 			previous = current;
 			current = current->nextDoctor;
 		}
+	}
+	Location& getHospitalLocation()
+	{
+		return hospitalLocation;
 	}
 
 };

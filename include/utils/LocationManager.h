@@ -185,7 +185,8 @@ private:
     }
 
 public:
-    locationManager() {
+    locationManager()
+    {
         cityLocationHead = nullptr;
         srand(time(0));
 
@@ -197,7 +198,11 @@ public:
 
         // 3. DEMO: Add "BlueArea" tag to F-8 and G-8 for testing
         addTagToSector("F-8", "BlueArea");
+        addTagToSector("F-8", "Centaurus");
         addTagToSector("G-8", "BlueArea");
+        addTagToSector("G-8", "PIMS Hospital");
+        addTagToSector("E-8", "Faisal Mosque");
+        addTagToSector("F-9", "Lake View");
     }
 
     // Initialize the Sector objects so we can store tags in them
@@ -353,7 +358,7 @@ public:
     // ---------------------------------------------------------
     // addToCityGrid 
     // ---------------------------------------------------------
-    void addToCityGrid(string name, string sectorOrTag, string type) {
+    void addToCityGrid(string name, string sectorOrTag, string type, Location& toSet) {
 
         // 1. Resolve the input string. 
         // If it's "BlueArea", it randomly picks a sector that has that tag.
@@ -396,6 +401,7 @@ public:
         }
 
         Location* newLocation = new Location(finalX, finalY, name, type);
+        toSet = *newLocation;
         newLocation->next = cityLocationHead;
         cityLocationHead = newLocation;
 

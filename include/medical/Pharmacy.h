@@ -8,7 +8,7 @@ class Pharmacy
     string name;
     Location pharmacyLocation;
     string id;
-
+    string sector="";
     Medicine** medsFormulaBasedTable;
     Medicine** medsNameBasedTable;
 
@@ -21,12 +21,21 @@ class Pharmacy
 public:
     Pharmacy* nextPharmacy = nullptr;
 
-    Pharmacy(string n, string loc, string i)
-        : name(n), location(loc), id(i)
+    Pharmacy(string n, string i)
+        : name(n), id(i)
     {
         medTableSize_Form = 101;
         medTableSize_Name = 101;
 
+        medsFormulaBasedTable = new Medicine * [medTableSize_Form]();
+        medsNameBasedTable = new Medicine * [medTableSize_Name]();
+    }
+    Pharmacy()
+    {
+        name = "";
+        id = "";
+        medTableSize_Form = 101;
+        medTableSize_Name = 101;
         medsFormulaBasedTable = new Medicine * [medTableSize_Form]();
         medsNameBasedTable = new Medicine * [medTableSize_Name]();
     }
@@ -35,7 +44,12 @@ public:
         delete[] medsFormulaBasedTable;
         delete[] medsNameBasedTable;
     }
-
+    void setPharmacyDetails(string n, string i, string sect)
+    {
+        name = n;
+        id = i;
+        sector = sect;
+    }
     void resizeMedsFormulaTable()
     {
         int newSize = medTableSize_Form * 2 + 1;
@@ -187,6 +201,10 @@ public:
     string getName()
     {
         return name;
+    }
+    Location& getPharmacyLocation() 
+    {
+        return pharmacyLocation;
     }
 };
 

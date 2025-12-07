@@ -10,7 +10,7 @@ class Medicine
 	public:
 		//FOR HASHMAPS COLLISIONS
 		Medicine* nextMedicine = nullptr;
-		Medicine(string& nam, string& form, int q, float p) 
+		Medicine(string& nam, string& form,  float p, int q=10) 
 		{
 			name = nam;
 			formulation = form;

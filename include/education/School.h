@@ -26,17 +26,7 @@ public:
 	School* nextSibling;  // n-ary trees
 	Location schoolLocation;
 
-	School()
-	{
-		subjects = nullptr;
-		subjectCount = 0;
-		totalSubjets = 10; // initial size
-		rating = 0.0f;
-		Bacha = nullptr;
-		FacultyHead = nullptr;
-		campusNo = 0;
-		nextSibling = nullptr;
-	}
+
 
 	School(string ID, string name, string sector, int campus);
 	void addSubject(const string& subject);
@@ -50,6 +40,31 @@ public:
 	bool addDepartment(Department& dept);
 	void display();
 	void displayStudentsInClass(string, string);
+	Location& getSchoolLocation() 
+	{
+		return schoolLocation;
+	}
+	// Default Constructor
+	School()
+	{
+		subjectCount = 0;
+		totalSubjets = 10;
+		subjects = new string[totalSubjets](); // <--- ALLOCATE MEMORY HERE
+		rating = 0.0f;
+		Bacha = nullptr;
+		FacultyHead = nullptr;
+		campusNo = 0;
+		nextSibling = nullptr;
+	}
+
+
+	void setSchoolDetails(string id, string n, string sec, float r) {
+		schoolID = id;
+		schoolName = n;
+		sector = sec;
+		rating = r;
+	}
+
 };
 
 
@@ -68,7 +83,8 @@ School::School(string ID, string name, string sector, int campus) {
 	nextSibling = nullptr;
 }
 
-void School::addSubject(const string& sub) {
+void School::addSubject(const string& sub)
+{
 	if (subjectCount >= totalSubjets) {
 		// need to resize
 		int newSize = totalSubjets * 2;

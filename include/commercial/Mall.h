@@ -24,11 +24,10 @@ class Mall
 public:
 	Mall* nextMall;
 	// constructor
-	Mall(int id = 0, string name = "", Location loc = { 0,0 }, int storesNum = 10)
+	Mall(int id = 0, string name = "", int storesNum = 10)
 	{
 		mallID = id;
 		mallName = name;
-		mallLocation = loc;
 		nextMall = nullptr;
 		storeTableSize = storesNum;
 		storesTable = new Store * [storesNum](); // initializes to nullptr
@@ -46,7 +45,7 @@ public:
 	}*/
 	int getMallID() const { return mallID; }
 	string getMallName() const { return mallName; }
-	Location getLocation() const { return mallLocation; }
+	Location& getLocation()  { return mallLocation; }
 	int getStoreCount() const { return storeCount; }
 	void resizeStoreMap()
 	{

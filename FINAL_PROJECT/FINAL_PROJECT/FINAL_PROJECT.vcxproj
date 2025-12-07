@@ -118,7 +118,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Hadiah\C++\VS\OOp_Project\OOP_Git\Libraries\SFML-2.6.2\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;sfml-audio-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -177,6 +177,7 @@
     <ClInclude Include="..\..\include\population\PopulationTree.h" />
     <ClInclude Include="..\..\include\population\Sector.h" />
     <ClInclude Include="..\..\include\population\Street.h" />
+    <ClInclude Include="..\..\include\Run.h" />
     <ClInclude Include="..\..\include\transport\Bus.h" />
     <ClInclude Include="..\..\include\transport\BusHashTable.h" />
     <ClInclude Include="..\..\include\transport\BusRoute.h" />
@@ -188,6 +189,7 @@
     <ClInclude Include="..\..\include\transport\TransportCompany.h" />
     <ClInclude Include="..\..\include\transport\TransportGraph.h" />
     <ClInclude Include="..\..\include\transport\TransportSystem.h" />
+    <ClInclude Include="..\..\include\utils\CSV_Handler.h" />
     <ClInclude Include="..\..\include\utils\LocationManager.h" />
     <ClInclude Include="..\..\include\utils\Nodes.h" />
     <ClInclude Include="..\..\include\visualizer\visualizer.h" />

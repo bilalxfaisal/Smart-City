@@ -213,7 +213,7 @@ Location* createSimulatedGraph() {
 // Function to create dummy population data for testing
 SectorPopNode* createDummyPopulationData(int& outMinPop, int& outMaxPop) {
     srand(time(0));
-    
+
     SectorPopNode* head = nullptr;
     SectorPopNode* tail = nullptr;
 
@@ -224,7 +224,7 @@ SectorPopNode* createDummyPopulationData(int& outMinPop, int& outMaxPop) {
     for (char row = 'D'; row <= 'J'; ++row) {
         for (int col = 5; col <= 12; ++col) {
             std::string sectorName = std::string(1, row) + "-" + std::to_string(col);
-            
+
             // Generate random population (0 to 5000, with some sectors having 0)
             int population = 0;
             if (rand() % 100 > 10) { // 90% chance of having population
@@ -239,7 +239,7 @@ SectorPopNode* createDummyPopulationData(int& outMinPop, int& outMaxPop) {
 
             // Create node
             SectorPopNode* newNode = new SectorPopNode(sectorName, population);
-            
+
             if (head == nullptr) {
                 head = tail = newNode;
             }
@@ -252,7 +252,7 @@ SectorPopNode* createDummyPopulationData(int& outMinPop, int& outMaxPop) {
 
     outMinPop = minPop;
     outMaxPop = maxPop;
-    
+
     return head;
 }
 

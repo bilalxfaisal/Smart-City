@@ -30,7 +30,10 @@ public:
         nextHouse(nullptr)
     {
     }
-
+    Location& getHouseLocation() 
+    {
+        return houseLocation;
+    }
     void addMember(Citizen& c)
     {
         family.insertMember(c);

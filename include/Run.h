@@ -1,15 +1,17 @@
 #pragma once
-#include "../Smart-City-DS-Project/include/transport/TransportSystem.h" 
-#include "../Smart-City-DS-Project/include/commercial/CommercialSystem.h"
-#include "../Smart-City-DS-Project/include/education/EducationSystem.h"
-#include "../Smart-City-DS-Project/include/medical/MedicalSystem.h"
-#include "../Smart-City-DS-Project/include/facilities/FacilitySystem.h"
-#include "../Smart-City-DS-Project/include/population/PopulationSystem.h"
+#include "transport/TransportSystem.h" 
+#include "commercial/CommercialSystem.h"
+#include "education/EducationSystem.h"
+#include "medical/MedicalSystem.h"
+#include "facilities/FacilitySystem.h"
+#include "population/PopulationSystem.h"
+#include "utils/LocationManager.h"
 #include <iostream>
 #include <cstdlib>
 #include <string>
 using namespace std;
 
+locationManager Loco;
 void waitForEnter()
 {
     cout << "\nPress ENTER to continue...\n";
@@ -288,8 +290,9 @@ void runEducationSystem(EducationSystem& education)
             string sector = readLine("Enter sector name: ");
             int campus = readInt("Enter the campus number: ");
             School school(id, name, sector, campus);
+            Loco.addToCityGrid(name, sector, "School", school.getSchoolLocation());
             education.addSchool(school);
-            cout << "School '" << name << "' added succesfully !";
+            cout << "School '" << name << "Added successfully !";
             break;
         }
         case 2: // Add Department
@@ -461,14 +464,14 @@ void runTransportSystem(TransportSystem& transport)
             string rname = readLine("Enter route name: ");
 
             string stopName = readLine("Enter new stop name: ");
-            int x = readInt("Enter X coordinate: ");
-            int y = readInt("Enter Y coordinate: ");
+            string sect = readLine("Enter the sector or location area to add : ");
             bool afterFlag = readInt("Add AFTER(1) or BEFORE(0) a stop? ");
 
             string after = afterFlag ? readLine("Add AFTER which stop? (exact name): ") : readLine("Add BEFORE which stop? (exact name): ");
 
 
-            BusStop bs(stopName, x, y);
+            BusStop bs(stopName);
+            Loco.addToCityGrid(stopName, sect, "Bus Stop", bs.getLocation());
 
             // Must find route (simple hash lookup)
             int idx = Polynomial_Rolling_Hash_V1(rname);
@@ -571,16 +574,16 @@ void runCommercialSystem(CommercialSystem& commercial)
         {
         case 1: // Adding the Mall
         {
-            int x = 0, y = 0;
+            string sect;
             cout << "\n=== Add Mall ===\n";
             string name = readLine("Enter mall name: ");
             int mallID = readInt("Enter mall ID: ");
-            cout << "\nEnter location for the mall (x, y): ";
-            cin >> x >> y;
-			cin.ignore(); // flush newline
-            Mall mall(mallID, name, Location(x, y));
+            cout << "\nEnter location for the mall (sector or location): ";
+            
+            Mall mall(mallID, name);
             commercial.addMall(mall);
             cout << "Mall '" << name << "'added !\n";
+            Loco.addToCityGrid(name, sect, "Mall", mall.getLocation());
             break;
         }
         case 2: // Adding Store to Mall
@@ -695,11 +698,16 @@ void runMedicalSystem(MedicalSystem& medical)
             string name = readLine("Enter hospital name: ");
             string id = readLine("Enter hospital ID: ");
             string sec = readLine("Enter sector: ");
+            string specs = readLine("Enter specializations(comma separated): ");
             int bedNum = readInt("Enter number of beds: ");
-            Hospital hospital(name, id, sec, bedNum);
+            Hospital hospital(name, id, sec, bedNum, specs);
+
+            //Add to map? Create a location manager object then give it stuff to add.
+            Loco.addToCityGrid(name, sec, "Hospital", hospital.getHospitalLocation());
             medical.addHospital(hospital);
             break;
         }
+        ///TO DO: MAKE REMOVE FROM GRID IN CITY MANAGER
 
         case 2: // Remove Hospital
         {
@@ -715,8 +723,9 @@ void runMedicalSystem(MedicalSystem& medical)
             string name = readLine("Enter pharmacy name: ");
             string location = readLine("Enter pharmacy location: ");
             string id = readLine("Enter pharmacy id: ");
-            string loc = readLine("Enter location: ");
-            Pharmacy pharmacy(name, loc, id);
+            string sec = readLine("Enter the sector or location tag for pharmacy: ");
+            Pharmacy pharmacy(name, id);
+            Loco.addToCityGrid(name, sec, "Pharmacy", pharmacy.getPharmacyLocation());
             medical.addPharmacy(pharmacy);
             break;
         }
@@ -967,6 +976,7 @@ void runPopulationSystem(PopulationSystem& population)
             int houseNumber = readInt("Enter house number: ");
             House house(houseNumber, streetNo, sectorName);
             population.addHouse(house, sectorName, streetNo);
+            Loco.addToCityGrid("House", sectorName, "House", house.getHouseLocation());
             break;
         }
         case 4: // Add Citizen

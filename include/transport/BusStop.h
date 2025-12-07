@@ -21,10 +21,8 @@ public:
 	// Removed prevStop - using singly linked list only
 
 public:
-	BusStop(string name, int x, int y) {
+	BusStop(string name) {
 		stopName = name;
-		stopLocation.x = x;
-		stopLocation.y = y;
 		currBuses = 0;
 		totalSize = 10;
 		busesAtStop = new Bus * [totalSize];
@@ -71,7 +69,7 @@ public:
 	string getStopName() const {
 		return stopName;
 	}
-	Location getLocation() const {
+	Location& getLocation() const {
 		return stopLocation;
 	}
 };
