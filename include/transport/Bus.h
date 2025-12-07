@@ -37,7 +37,7 @@ public:
 	 // --Setters--
 	void setcurrStopID(int stopID) { currStopID = stopID; }
 
-	Bus(string busId="", string currRoute= "", int stopID = 0, int cap = 0,  bool ammv = true, bool dir = true)
+	Bus(string busId, string currRoute= "", int stopID = 0, int cap = 0,  bool ammv = true, bool dir = true)
 	{
 		busRouteHistory = new RouteStack();
 		busID = busId;
@@ -85,7 +85,10 @@ public:
 		currPassengers -= toRemove;
 		cout << toRemove << " passengers alighted from the bus " << busID << ". Current passengers: " << currPassengers << endl;
 	}
-
+	void Display() 
+	{
+		cout << busID << " Route: " << busRouteID << endl;
+	}
 	void simulateMovement(BusRoute* route) 
 	{
 		BusStop* head = route->getStartingStop();
@@ -146,7 +149,32 @@ public:
 			}
 		}
 	}
-	//For resizing 
+	Bus() {
+		busRouteHistory = new RouteStack();
+		busID = "";
+		busRouteID = ""; // We will store the raw route string here
+		capacity = 50;   // Default capacity
+		isMoving = true;
+		direction = true;
+		currPassengers = 0;
+		currStopID = 0;
+	}
+
+	// 2. Setter
+	void setBusDetails(string id, string company, string currentStopStr, string routeStr) {
+		busID = id;
+
+		busRouteID = routeStr;
+
+		// Extract ID from "Stop3" -> 3
+		// Simple parsing: ignore non-digits
+		string num = "";
+		for (char c : currentStopStr) {
+			if (isdigit(c)) num += c;
+		}
+		if (num != "") currStopID = stoi(num);
+	}
+
 
 };
 

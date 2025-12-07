@@ -79,6 +79,17 @@ public:
     {
         return nextSibling;
     }
+    // Add this to public:
+    void setCitizenDetails(string cn, string n, int ag, string sec, int sn, int hn, string occ)
+    {
+        CNIC = cn;
+        name = n;
+        age = ag;
+        // Combine address parts
+        address = sec + " " + to_string(sn) + " " + to_string(hn);
+        Occupation = occ;
+    }
+
 };
 
 #endif // CITIZEN_H

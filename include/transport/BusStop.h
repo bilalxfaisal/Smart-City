@@ -69,9 +69,30 @@ public:
 	string getStopName() const {
 		return stopName;
 	}
-	Location& getLocation() const {
+	Location& getLocation() {
 		return stopLocation;
 	}
+	// 1. Default Constructor (REQUIRED)
+	BusStop() {
+		stopName = "";
+		currBuses = 0;
+		totalSize = 10;
+		busesAtStop = new Bus * [totalSize];
+		nextStop = nullptr;
+		counter++;
+		stopID = counter;
+	}
+	void Display() 
+	{
+		cout << "Stop Name: " << stopName << " " << " Stop Id " << stopID << endl;
+	}
+	// 2. Setter for loading data
+	void setStopDetails(string name, float lat, float lon) {
+		stopName = name;
+		stopLocation.x = lat;
+		stopLocation.y = lon;
+	}
+
 };
 
 int BusStop::counter = 0;

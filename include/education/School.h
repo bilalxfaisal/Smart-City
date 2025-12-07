@@ -83,26 +83,29 @@ School::School(string ID, string name, string sector, int campus) {
 	nextSibling = nullptr;
 }
 
-void School::addSubject(const string& sub)
-{
+void School::addSubject(const string& sub) {
+	// 1. Check if we need to resize
 	if (subjectCount >= totalSubjets) {
-		// need to resize
 		int newSize = totalSubjets * 2;
 		string* newSubjects = new string[newSize]();
-		// copy old subjects
-		for(int i = 0; i < subjectCount; i++) {
+
+		// Copy old subjects
+		for (int i = 0; i < subjectCount; i++) {
 			newSubjects[i] = subjects[i];
 		}
-		// delete old array
+
 		delete[] subjects;
 		subjects = newSubjects;
 		totalSubjets = newSize;
 	}
-	else {
-		// enough space
-		subjects[subjectCount] = sub;
-	}
+
+	// 2. Add the new subject
+	subjects[subjectCount] = sub;
+
+	// 3. CRITICAL STEP: Increment the counter!
+	subjectCount++;
 }
+
 
 bool School::addFaculty(const Faculty& fac) 
 {
