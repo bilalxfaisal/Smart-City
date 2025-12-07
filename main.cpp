@@ -1,6 +1,10 @@
 #include "SFML/Graphics.hpp"
 #include "include/visualizer/Visualizer.h"
+#include "include/population/PopulationSystem.h"
+#include "include/utils/Nodes.h"
 #include <cmath>
+#include <cstdlib>
+#include <ctime>
 
 // Helper function to calculate Euclidean distance
 float calculateDistance(int x1, int y1, int x2, int y2) {
@@ -206,18 +210,75 @@ Location* createSimulatedGraph() {
     return head;
 }
 
+// Function to create dummy population data for testing
+SectorPopNode* createDummyPopulationData(int& outMinPop, int& outMaxPop) {
+    srand(time(0));
+    
+    SectorPopNode* head = nullptr;
+    SectorPopNode* tail = nullptr;
+
+    int minPop = INT_MAX;
+    int maxPop = INT_MIN;
+
+    // Create population data for all Islamabad sectors (D-5 to J-12)
+    for (char row = 'D'; row <= 'J'; ++row) {
+        for (int col = 5; col <= 12; ++col) {
+            std::string sectorName = std::string(1, row) + "-" + std::to_string(col);
+            
+            // Generate random population (0 to 5000, with some sectors having 0)
+            int population = 0;
+            if (rand() % 100 > 10) { // 90% chance of having population
+                population = rand() % 5000 + 100; // Between 100 and 5100
+            }
+
+            // Update min/max
+            if (population > 0) {
+                if (population < minPop) minPop = population;
+                if (population > maxPop) maxPop = population;
+            }
+
+            // Create node
+            SectorPopNode* newNode = new SectorPopNode(sectorName, population);
+            
+            if (head == nullptr) {
+                head = tail = newNode;
+            }
+            else {
+                tail->next = newNode;
+                tail = newNode;
+            }
+        }
+    }
+
+    outMinPop = minPop;
+    outMaxPop = maxPop;
+    
+    return head;
+}
+
 int main() {
+    // Initialize Islamabad sector grid (MUST be called before using visualizer)
+    initializeIslamabadSectorGrid();
+
     // Create simulated graph with schools and intersections
     Location* locationHead = createSimulatedGraph();
 
-    // Create visualizer and set the data
+    // Create dummy population data for testing heatmap
+    int minPop, maxPop;
+    SectorPopNode* popHead = createDummyPopulationData(minPop, maxPop);
+
+    // Create visualizer and set all the data
     Visualizer viz;
     viz.setLocationHead(locationHead);
+    viz.setSectorPopHead(popHead);
+    viz.setMinMaxPop(minPop, maxPop);
 
     // Run the visualization (handles window, events, rendering)
+    // Press 'H' key to toggle heatmap mode
+    // Press 'Enter' to exit heatmap mode
     viz.run();
 
-    // Cleanup
+    // Cleanup locations
     Location* curr = locationHead;
     while (curr) {
         Location* next = curr->next;
@@ -232,6 +293,14 @@ int main() {
 
         delete curr;
         curr = next;
+    }
+
+    // Cleanup population data
+    SectorPopNode* popCurr = popHead;
+    while (popCurr) {
+        SectorPopNode* next = popCurr->next;
+        delete popCurr;
+        popCurr = next;
     }
 
     return 0;

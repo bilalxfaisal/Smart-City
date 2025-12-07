@@ -166,6 +166,15 @@ class Library;
 // the rest of the node structures would go here...
 
 
+// Node for Sector Population (for heatmap visualization)
+struct SectorPopNode {
+    string sectorName;
+    int population;
+    SectorPopNode* next;
+    
+    SectorPopNode(const string& name, int pop) 
+        : sectorName(name), population(pop), next(nullptr) {}
+};
 
 
 
@@ -447,6 +456,9 @@ class Library;
 //
 //
 //};
+
+
+//Hash maps for education sector
 
 
 #endif

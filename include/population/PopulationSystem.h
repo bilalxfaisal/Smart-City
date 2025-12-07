@@ -298,6 +298,40 @@ public:
         maxPopulationPerSector = maxPop;
     }
 
+    // Returns a linked list of SectorPopNode for heatmap visualization
+    SectorPopNode* getSectorPopulationList()
+    {
+        SectorPopNode* head = nullptr;
+        SectorPopNode* tail = nullptr;
+
+        for (int i = 0; i < sectorCap; i++)
+        {
+            Sector* sec = sectorMap[i];
+            while (sec != nullptr)
+            {
+                int pop = sec->calculatePopulation();
+                SectorPopNode* newNode = new SectorPopNode(sec->getName(), pop);
+
+                if (head == nullptr)
+                {
+                    head = tail = newNode;
+                }
+                else
+                {
+                    tail->next = newNode;
+                    tail = newNode;
+                }
+
+                sec = sec->nextSector;
+            }
+        }
+
+        return head;
+    }
+
+    int getMinPopulation() const { return minPopulationPerSector; }
+    int getMaxPopulation() const { return maxPopulationPerSector; }
+
 };
 
 #endif

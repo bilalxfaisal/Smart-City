@@ -1,5 +1,73 @@
 #include "SFML/Graphics.hpp"
 #include "../utils/Nodes.h"
+#include <string>
+
+
+
+///
+/// How to set this up:
+/// 1. set up the grid by calling initializeIslamabadSectorGrid() once at program start.
+/// 2. set up the visualizer object.
+/// 3. set up the SFML window and font.
+/// 4. set up the location head and sector pop head in the visualizer.
+/// 5. set the min and max population in the visualizer.
+/// 6. in the main loop, call visualizer.run() with the window and font.
+/// 7. it will do the rest itself/
+///
+/// Instructions to use:
+/// left click will zoom in on a sector
+/// right click will zoom out
+/// press 'H' to toggle heatmap mode
+/// press 'Enter' to exit heatmap mode
+/// 
+
+
+// Struct to hold sector info
+struct SectorBounds {
+    std::string name = "";
+    float topLeftX = 0.0;
+    float topLeftY = 0.0;
+};
+
+// Fixed array — no STL containers used beyond std::string
+const int TOTAL_SECTORS = 56; // 7 rows (D-J) × 8 cols (5-12)
+static SectorBounds ISLAMABAD_SECTORS[TOTAL_SECTORS];
+
+// Initialize the grid once (call this in your Visualizer constructor or main)
+void initializeIslamabadSectorGrid() {
+    const int ROWS = 7;          // D (0) to J (6)
+    const int COLS = 8;          // 5 (0) to 12 (7)
+    const int SECTOR_SIZE = 90;
+    const int START_X = 80;
+    const int START_Y = 50;
+
+    int index = 0;
+    for (int r = 0; r < ROWS; ++r) {
+        char rowLetter = 'D' + r;
+        for (int c = 0; c < COLS; ++c) {
+            int colNumber = 5 + c;
+            std::string name = std::string(1, rowLetter) + "-" + std::to_string(colNumber);
+
+            ISLAMABAD_SECTORS[index].name = name;
+            ISLAMABAD_SECTORS[index].topLeftX = START_X + c * SECTOR_SIZE;
+            ISLAMABAD_SECTORS[index].topLeftY = START_Y + r * SECTOR_SIZE;
+            ++index;
+        }
+    }
+}
+
+// Lookup function: returns true if found, and fills out bounds
+bool getSectorTopLeft(const std::string& sectorName, float& outX, float& outY) {
+    for (int i = 0; i < TOTAL_SECTORS; ++i) {
+        if (ISLAMABAD_SECTORS[i].name == sectorName) {
+            outX = ISLAMABAD_SECTORS[i].topLeftX;
+            outY = ISLAMABAD_SECTORS[i].topLeftY;
+            return true;
+        }
+    }
+    return false; // not found
+}
+
 
 class Visualizer {
 private:
@@ -13,10 +81,14 @@ private:
     static const int ZOOMED_AREA_SIZE = 600;
 
     bool isZoomedIn = false;
+	bool HeatMapMode = false;
     int zoomedRow = -1;
     int zoomedCol = -1;
 
     Location* location; // head of all Locations
+	SectorPopNode* sectorPopHead; // head of sector population list
+	int minPop = INT_MAX;
+	int maxPop = INT_MIN;
 
     char getRowLetter(int r) const { return static_cast<char>('D' + r); }
     int getColNumber(int c) const { return 5 + c; }
@@ -155,6 +227,14 @@ public:
         location = head;
     }
 
+    void setSectorPopHead(SectorPopNode* head) {
+        sectorPopHead = head;
+	}
+    void setMinMaxPop(int minP, int maxP) {
+        minPop = minP;
+        maxPop = maxP;
+	}
+
     Location* getLocationHead() const {
         return location;
     }
@@ -188,14 +268,21 @@ public:
             }
 
             // Draw frame
-            draw(window, font);
+            if(!HeatMapMode){
+                draw(window, font);
+            }
+            else {
+                // HeatMapMode drawing logic here
+                window.clear(sf::Color::Black);
+				drawHeatMap(window, font);
+            }
             window.display();
         }
     }
 
     void handleInput(const sf::Event& event) {
         if (event.type == sf::Event::MouseButtonPressed) {
-            if (event.mouseButton.button == sf::Mouse::Left && !isZoomedIn) {
+            if (event.mouseButton.button == sf::Mouse::Left && !isZoomedIn && !HeatMapMode) {
                 int clickX = event.mouseButton.x;
                 int clickY = event.mouseButton.y;
                 int col = (clickX - START_X) / SECTOR_SIZE;
@@ -208,6 +295,14 @@ public:
             }
             else if (event.mouseButton.button == sf::Mouse::Right && isZoomedIn) {
                 isZoomedIn = false;
+            }
+        }
+        else if (event.type == sf::Event::KeyPressed) {
+            if (event.key.code == sf::Keyboard::H && !isZoomedIn && !HeatMapMode) {
+                HeatMapMode = true;
+            }
+            else if (event.key.code == sf::Keyboard::Enter && HeatMapMode) {
+                HeatMapMode = false;
             }
         }
     }
@@ -337,4 +432,33 @@ public:
             window.draw(instruction);
         }
     }
+
+
+    void drawHeatMap(sf::RenderWindow& window, sf::Font& font) {
+		drawGrid(window);
+		drawLabels(window, font);
+		// TO DO: Implement heat map drawing logic here
+        SectorPopNode* head = sectorPopHead;
+        int min = minPop;
+		int max = maxPop;
+		while (head) {
+			float topLeftX, topLeftY;
+            if (getSectorTopLeft(head->sectorName, topLeftX, topLeftY)) {
+					// this will output 0.0 to 1.0
+                    float intensity = static_cast<float>(head->population - min) / (max - min);
+					sf::Color redColor = sf::Color(255, 0, 0, intensity * 255);
+					sf::RectangleShape rectangle(sf::Vector2f(SECTOR_SIZE, SECTOR_SIZE));
+					rectangle.setPosition(topLeftX, topLeftY);
+					rectangle.setFillColor(redColor);
+					window.draw(rectangle);
+
+            }
+            else {
+                // Sector name not found
+				// no need to do anything here for now
+            }
+			head = head->next;
+        }
+        
+	}
 };
