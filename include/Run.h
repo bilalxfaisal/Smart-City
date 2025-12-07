@@ -1,6 +1,7 @@
 #pragma once
 #include "transport/TransportSystem.h" 
 #include "commercial/CommercialSystem.h"
+#include "utils/CSV_Handler.h"
 #include "education/EducationSystem.h"
 #include "medical/MedicalSystem.h"
 #include "facilities/FacilitySystem.h"
@@ -12,6 +13,8 @@
 using namespace std;
 
 locationManager Loco;
+CSVHandler csvHandler;
+
 void waitForEnter()
 {
     cout << "\nPress ENTER to continue...\n";
@@ -22,6 +25,7 @@ void waitForEnter()
 
 void runTheCitySystem();
 void showMainMenu(int& choice);
+int showDataInputMenu(); // NEW: Choose CSV or Manual
 int showTransportMenu();
 int showCommercialMenu();
 int showEducationMenu();
@@ -35,6 +39,14 @@ void runEducationSystem(EducationSystem&);
 void runMedicalSystem(MedicalSystem&);
 void runFacilitySystem(FacilitySystem&);
 void runPopulationSystem(PopulationSystem&);
+
+// NEW: Load data from CSV files (updated signatures to pass system references)
+void loadHospitalsFromCSV(MedicalSystem& medical);
+void loadPharmaciesFromCSV(MedicalSystem& medical);
+void loadSchoolsFromCSV(EducationSystem& education);
+void loadBusStopsFromCSV(TransportSystem& transport);
+void loadBusesFromCSV(TransportSystem& transport);
+void loadCitizensFromCSV(PopulationSystem& population);
 
 // Read helpers
 string readLine(const string& prompt)
@@ -72,6 +84,19 @@ float readFloat(const string& prompt)
     }
 }
 
+// NEW: Show data input menu
+int showDataInputMenu()
+{
+    int ch;
+    cout << "\n====== DATA INPUT METHOD ======\n";
+    cout << "1. Load from CSV Files\n";
+    cout << "2. Manual Input\n";
+    cout << "0. Go Back\n";
+    cout << "\nEnter choice: ";
+    cin >> ch;
+    return ch;
+}
+
 // FUNCION DEFINITIONS
 
 void runTheCitySystem()
@@ -86,6 +111,7 @@ void runTheCitySystem()
     } while (mainMenuCh != 0);
 	cout << "Exiting Smart City System. Goodbye!\n";
 }
+
 void showMainMenu(int& choice)
 {
     int ch;
@@ -101,6 +127,7 @@ void showMainMenu(int& choice)
     cin >> ch;
     choice = ch;
 }
+
 int showTransportMenu()
 {
     int ch;
@@ -117,6 +144,7 @@ int showTransportMenu()
     cin >> ch;
     return ch;
 }
+
 int showCommercialMenu()
 {
     int ch;
@@ -134,6 +162,7 @@ int showCommercialMenu()
     cin >> ch;
     return ch;
 }
+
 int showEducationMenu()
 {
     int ch;
@@ -155,6 +184,7 @@ int showEducationMenu()
     cin >> ch;
     return ch;
 }
+
 int showMedicalSystemMenu()
 {
     int ch;
@@ -180,6 +210,7 @@ int showMedicalSystemMenu()
     cin >> ch;
     return ch;
 }
+
 int showFacilityMenu()
 {
     int ch;
@@ -195,6 +226,7 @@ int showFacilityMenu()
     cin >> ch;
     return ch;
 }
+
 int showPopulationMenu()
 {
     int ch;
@@ -217,6 +249,7 @@ int showPopulationMenu()
 
 void simulateBasedOnMainChoice(int ch)
 {
+    // Create system instances FIRST
     CommercialSystem commercial;
     TransportSystem transport;
     EducationSystem education(20);
@@ -226,6 +259,57 @@ void simulateBasedOnMainChoice(int ch)
 
     int choice = ch;
 
+    // NEW: Ask for input method
+    system("cls");
+    int inputMethod = showDataInputMenu();
+    cin.ignore();
+
+    if (inputMethod == 0) {
+        return; // Go back to main menu
+    }
+    else if (inputMethod == 1) {
+        // Load from CSV - pass the system references
+        cout << "\n=== Loading data from CSV files ===\n";
+        
+        switch (choice)
+        {
+        case 1: // Commercial
+            cout << "CSV loading not implemented for Commercial System yet.\n";
+            break;
+            
+        case 2: // Education
+            loadSchoolsFromCSV(education);
+            break;
+            
+        case 3: // Medical
+            loadHospitalsFromCSV(medical);
+            loadPharmaciesFromCSV(medical);
+            break;
+            
+        case 4: // Population
+            loadCitizensFromCSV(population);
+            break;
+            
+        case 5: // Transport
+            loadBusStopsFromCSV(transport);
+            loadBusesFromCSV(transport);
+            break;
+            
+        case 6: // Facility
+            cout << "CSV loading not implemented for Facility System yet.\n";
+            break;
+            
+        default:
+            cout << "Invalid system choice.\n";
+            break;
+        }
+        
+        cout << "\nData loading completed!\n";
+        waitForEnter();
+    }
+    // If inputMethod == 2 (Manual), just proceed to the system menu
+
+    // Now run the appropriate system
     switch (choice)
     {
 	    case 1: // Commercial System
@@ -263,6 +347,119 @@ void simulateBasedOnMainChoice(int ch)
             cout << "Invalid choice. Exiting...\n";
             break;
         }
+    }
+}
+
+// NEW: Load hospitals from CSV
+void loadHospitalsFromCSV(MedicalSystem& medical)
+{
+    string path = readLine("Enter path to hospitals CSV file: ");
+    int count = 0;
+    Hospital* hospitals = csvHandler.traverseHospitalFile(path, count);
+    
+    if (hospitals) {
+        for (int i = 0; i < count; i++) {
+            medical.addHospital(hospitals[i]);
+        }
+        cout << "Loaded " << count << " hospitals.\n";
+        delete[] hospitals;
+    }
+    else {
+        cout << "Failed to load hospitals.\n";
+    }
+}
+
+// NEW: Load pharmacies from CSV
+void loadPharmaciesFromCSV(MedicalSystem& medical)
+{
+    string path = readLine("Enter path to pharmacies CSV file: ");
+    int count = 0;
+    Pharmacy* pharmacies = csvHandler.traversePharmacyFile(path, count);
+    
+    if (pharmacies) {
+        for (int i = 0; i < count; i++) {
+            medical.addPharmacy(pharmacies[i]);
+        }
+        cout << "Loaded " << count << " pharmacies.\n";
+        delete[] pharmacies;
+    }
+    else {
+        cout << "Failed to load pharmacies.\n";
+    }
+}
+
+// NEW: Load schools from CSV
+void loadSchoolsFromCSV(EducationSystem& education)
+{
+    string path = readLine("Enter path to schools CSV file: ");
+    int count = 0;
+    School* schools = csvHandler.traverseSchoolFile(path, count);
+    
+    if (schools) {
+        for (int i = 0; i < count; i++) {
+            education.addSchool(schools[i]);
+        }
+        cout << "Loaded " << count << " schools.\n";
+        delete[] schools;
+    }
+    else {
+        cout << "Failed to load schools.\n";
+    }
+}
+
+// NEW: Load bus stops from CSV
+void loadBusStopsFromCSV(TransportSystem& transport)
+{
+    string path = readLine("Enter path to bus stops CSV file: ");
+    int count = 0;
+    BusStop* stops = csvHandler.traverseBusStops(path, count);
+    
+    if (stops) {
+        cout << "Loaded " << count << " bus stops.\n";
+        // Note: You'll need to add these to routes manually
+        delete[] stops;
+    }
+    else {
+        cout << "Failed to load bus stops.\n";
+    }
+}
+
+// NEW: Load buses from CSV
+void loadBusesFromCSV(TransportSystem& transport)
+{
+    string path = readLine("Enter path to buses CSV file: ");
+    int count = 0;
+    Bus* buses = csvHandler.traverseBuses(path, count);
+    
+    if (buses) {
+        cout << "Loaded " << count << " buses.\n";
+        delete[] buses;
+    }
+    else {
+        cout << "Failed to load buses.\n";
+    }
+}
+
+// NEW: Load citizens from CSV
+void loadCitizensFromCSV(PopulationSystem& population)
+{
+    string path = readLine("Enter path to citizens CSV file: ");
+    int count = 0;
+    Citizen* citizens = csvHandler.traversePopulationFile(path, count);
+    
+    if (citizens) {
+        for (int i = 0; i < count; i++) {
+            // Extract sector, street, house from citizen data
+            string sector = ""; // You'll need getter methods in Citizen class
+            int street = 0;
+            int house = 0;
+            population.addCitizen(citizens[i], sector, street, house);
+        }
+        cout << "Loaded " << count << " citizens.\n";
+        delete[] citizens;
+    }
+    else {
+        cout << "Failed to load citizens.\n";
     }
 }
 
@@ -579,11 +776,11 @@ void runCommercialSystem(CommercialSystem& commercial)
             string name = readLine("Enter mall name: ");
             int mallID = readInt("Enter mall ID: ");
             cout << "\nEnter location for the mall (sector or location): ";
-            
+            cin >> sect;
             Mall mall(mallID, name);
+            Loco.addToCityGrid(name, sect, "Mall", mall.getLocation());
             commercial.addMall(mall);
             cout << "Mall '" << name << "'added !\n";
-            Loco.addToCityGrid(name, sect, "Mall", mall.getLocation());
             break;
         }
         case 2: // Adding Store to Mall
