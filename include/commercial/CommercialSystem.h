@@ -14,6 +14,7 @@ private:
     Mall** mallsTable;
     int mallCount;
     int mallTableSize;
+	Location* headMallLocation = nullptr;
 
 public:
 
@@ -55,6 +56,14 @@ public:
     bool addMall(Mall& m1)
     {
         Mall* toAdd = new Mall(m1);
+        if (mallCount >= mallTableSize)
+        {
+            resizeMallMap();
+		}
+
+		// add Location to location list for graph
+		addLocationToLinkedList(toAdd->getLocation());
+
         int index = Polynomial_Rolling_Hash_V1(toAdd->getMallName());
         index = index % mallTableSize;
         if (mallsTable[index])
@@ -83,6 +92,8 @@ public:
 
         while (current != nullptr) {
             if (current->getMallName() == mallName) {
+				// delete location from linked list
+				removeLocationFromLinkedList(current->getLocation());
                 if (previous == nullptr) {
                     mallsTable[index] = current->nextMall;
                 }
@@ -265,5 +276,50 @@ public:
         cout << "\nMall not found." << endl;
         return false;
     }
+
+    void addLocationToLinkedList(Location& mallLocation) {
+        // Ensure the location doesn't already exist in the list
+        Location* temp = headMallLocation;
+        while (temp) {
+            if (temp == &mallLocation) {
+                // Already in list, don't add again
+                return;
+            }
+            temp = temp->next;
+        }
+
+        // Add to beginning of list (more efficient than traversing to end)
+        mallLocation.next = headMallLocation;
+        headMallLocation = &mallLocation;
+    }
+
+    void removeLocationFromLinkedList(Location& mallLocation) {
+        if (!headMallLocation) return;
+        
+        // Check if it's the head
+        if (headMallLocation == &mallLocation) {
+            headMallLocation = headMallLocation->next;
+            mallLocation.next = nullptr; // Clean up the removed node
+            return;
+        }
+        
+        // Search for the location
+        Location* temp = headMallLocation;
+        while (temp->next) {
+            if (temp->next == &mallLocation) {
+                temp->next = mallLocation.next;
+                mallLocation.next = nullptr; // Clean up the removed node
+                return;
+            }
+            temp = temp->next;
+        }
+        
+        // Location not found - could log this for debugging
+        // cout << "Warning: Location not found in list\n";
+	}
+
+    Location* getMallLocationHead() {
+        return headMallLocation;
+	}
 };
 #endif // !COMMERCIALSYSTEM_H

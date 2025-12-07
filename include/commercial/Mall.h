@@ -136,23 +136,23 @@ public:
 		return store->addCategory(catName);
 	}
 
-	//Product* findProductInMall(string productName)
-	//{
-	//	for (int i = 0; i < storeTableSize; i++)
-	//	{
-	//		Store* store = storesTable[i];
-	//		while (store != nullptr)
-	//		{
-	//			Product* product = store->findProductByName(productName);
-	//			if (product != nullptr)
-	//			{
-	//				return product; // Product found
-	//			}
-	//			store = store->nextStore;
-	//		}
-	//	}
-	//	return nullptr; // Product not found in any store
-	//}
+	Product* findProductInMall(string productName)
+	{
+		for (int i = 0; i < storeTableSize; i++)
+		{
+			Store* store = storesTable[i];
+			while (store != nullptr)
+			{
+				Product* product = store->findProductByName(productName);
+				if (product != nullptr)
+				{
+					return product; // Product found
+				}
+				store = store->nextStore;
+			}
+		}
+		return nullptr; // Product not found in any store
+	}
 
 	bool removeProductFromStore(string storeName, string catName, string productName)
 	{

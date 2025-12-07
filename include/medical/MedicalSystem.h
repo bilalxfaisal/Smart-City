@@ -22,6 +22,88 @@ class MedicalSystem
 	int pharmaciesCount;
 	int pharmaciesTableSize;
 	Pharmacy** pharmaciesTable;
+
+	Location* hospitalLocationHead = nullptr;
+	Location* pharmacyLocationHead = nullptr;
+
+	// Helper: Add hospital location to linked list (with duplicate check)
+	void addHospitalLocationToList(Location& hospitalLocation) {
+		// Check if already in list
+		Location* temp = hospitalLocationHead;
+		while (temp) {
+			if (temp == &hospitalLocation) {
+				return; // Already exists
+			}
+			temp = temp->next;
+		}
+
+		// Add to head (O(1) operation)
+		hospitalLocation.next = hospitalLocationHead;
+		hospitalLocationHead = &hospitalLocation;
+	}
+
+	// Helper: Remove hospital location from linked list
+	void removeHospitalLocationFromList(Location& hospitalLocation) {
+		if (!hospitalLocationHead) return;
+
+		// Check if it's the head
+		if (hospitalLocationHead == &hospitalLocation) {
+			hospitalLocationHead = hospitalLocationHead->next;
+			hospitalLocation.next = nullptr;
+			return;
+		}
+
+		// Search for the location
+		Location* temp = hospitalLocationHead;
+		while (temp->next) {
+			if (temp->next == &hospitalLocation) {
+				temp->next = hospitalLocation.next;
+				hospitalLocation.next = nullptr;
+				return;
+			}
+			temp = temp->next;
+		}
+	}
+
+	// Helper: Add pharmacy location to linked list (with duplicate check)
+	void addPharmacyLocationToList(Location& pharmacyLocation) {
+		// Check if already in list
+		Location* temp = pharmacyLocationHead;
+		while (temp) {
+			if (temp == &pharmacyLocation) {
+				return; // Already exists
+			}
+			temp = temp->next;
+		}
+
+		// Add to head (O(1) operation)
+		pharmacyLocation.next = pharmacyLocationHead;
+		pharmacyLocationHead = &pharmacyLocation;
+	}
+
+	// Helper: Remove pharmacy location from linked list
+	void removePharmacyLocationFromList(Location& pharmacyLocation) {
+		if (!pharmacyLocationHead) return;
+
+		// Check if it's the head
+		if (pharmacyLocationHead == &pharmacyLocation) {
+			pharmacyLocationHead = pharmacyLocationHead->next;
+			pharmacyLocation.next = nullptr;
+			return;
+		}
+
+		// Search for the location
+		Location* temp = pharmacyLocationHead;
+		while (temp->next) {
+			if (temp->next == &pharmacyLocation) {
+				temp->next = pharmacyLocation.next;
+				pharmacyLocation.next = nullptr;
+				return;
+			}
+			temp = temp->next;
+		}
+	}
+
 public:
 	MedicalSystem() {
 		hospitalCount = 0;
@@ -55,6 +137,10 @@ public:
 	void searchPharmacyByName(const string& pharmacyName);
 	void searchPatientByID(const string& patientId);
 	void resizeHospitalMap();
+
+	// Getters for location heads (for visualization)
+	Location* getHospitalLocationHead() const { return hospitalLocationHead; }
+	Location* getPharmacyLocationHead() const { return pharmacyLocationHead; }
 };
 
 void MedicalSystem::addHospital(Hospital& h1)
@@ -63,6 +149,10 @@ void MedicalSystem::addHospital(Hospital& h1)
 		resizeHospitalMap();
 	}
 	Hospital* toAdd = new Hospital(h1);
+
+	// add location node
+	addHospitalLocationToList(toAdd->getHospitalLocation());
+
 	int index = Polynomial_Rolling_Hash_V1(toAdd->getName());
 	index = index % hospitalTableSize;
 	if (hospitalsTable[index]) {
@@ -84,6 +174,10 @@ void MedicalSystem::removeHospital(const string& hospitalName) {
 	Hospital* previous = nullptr;
 	while (current != nullptr) {
 		if (current->getName() == hospitalName) {
+
+			// remove hospital Location
+			removeHospitalLocationFromList(current->getHospitalLocation());
+
 			if (previous == nullptr) {
 				hospitalsTable[index] = current->nextHospital;
 			}
@@ -101,6 +195,10 @@ void MedicalSystem::removeHospital(const string& hospitalName) {
 
 void MedicalSystem::addPharmacy(Pharmacy& p1) {
 	Pharmacy* toAdd = new Pharmacy(p1);
+
+	// add location node
+	addPharmacyLocationToList(toAdd->getPharmacyLocation());
+
 	int index = Polynomial_Rolling_Hash_V1(toAdd->getName());
 	index = index % pharmaciesTableSize;
 	if (pharmaciesTable[index]) {
@@ -122,6 +220,9 @@ void MedicalSystem::removePharmacy(const string& pharmacyName) {
 	Pharmacy* previous = nullptr;
 	while (current != nullptr) {
 		if (current->getName() == pharmacyName) {
+			// remove location node
+			removePharmacyLocationFromList(current->getPharmacyLocation());
+
 			if (previous == nullptr) {
 				pharmaciesTable[index] = current->nextPharmacy;
 			}

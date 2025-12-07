@@ -23,6 +23,8 @@ class EducationSystem
 	School** schoolHashTable; // hash table for quick access to schools by ID
 	School** heapArr; // max heap for schools based on rating, array structure
 
+	Location* schoolLocationHead = nullptr;
+
 protected:
 	void resizeHeap() {
 		School** newArr = new School * [heapCapacity * 2];
@@ -69,11 +71,14 @@ public:
 	// THIS METHOD SHALL AND SHALL ONLY GET A SCHOOL OBJECT WHICH HAS NO KIDS
 	// ADDING KIDS MUST BE DONE SEPARATELY
 	void addSchool(School& newSchool)
- {
+    {
 		if (currSchools >= totalSchools) {
 			resizeSchoolHashTable();
 		}
 		School* toAdd = new School(newSchool);
+
+		// add location to location linked list for graph
+		addSchoolLocation(toAdd->getSchoolLocation());
 
 		// getting index using the hashFunction
 		int index = Polynomial_Rolling_Hash_V1(newSchool.schoolID);
@@ -314,6 +319,45 @@ public:
 		}
 		cout << "Could not remove faculty member with name " << facName << " from school " << schoolId << endl;
 		return false;
+	}
+
+	void addSchoolLocation(Location& loc)
+	{
+		// Check for duplicates
+		Location* temp = schoolLocationHead;
+		while (temp) {
+			if (temp == &loc) return; // Already exists
+			temp = temp->next;
+		}
+		
+		loc.next = schoolLocationHead;
+		schoolLocationHead = &loc;
+	}
+
+	void removeSchoolLocation(Location& loc)
+	{
+		if (!schoolLocationHead) return;
+		
+		if (schoolLocationHead == &loc) {
+			schoolLocationHead = schoolLocationHead->next;
+			loc.next = nullptr;
+			return;
+		}
+		
+		Location* temp = schoolLocationHead;
+		while (temp->next) {
+			if (temp->next == &loc) {
+				temp->next = loc.next;
+				loc.next = nullptr;
+				return;
+			}
+			temp = temp->next;
+		}
+	}
+
+	Location* getSchoolLocationsHead()
+	{
+		return schoolLocationHead;
 	}
 };
 
