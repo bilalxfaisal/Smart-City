@@ -23,6 +23,101 @@ private:
     int coolerCount;
     int coolerTableSize;
 
+    // Location linked lists for visualization
+    Location* mosqueLocationHead = nullptr;
+    Location* parkLocationHead = nullptr;
+    Location* coolerLocationHead = nullptr;
+
+    // Helper: Add mosque location to linked list (with duplicate check)
+    void addMosqueLocationToList(Location& mosqueLocation) {
+        Location* temp = mosqueLocationHead;
+        while (temp) {
+            if (temp == &mosqueLocation) return;
+            temp = temp->next;
+        }
+        mosqueLocation.next = mosqueLocationHead;
+        mosqueLocationHead = &mosqueLocation;
+    }
+
+    // Helper: Remove mosque location from linked list
+    void removeMosqueLocationFromList(Location& mosqueLocation) {
+        if (!mosqueLocationHead) return;
+        if (mosqueLocationHead == &mosqueLocation) {
+            mosqueLocationHead = mosqueLocationHead->next;
+            mosqueLocation.next = nullptr;
+            return;
+        }
+        Location* temp = mosqueLocationHead;
+        while (temp->next) {
+            if (temp->next == &mosqueLocation) {
+                temp->next = mosqueLocation.next;
+                mosqueLocation.next = nullptr;
+                return;
+            }
+            temp = temp->next;
+        }
+    }
+
+    // Helper: Add park location to linked list (with duplicate check)
+    void addParkLocationToList(Location& parkLocation) {
+        Location* temp = parkLocationHead;
+        while (temp) {
+            if (temp == &parkLocation) return;
+            temp = temp->next;
+        }
+        parkLocation.next = parkLocationHead;
+        parkLocationHead = &parkLocation;
+    }
+
+    // Helper: Remove park location from linked list
+    void removeParkLocationFromList(Location& parkLocation) {
+        if (!parkLocationHead) return;
+        if (parkLocationHead == &parkLocation) {
+            parkLocationHead = parkLocationHead->next;
+            parkLocation.next = nullptr;
+            return;
+        }
+        Location* temp = parkLocationHead;
+        while (temp->next) {
+            if (temp->next == &parkLocation) {
+                temp->next = parkLocation.next;
+                parkLocation.next = nullptr;
+                return;
+            }
+            temp = temp->next;
+        }
+    }
+
+    // Helper: Add cooler location to linked list (with duplicate check)
+    void addCoolerLocationToList(Location& coolerLocation) {
+        Location* temp = coolerLocationHead;
+        while (temp) {
+            if (temp == &coolerLocation) return;
+            temp = temp->next;
+        }
+        coolerLocation.next = coolerLocationHead;
+        coolerLocationHead = &coolerLocation;
+    }
+
+    // Helper: Remove cooler location from linked list
+    void removeCoolerLocationFromList(Location& coolerLocation) {
+        if (!coolerLocationHead) return;
+        if (coolerLocationHead == &coolerLocation) {
+            coolerLocationHead = coolerLocationHead->next;
+            coolerLocation.next = nullptr;
+            return;
+        }
+        Location* temp = coolerLocationHead;
+        while (temp->next) {
+            if (temp->next == &coolerLocation) {
+                temp->next = coolerLocation.next;
+                coolerLocation.next = nullptr;
+                return;
+            }
+            temp = temp->next;
+        }
+    }
+
 public:
     FacilitySystem() {
         mosqueCount = 0;
@@ -168,6 +263,7 @@ public:
     // Add functions
     bool addMosque(Mosque& m) {
         Mosque* toAdd = new Mosque(m);
+        addMosqueLocationToList(toAdd->getLocation());
         int index = Polynomial_Rolling_Hash_V1(toAdd->getName()) % mosqueTableSize;
 
         if (mosquesTable[index]) {
@@ -183,6 +279,7 @@ public:
 
     bool addPark(Park& p) {
         Park* toAdd = new Park(p);
+        addParkLocationToList(toAdd->getLocation());
         int index = Polynomial_Rolling_Hash_V1(toAdd->getName()) % parkTableSize;
 
         if (parksTable[index]) {
@@ -198,6 +295,7 @@ public:
 
     bool addWaterCooler(WaterCooler& w) {
         WaterCooler* toAdd = new WaterCooler(w);
+        addCoolerLocationToList(toAdd->getLocation());
         int index = Polynomial_Rolling_Hash_V1(toAdd->getName()) % coolerTableSize;
 
         if (coolersTable[index]) {
@@ -222,6 +320,7 @@ public:
 
         while (current != nullptr) {
             if (current->getName() == name) {
+                removeMosqueLocationFromList(current->getLocation());
                 if (previous == nullptr) {
                     mosquesTable[index] = current->next;
                 }
@@ -248,6 +347,7 @@ public:
 
         while (current != nullptr) {
             if (current->getName() == name) {
+                removeParkLocationFromList(current->getLocation());
                 if (previous == nullptr) {
                     parksTable[index] = current->next;
                 }
@@ -274,6 +374,7 @@ public:
 
         while (current != nullptr) {
             if (current->getName() == name) {
+                removeCoolerLocationFromList(current->getLocation());
                 if (previous == nullptr) {
                     coolersTable[index] = current->next;
                 }
@@ -377,6 +478,11 @@ public:
     int getMosqueCount() const { return mosqueCount; }
     int getParkCount() const { return parkCount; }
     int getCoolerCount() const { return coolerCount; }
+
+    // Getters for location heads (for visualization)
+    Location* getMosqueLocationHead() const { return mosqueLocationHead; }
+    Location* getParkLocationHead() const { return parkLocationHead; }
+    Location* getCoolerLocationHead() const { return coolerLocationHead; }
 };
 
 #endif // !FACILITYSYSTEM_H
