@@ -2,6 +2,7 @@
 #include "../utils/Nodes.h"
 #include "StoresHashTable.h"
 #include "Store.h"
+
 #ifndef MALL_H
 #define MALL_H
 
@@ -136,14 +137,14 @@ public:
 		return store->addCategory(catName);
 	}
 
-	Product* findProductInMall(string productName)
+	Product* findProductInMall(string productName, string cat)
 	{
 		for (int i = 0; i < storeTableSize; i++)
 		{
 			Store* store = storesTable[i];
 			while (store != nullptr)
 			{
-				Product* product = store->findProductByName(productName);
+				Product* product = store->findProductByName(productName, cat);
 				if (product != nullptr)
 				{
 					return product; // Product found
