@@ -25,11 +25,45 @@ class TransportSystem
 	int routesTableSize;
 	BusRoute** routeHashTable; // hashtable of routes string based
 	
-
+	Location* headBusStopsList = nullptr; // linked list of all bus stops in the system
 	
 	int currCompanies;
 	int companyTableSize;
 	TransportCompany** companyHashTable; // hashtable of transport companies string based by name
+
+	// Helper: Add bus stop location to linked list (with duplicate check)
+	void addBusStopLocationToList(Location& busStopLocation) {
+		Location* temp = headBusStopsList;
+		while (temp) {
+			if (temp == &busStopLocation) return;
+			temp = temp->next;
+		}
+		busStopLocation.next = headBusStopsList;
+		headBusStopsList = &busStopLocation;
+		busStopsCount++;
+	}
+
+	// Helper: Remove bus stop location from linked list
+	void removeBusStopLocationFromList(Location& busStopLocation) {
+		if (!headBusStopsList) return;
+		if (headBusStopsList == &busStopLocation) {
+			headBusStopsList = headBusStopsList->next;
+			busStopLocation.next = nullptr;
+			busStopsCount--;
+			return;
+		}
+		Location* temp = headBusStopsList;
+		while (temp->next) {
+			if (temp->next == &busStopLocation) {
+				temp->next = busStopLocation.next;
+				busStopLocation.next = nullptr;
+				busStopsCount--;
+				return;
+			}
+			temp = temp->next;
+		}
+	}
+
 public:
 	TransportSystem(int compSize = 20, int routeSize = 20)
 	{
@@ -48,6 +82,7 @@ public:
 		currCompanies = 0;
 		currRoutes = 0;
 		busStopsCount = 0;
+		headBusStopsList = nullptr;
 	}
 	void resizeTransportCompTable() {
 		int newSize = companyTableSize * 2;
@@ -128,6 +163,13 @@ public:
 			toAdd->nextRoute = routeHashTable[index];
 			routeHashTable[index] = toAdd;
 			// done
+		}
+
+		// Add all bus stops from this route to the location linked list
+		BusStop* currentStop = toAdd->getStartingStop();
+		while (currentStop) {
+			addBusStopLocationToList(currentStop->getLocation());
+			currentStop = currentStop->nextStop;
 		}
 	}
 
@@ -258,6 +300,12 @@ public:
 		}
 		return -1; // not found
 	}
+
+	// Getter for bus stop location head (for visualization)
+	Location* getBusStopLocationHead() const { return headBusStopsList; }
+
+	// Get total bus stops count
+	int getBusStopsCount() const { return busStopsCount; }
 };
 
 #endif

@@ -52,7 +52,6 @@ public:
         cout << "House " << houseNum << " : \n";
         family.printFamily();
     }
-
 };
 
 #endif

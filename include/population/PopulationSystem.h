@@ -21,6 +21,8 @@ private:
     int maxPopulationPerSector = 0;
     int minPopulationPerSector = 0;
 
+	Location* houseHead = nullptr; // Head of the house location list
+
     int hashStr(const string& s, int mod) const
     {
         long long h = Polynomial_Rolling_Hash_V1(s);
@@ -88,6 +90,43 @@ private:
         return nullptr;
     }
 
+
+    void addHouseLocationToList(const Location& loc) {
+        // Check for duplicate (same x,y)
+        for (Location* temp = houseHead; temp; temp = temp->next) {
+            if (temp->x == loc.x && temp->y == loc.y) {
+                return; // already exists
+            }
+        }
+        // Create new node on heap
+        Location* newNode = new Location(loc);
+        newNode->next = houseHead;
+        houseHead = newNode;
+    }
+
+    // Remove house location from visualization list
+    void removeHouseLocationFromList(const Location& loc) {
+        if (!houseHead) return;
+
+        if (houseHead->x == loc.x && houseHead->y == loc.y) {
+            Location* toDelete = houseHead;
+            houseHead = houseHead->next;
+            delete toDelete;
+            return;
+        }
+
+        Location* curr = houseHead;
+        while (curr->next) {
+            if (curr->next->x == loc.x && curr->next->y == loc.y) {
+                Location* toDelete = curr->next;
+                curr->next = curr->next->next;
+                delete toDelete;
+                return;
+            }
+            curr = curr->next;
+        }
+    }
+
 public:
     PopulationSystem()
     {
@@ -125,6 +164,10 @@ public:
     {
         Sector* s = findSector(sectorName);
         if (!s) return;
+
+        // Add house location to visualization list
+        addHouseLocationToList(h.getHouseLocation());
+
         s->addHouseToStreet(streetID, h);
     }
 
@@ -331,6 +374,9 @@ public:
 
     int getMinPopulation() const { return minPopulationPerSector; }
     int getMaxPopulation() const { return maxPopulationPerSector; }
+    Location* getHouseLocationHead() const {
+        return houseHead;
+    }
 
 };
 
