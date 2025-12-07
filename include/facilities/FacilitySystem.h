@@ -28,93 +28,99 @@ private:
     Location* parkLocationHead = nullptr;
     Location* coolerLocationHead = nullptr;
 
-    // Helper: Add mosque location to linked list (with duplicate check)
-    void addMosqueLocationToList(Location& mosqueLocation) {
-        Location* temp = mosqueLocationHead;
-        while (temp) {
-            if (temp == &mosqueLocation) return;
-            temp = temp->next;
+    // === ADD FUNCTIONS (allocate new nodes) ===
+    void addMosqueLocationToList(const Location& loc) {
+        // Prevent duplicates by coordinates
+        for (Location* temp = mosqueLocationHead; temp; temp = temp->next) {
+            if (temp->x == loc.x && temp->y == loc.y) return;
         }
-        mosqueLocation.next = mosqueLocationHead;
-        mosqueLocationHead = &mosqueLocation;
+        Location* newNode = new Location(loc);      // deep copy on heap
+        newNode->next = mosqueLocationHead;
+        mosqueLocationHead = newNode;
     }
 
-    // Helper: Remove mosque location from linked list
-    void removeMosqueLocationFromList(Location& mosqueLocation) {
+    void addParkLocationToList(const Location& loc) {
+        for (Location* temp = parkLocationHead; temp; temp = temp->next) {
+            if (temp->x == loc.x && temp->y == loc.y) return;
+        }
+        Location* newNode = new Location(loc);
+        newNode->next = parkLocationHead;
+        parkLocationHead = newNode;
+    }
+
+    void addCoolerLocationToList(const Location& loc) {
+        for (Location* temp = coolerLocationHead; temp; temp = temp->next) {
+            if (temp->x == loc.x && temp->y == loc.y) return;
+        }
+        Location* newNode = new Location(loc);
+        newNode->next = coolerLocationHead;
+        coolerLocationHead = newNode;
+    }
+
+    // === REMOVE FUNCTIONS (delete our own node, not the original) ===
+    void removeMosqueLocationFromList(const Location& loc) {
         if (!mosqueLocationHead) return;
-        if (mosqueLocationHead == &mosqueLocation) {
+
+        if (mosqueLocationHead->x == loc.x && mosqueLocationHead->y == loc.y) {
+            Location* toDelete = mosqueLocationHead;
             mosqueLocationHead = mosqueLocationHead->next;
-            mosqueLocation.next = nullptr;
+            delete toDelete;
             return;
         }
-        Location* temp = mosqueLocationHead;
-        while (temp->next) {
-            if (temp->next == &mosqueLocation) {
-                temp->next = mosqueLocation.next;
-                mosqueLocation.next = nullptr;
+
+        Location* curr = mosqueLocationHead;
+        while (curr->next) {
+            if (curr->next->x == loc.x && curr->next->y == loc.y) {
+                Location* toDelete = curr->next;
+                curr->next = curr->next->next;
+                delete toDelete;
                 return;
             }
-            temp = temp->next;
+            curr = curr->next;
         }
     }
 
-    // Helper: Add park location to linked list (with duplicate check)
-    void addParkLocationToList(Location& parkLocation) {
-        Location* temp = parkLocationHead;
-        while (temp) {
-            if (temp == &parkLocation) return;
-            temp = temp->next;
-        }
-        parkLocation.next = parkLocationHead;
-        parkLocationHead = &parkLocation;
-    }
-
-    // Helper: Remove park location from linked list
-    void removeParkLocationFromList(Location& parkLocation) {
+    void removeParkLocationFromList(const Location& loc) {
         if (!parkLocationHead) return;
-        if (parkLocationHead == &parkLocation) {
+
+        if (parkLocationHead->x == loc.x && parkLocationHead->y == loc.y) {
+            Location* toDelete = parkLocationHead;
             parkLocationHead = parkLocationHead->next;
-            parkLocation.next = nullptr;
+            delete toDelete;
             return;
         }
-        Location* temp = parkLocationHead;
-        while (temp->next) {
-            if (temp->next == &parkLocation) {
-                temp->next = parkLocation.next;
-                parkLocation.next = nullptr;
+
+        Location* curr = parkLocationHead;
+        while (curr->next) {
+            if (curr->next->x == loc.x && curr->next->y == loc.y) {
+                Location* toDelete = curr->next;
+                curr->next = curr->next->next;
+                delete toDelete;
                 return;
             }
-            temp = temp->next;
+            curr = curr->next;
         }
     }
 
-    // Helper: Add cooler location to linked list (with duplicate check)
-    void addCoolerLocationToList(Location& coolerLocation) {
-        Location* temp = coolerLocationHead;
-        while (temp) {
-            if (temp == &coolerLocation) return;
-            temp = temp->next;
-        }
-        coolerLocation.next = coolerLocationHead;
-        coolerLocationHead = &coolerLocation;
-    }
-
-    // Helper: Remove cooler location from linked list
-    void removeCoolerLocationFromList(Location& coolerLocation) {
+    void removeCoolerLocationFromList(const Location& loc) {
         if (!coolerLocationHead) return;
-        if (coolerLocationHead == &coolerLocation) {
+
+        if (coolerLocationHead->x == loc.x && coolerLocationHead->y == loc.y) {
+            Location* toDelete = coolerLocationHead;
             coolerLocationHead = coolerLocationHead->next;
-            coolerLocation.next = nullptr;
+            delete toDelete;
             return;
         }
-        Location* temp = coolerLocationHead;
-        while (temp->next) {
-            if (temp->next == &coolerLocation) {
-                temp->next = coolerLocation.next;
-                coolerLocation.next = nullptr;
+
+        Location* curr = coolerLocationHead;
+        while (curr->next) {
+            if (curr->next->x == loc.x && curr->next->y == loc.y) {
+                Location* toDelete = curr->next;
+                curr->next = curr->next->next;
+                delete toDelete;
                 return;
             }
-            temp = temp->next;
+            curr = curr->next;
         }
     }
 
@@ -478,11 +484,6 @@ public:
     int getMosqueCount() const { return mosqueCount; }
     int getParkCount() const { return parkCount; }
     int getCoolerCount() const { return coolerCount; }
-
-    // Getters for location heads (for visualization)
-    Location* getMosqueLocationHead() const { return mosqueLocationHead; }
-    Location* getParkLocationHead() const { return parkLocationHead; }
-    Location* getCoolerLocationHead() const { return coolerLocationHead; }
 };
 
 #endif // !FACILITYSYSTEM_H
