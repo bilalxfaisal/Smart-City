@@ -112,6 +112,44 @@ private:
         return loc->x >= left && loc->x <= right && loc->y >= top && loc->y <= bottom;
     }
 
+    // NEW: Helper function to get color based on location type
+    sf::Color getColorForType(const std::string& type) const {
+        if (type == "Intersection") {
+            return sf::Color::Green;
+        }
+        else if (type == "School") {
+            return sf::Color::Blue;  // Blue for schools
+        }
+        else if (type == "Hospital") {
+            return sf::Color::Red;  // Red for hospitals
+        }
+        else if (type == "Pharmacy") {
+            return sf::Color::Magenta;  // Magenta/Pink for pharmacies
+        }
+        else if (type == "Mall") {
+            return sf::Color::Cyan;  // Cyan for malls
+        }
+        else if (type == "Bus Stop") {
+            return sf::Color::Yellow;  // Yellow for bus stops
+        }
+        else if (type == "House") {
+            return sf::Color(139, 69, 19);  // Brown for houses
+        }
+        else if (type == "Mosque") {
+            return sf::Color(0, 255, 127);  // Spring green for mosques
+        }
+        else if (type == "Park") {
+            return sf::Color(34, 139, 34);  // Forest green for parks
+        }
+        else if (type == "WaterCooler") {
+            return sf::Color(135, 206, 250);  // Light sky blue for water coolers
+        }
+        else {
+            // Default orange for unknown types
+            return sf::Color(255, 165, 0);
+        }
+    }
+
 public:
     Visualizer() {
         location = nullptr;
@@ -177,14 +215,8 @@ public:
     void displayNode(sf::RenderWindow& window, Location* loc) const {
         sf::CircleShape circle(4);
 
-        // Different colors for different types
-        if (loc->type == "Intersection") {
-            circle.setFillColor(sf::Color::Green);
-        }
-        else {
-            const sf::Color orange(255, 165, 0);
-            circle.setFillColor(orange);
-        }
+        // UPDATED: Use the helper function to get color based on type
+        circle.setFillColor(getColorForType(loc->type));
 
         circle.setOrigin(4, 4);
         circle.setPosition(static_cast<float>(loc->x), static_cast<float>(loc->y));
@@ -375,12 +407,8 @@ public:
                     sf::CircleShape circle(2); // Size relative to world coordinates
                     circle.setOrigin(2, 2);
 
-                    if (curr->type == "Intersection") {
-                        circle.setFillColor(sf::Color::Green);
-                    }
-                    else {
-                        circle.setFillColor(sf::Color(255, 165, 0));
-                    }
+                    // UPDATED: Use the helper function for color
+                    circle.setFillColor(getColorForType(curr->type));
 
                     circle.setPosition(curr->x, curr->y);
                     window.draw(circle);

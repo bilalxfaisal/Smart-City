@@ -81,7 +81,7 @@ public:
 class locationManager
 {
 private:
-    static const int SECTOR_SIZE = 70;
+    static const int SECTOR_SIZE = 90;
     Location* cityLocationHead = nullptr;
 
 
@@ -240,8 +240,10 @@ public:
             {
                 int rIdx = row - 'D';
                 int cIdx = col - 5;
-                int currX = cIdx * SECTOR_SIZE;
-                int currY = rIdx * SECTOR_SIZE;
+                
+                // FIXED: Add the START offsets here to match visualizer coordinate system
+                int currX = 80 + cIdx * SECTOR_SIZE;
+                int currY = 50 + rIdx * SECTOR_SIZE;
 
                 Location* current = getOrCreateNode(currX, currY, "Intersection");
 
@@ -384,8 +386,10 @@ public:
         {
             int offsetX = 1 + (rand() % (SECTOR_SIZE - 2));
             int offsetY = 1 + (rand() % (SECTOR_SIZE - 2));
-            finalX = SectorStartX + offsetX + 80;
-            finalY = SectorStartY + offsetY + 50;
+            
+            // FIXED: Add START offsets here
+            finalX = 80 + SectorStartX + offsetX;
+            finalY = 50 + SectorStartY + offsetY;
 
             if (!isOccupied(finalX, finalY))
             {
@@ -400,14 +404,24 @@ public:
             return;
         }
 
-        Location* newLocation = new Location(finalX + 80, finalY + 50, name, type);
+        Location* newLocation = new Location(finalX, finalY, name, type);
         toSet = *newLocation;
         newLocation->next = cityLocationHead;
         cityLocationHead = newLocation;
 
-        // Connect to the 4 corners
-        int cornersX[4] = { SectorStartX, SectorStartX + SECTOR_SIZE, SectorStartX, SectorStartX + SECTOR_SIZE };
-        int cornersY[4] = { SectorStartY, SectorStartY, SectorStartY + SECTOR_SIZE, SectorStartY + SECTOR_SIZE };
+        // FIXED: Connect to the 4 corners with proper offsets
+        int cornersX[4] = { 
+            80 + SectorStartX, 
+            80 + SectorStartX + SECTOR_SIZE, 
+            80 + SectorStartX, 
+            80 + SectorStartX + SECTOR_SIZE 
+        };
+        int cornersY[4] = { 
+            50 + SectorStartY, 
+            50 + SectorStartY, 
+            50 + SectorStartY + SECTOR_SIZE, 
+            50 + SectorStartY + SECTOR_SIZE 
+        };
 
         for (int i = 0; i < 4; i++)
         {
