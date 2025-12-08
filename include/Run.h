@@ -127,7 +127,8 @@ private:
         cout << "5. Simulate Bus Movement\n";
         cout << "6. Display Transport Company Status\n";
         cout << "7. Show Routes\n";
-        cout << "8. Visualize Transport System\n";
+        cout << "8. Display All Companies\n";
+        cout << "9. Visualize Transport System\n";
         cout << "0. Exit to main menu\n";
         cout << "Enter choice: ";
         cin >> ch;
@@ -146,6 +147,7 @@ private:
         cout << "6. Display Products in Store from Category\n";
         cout << "7. Search Product in Store\n";
         cout << "8. Buy Product\n";
+        cout << "9. Display All Malls\n";
         cout << "0. Exit to main menu\n";
         cout << "Enter choice: ";
         cin >> ch;
@@ -168,7 +170,8 @@ private:
         cout << "10. Display Students in Class\n";
         cout << "11. Display All Students in School\n";
         cout << "12. Find Student\n";
-        cout << "13. Visualize Education System\n";
+        cout << "13. Display All Schools\n"; 
+        cout << "14. Visualize Education System\n";
         cout << "0. Exit to main menu\n";
         cout << "Enter choice: ";
         cin >> ch;
@@ -195,7 +198,9 @@ private:
         cout << "14. Search Hospital By Name\n";
         cout << "15. Search Pharmacy By Name\n";
         cout << "16. Search Patient By Name\n";
-        cout << "17. Visualize Medical System\n";
+        cout << "17. Display All Hospitals\n";  // ADD THIS
+        cout << "18. Display All Pharmacies\n";
+        cout << "19. Visualize Medical System\n";
         cout << "0. Exit to main menu\n";
         cout << "Enter choice: ";
         cin >> ch;
@@ -233,7 +238,8 @@ private:
         cout << "8. Population Density Report\n";
         cout << "9. Display Members of a House\n";
         cout << "10. Display Houses in a Street\n";
-        cout << "11. Visualize Population System\n";
+        cout << "11. Display All Sectors\n";
+        cout << "12. Visualize Population System\n";
         cout << "0. Exit to main menu\n";
         cout << "Enter choice: ";
         cin >> ch;
@@ -834,6 +840,12 @@ private:
                     cout << "[ERROR] Failed to purchase product.\n";
                 break;
             }
+            case 9: // Display All Malls - ADD THIS ENTIRE CASE
+            {
+                cout << "\n=== Display All Malls ===\n";
+                commercial.display();
+                break;
+            }
             default:
                 cout << "Invalid choice. Try again.\n";
                 break;
@@ -855,7 +867,7 @@ private:
                 break;
             }
 
-            if (choice == 13) {
+            if (choice == 14) {
                 if (!csvDataLoaded) {
                     cout << "\nPlease load CSV data first before visualizing.\n";
                     waitForEnter();
@@ -994,6 +1006,12 @@ private:
                 education.displayStudentsInSchool(schoolID);
                 break;
             }
+            case 13: // Display All Schools - ADD THIS CASE
+            {
+                cout << "\n=== Display All Schools ===\n";
+                education.display();
+                break;
+            }
             default:
                 break;
             }
@@ -1014,7 +1032,7 @@ private:
                 break;
             }
 
-            if (choice == 17) {
+            if (choice == 19) {  // CHANGE from 17
                 if (!csvDataLoaded) {
                     cout << "\nPlease load CSV data first before visualizing.\n";
                     waitForEnter();
@@ -1186,6 +1204,18 @@ private:
                 medical.searchPatientByID(id);
                 break;
             }
+            case 17: // Display All Hospitals - ADD THIS CASE
+            {
+                cout << "\n=== Display All Hospitals ===\n";
+                medical.display();
+                break;
+            }
+            case 18: // Display All Pharmacies - ADD THIS CASE
+            {
+                cout << "\n=== Display All Pharmacies ===\n";
+                medical.display();
+                break;
+            }
             default:
                 cout << "\nInvalid choice! Try again.\n";
                 break;
@@ -1327,7 +1357,7 @@ private:
                 break;
             }
 
-            if (choice == 11) {
+            if (choice == 12) {
                 if (!csvDataLoaded) {
                     cout << "\nPlease load CSV data first before visualizing.\n";
                     waitForEnter();
@@ -1427,6 +1457,12 @@ private:
                 string sectorName = readLine("Enter sector name: ");
                 int streetNo = readInt("Enter street number: ");
                 population.displayHousesInStreet(sectorName, streetNo);
+                break;
+            }
+            case 11: // Display All Sectors - ADD THIS CASE
+            {
+                cout << "\n=== Display All Sectors ===\n";
+                population.display();
                 break;
             }
             default:

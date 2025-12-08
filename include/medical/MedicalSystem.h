@@ -25,20 +25,6 @@ class MedicalSystem
 
 	Location* hospitalLocationHead = nullptr;
 	Location* pharmacyLocationHead = nullptr;
-
-	void display() const
-	{
-		cout << "=== Medical System ===" << endl;
-		cout << "Total Hospitals: " << hospitalCount << endl;
-
-		for (int i = 0; i < hospitalCount; i++) {
-			if (hospitalsTable[i] != nullptr) {
-				hospitalsTable[i]->display();  // Display each hospital
-				cout << endl;
-			}
-		}
-		cout << "==========================" << endl;
-	}
 	// Helper: Add hospital location to linked list (with duplicate check)
 	void addHospitalLocationToList(Location& hospitalLocation) {
 		// Check if already in list
@@ -131,6 +117,20 @@ public:
 		for (int i = 0; i < pharmaciesTableSize; i++) {
 			pharmaciesTable[i] = nullptr;
 		}
+	}
+
+	void display() const
+	{
+		cout << "=== Medical System ===" << endl;
+		cout << "Total Hospitals: " << hospitalCount << endl;
+
+		for (int i = 0; i < hospitalCount; i++) {
+			if (hospitalsTable[i] != nullptr) {
+				hospitalsTable[i]->display();  // Display each hospital
+				cout << endl;
+			}
+		}
+		cout << "==========================" << endl;
 	}
 
 	void addHospital(Hospital& h1);
