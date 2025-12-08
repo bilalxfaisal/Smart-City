@@ -26,14 +26,7 @@ private:
         cur->nextSibling = child;
     }
 
-    void printRec(Citizen* node, int depth) const
-    {
-        if (!node) return;
-        for (int i = 0; i < depth; i++) cout << "  ";
-        cout << node->getName() << " (" << node->getAge() << ")\n";
-        printRec(node->firstChild, depth + 1);
-        printRec(node->nextSibling, depth);
-    }
+
 
     bool searchRec(Citizen* node, const string& cnic) const
     {
@@ -45,7 +38,10 @@ private:
 
 public:
     Family() {}
-
+    Citizen* getCitizenHead()  const
+    {
+        return familyHead;
+    }
     void insertMember(Citizen& c)
     {
         Citizen* n = &c;
@@ -72,9 +68,32 @@ public:
     {
         return searchRec(familyHead, cnic);
     }
-    void printFamily() const
-    {
-        printRec(familyHead, 3);
+    void display() const {
+        cout << "Family Members:" << endl;
+        if (familyHead) {
+            printRec(familyHead, 0);
+        }
+        else {
+            cout << "No family members." << endl;
+        }
+    }
+
+    void printRec(Citizen* node, int depth) const {
+        if (!node) return;
+
+        // Print current citizen
+        for (int i = 0; i < depth; i++) cout << "  "; // Indent based on depth
+        node->displayCitizenInfo();
+
+        // Print children (if any)
+        if (node->firstChild) {
+            printRec(node->firstChild, depth + 1);
+        }
+
+        // Print siblings
+        if (node->nextSibling) {
+            printRec(node->nextSibling, depth);
+        }
     }
     int RecCalculation(Citizen* node)
     {

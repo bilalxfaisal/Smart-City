@@ -86,6 +86,35 @@ public:
 		}
 		srand(time(0));
 	}
+	void display() const {
+		cout << "Hospital ID: " << id
+			<< ", Name: " << name << endl;
+
+		for (int i = 0; i < docTableCap; i++) {
+			if (doctorsArray[i] != nullptr)
+			{
+				Doctor* temp = doctorsArray[i];
+				while (temp)
+				{
+					temp->display();
+					temp = temp->nextDoctor;
+				}
+			}
+		}
+
+		cout << "Patients:" << endl;
+		for (int i = 0; i < PatTableCap; i++) {
+			if (patientsArray[i] != nullptr) 
+			{
+				Patient* temp = patientsArray[i];
+				while (temp) 
+				{
+					temp->display();
+					temp = temp->nextPatient;
+				}
+			}
+		}
+	}
 	void setHospitalDetails(string nam = "", string Id = "", string sec = "", int emBedNum = 0, string specs = "")
 	{
 		name = nam;

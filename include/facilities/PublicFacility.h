@@ -25,7 +25,11 @@ struct PublicFacility {
 		}
 		return *this;
 	}
-
+	// Display function
+	virtual void display() const {
+		cout << "Public Facility: " << name << " at ";
+		location.display(); // Assuming location has a display method
+	}
 	// Destructor
 	virtual ~PublicFacility() {}
 
@@ -45,7 +49,8 @@ struct PublicFacility {
 };
 
 // Derived structs
-struct Mosque : public PublicFacility {
+struct Mosque : public PublicFacility
+{
 	// Constructors
 	Mosque* next = nullptr; // For chaining in hash table
 	Mosque() : PublicFacility() {}
@@ -56,15 +61,24 @@ struct Mosque : public PublicFacility {
 		cout << "Mosque: " << name << " at ";
 		location.display();
 	}
+	void display() const override {
+		cout << "Mosque: " << name << " at ";
+		location.display();
+	}
 };
 
-struct Park : public PublicFacility {
+struct Park : public PublicFacility 
+{
 	// Constructors
 	Park* next = nullptr; // For chaining in hash table
 	Park() : PublicFacility() {}
 	Park(const Location& loc, const string& n) : PublicFacility(loc, n) {}
 
 	// Override display
+	void display() const override {
+		cout << "Park: " << name << " at ";
+		location.display();
+	}
 	void display() const override {
 		cout << "Park: " << name << " at ";
 		location.display();
@@ -79,6 +93,11 @@ struct WaterCooler : public PublicFacility {
 
 	// Override display
 	void display() const override {
+		cout << "Water Cooler: " << name << " at ";
+		location.display();
+	}
+	void display() const override 
+	{
 		cout << "Water Cooler: " << name << " at ";
 		location.display();
 	}

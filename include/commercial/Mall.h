@@ -186,7 +186,20 @@ public:
 			}
 		}
 	}
+	void displayMall() const {
+		cout << "Mall ID: " << mallID
+			<< ", Name: " << mallName
+			<< ", Location: (" << mallLocation.x << ", " << mallLocation.y << ")"
+			<< ", Store Count: " << storeCount << endl;
 
+		for (int i = 0; i < storeTableSize; i++) {
+			Store* store = storesTable[i];
+			while (store != nullptr) {
+				store->displayStore();
+				store = store->nextStore; // Move to next store
+			}
+		}
+	}
 	bool buyProductFromStore(string storeName, string catName, string productName)
 	{
 		Store* store = findStoreByName(storeName);
@@ -243,6 +256,7 @@ public:
 			cout << "\nNo store of name (" << storeName << ") exists.";
 		}
 	}
+
 
 
 };

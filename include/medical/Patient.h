@@ -55,6 +55,12 @@ public:
 	{
 		return Name;
 	}
+	void display() const
+	{
+		cout << "Patient ID: " << patientId
+			<< ", Name: " << Name
+			<< ", Weight: " << weight << "kg" << endl;
+	}
 	
 
 };

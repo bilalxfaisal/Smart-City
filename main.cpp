@@ -6,7 +6,8 @@
 #include <ctime>
 #include "include/Run.h"
 
-int main() {
+int main()
+{
     runTheCitySystem();
     return 0;
 }

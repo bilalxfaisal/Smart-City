@@ -233,7 +233,30 @@ public:
 				category = category->nextCategory;
 			}
 		}
+
 	}
+
+	void displayStore()
+	{
+		cout << "Store ID: " << storeID
+			<< ", Name: " << storeName
+			<< ", Mall ID: " << mallID
+			<< ", Categories: " << CatTableCount << endl;
+
+		for (int i = 0; i < CatTableSize; i++) {
+			Category* category = CategoriesTable[i];
+			while (category != nullptr) {
+				cout << "  Category: " << category->getCategoryName() << endl;
+				Product* product = category->findProductByName();
+				while (product != nullptr) {
+					product->displayProduct();
+					product = product->next; // Assuming linked list structure
+				}
+				category = category->nextCategory; // Move to next category
+			}
+		}
+	}
+
 
 };
 

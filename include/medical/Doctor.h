@@ -23,6 +23,14 @@ public:
 		appointmentCap = 10;
 
 	}
+	void display() const
+	{
+		cout << "Doctor ID: " << id
+			<< ", Name: " << name
+			<< ", Specialization: " << specialization
+			<< ", Appointments Count: " << appointmentCount << endl;
+		// Add logic to display appointments if needed
+	}
 	void addAppointment(int indexToBeAdded)
 	{
 		if (appointmentCount >= appointmentCap)

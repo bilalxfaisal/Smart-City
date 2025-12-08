@@ -48,6 +48,12 @@ public:
     {
         cout << "\nID: " << productID << " | Name: " << productName << " | Price: " << price;
     }
+    void displayProduct() const
+    {
+        cout << "Product ID: " << productID << ", Name: " << productName << ", Price: " << price
+            << ", Quantity: " << quantity
+            << (soldOut ? " (Sold Out)" : "") << endl;
+    }
     void addOneMore() { quantity++; if (quantity > 0) soldOut = false; }
 	void addQuantity(int qty) { quantity += qty; if (quantity > 0) soldOut = false; }
     int getQuantity() { return quantity; }
@@ -263,6 +269,7 @@ public:
             }
         }
     }
+
 
 
 };

@@ -321,5 +321,20 @@ public:
     Location* getMallLocationHead() {
         return headMallLocation;
 	}
+    void display() const {
+        cout << "=== Commercial System ===" << endl;
+        cout << "Total Malls: " << mallCount << endl;
+
+        for (int i = 0; i < mallTableSize; i++) {
+            if (mallsTable[i] != nullptr) {
+                Mall* current = mallsTable[i];
+                while (current != nullptr) {
+                    current->displayMall();
+                    current = current->nextMall; // Move to next mall
+                }
+            }
+        }
+        cout << "==========================" << endl;
+    }
 };
 #endif // !COMMERCIALSYSTEM_H

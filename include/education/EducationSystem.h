@@ -117,7 +117,21 @@ public:
 		}
 
 	}
-	
+	void display() const {
+		cout << "=== Education System ===" << endl;
+		cout << "Total Schools: " << currSchools << endl;
+
+		for (int i = 0; i < totalSchools; i++) {
+			if (schoolHashTable[i] != nullptr) {
+				School* current = schoolHashTable[i];
+				while (current != nullptr) {
+					current->display();  // Display school details
+					current = current->nextSibling;  // Move to next school
+				}
+			}
+		}
+		cout << "==========================" << endl;
+	}
 	// Heapify up : maintains max - heap property after insertion
 	// CONSIDERING NO DELETION HAPPENS
 	void heapifyUp(int index) {

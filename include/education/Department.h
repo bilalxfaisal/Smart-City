@@ -144,6 +144,16 @@ public:
             return false;
         }
     }
+
+    void display() const {
+        cout << "Department ID: " << deptID << ", Name: " << deptName << endl;
+        Class* temp = Bacha;
+        while (temp) {
+            cout << "  Class ID: " << temp->classID << ", Name: " << temp->className << endl;
+            temp->display();  // Display students in the class
+            temp = temp->nextSibling;  // Move to next class
+        }
+    }
 };
 
 #endif // !DEPARTMENT_H

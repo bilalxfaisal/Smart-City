@@ -39,7 +39,12 @@ public:
         medsFormulaBasedTable = new Medicine * [medTableSize_Form]();
         medsNameBasedTable = new Medicine * [medTableSize_Name]();
     }
-
+    void display() const {
+        cout << "Pharmacy ID: " << id
+            << ", Name: " << name
+            << ", Location: ";
+        pharmacyLocation.display(); 
+    }
     ~Pharmacy() {
         delete[] medsFormulaBasedTable;
         delete[] medsNameBasedTable;

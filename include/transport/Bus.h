@@ -85,9 +85,12 @@ public:
 		currPassengers -= toRemove;
 		cout << toRemove << " passengers alighted from the bus " << busID << ". Current passengers: " << currPassengers << endl;
 	}
-	void Display() 
-	{
-		cout << busID << " Route: " << busRouteID << endl;
+	void display() const {
+		cout << "Bus ID: " << busID
+			<< ", Route ID: " << busRouteID
+			<< ", Current Passengers: " << currPassengers
+			<< ", Capacity: " << capacity
+			<< ", Is Moving: " << (isMoving ? "Yes" : "No") << endl;
 	}
 	void simulateMovement(BusRoute* route) 
 	{

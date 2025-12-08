@@ -44,6 +44,19 @@ public:
 	{
 		return schoolLocation;
 	}
+	void display() const {
+		cout << "School ID: " << schoolID
+			<< ", Name: " << schoolName
+			<< ", Sector: " << sector
+			<< ", Rating: " << rating
+			<< ", Campus No: " << campusNo << endl;
+
+		Department* temp = Bacha;
+		while (temp) {
+			temp->display();  // Display department details
+			temp = temp->nextSibling;  // Move to next department
+		}
+	}
 	// Default Constructor
 	School()
 	{

@@ -18,6 +18,13 @@ class Medicine
 			price = p;
 
 		}
+		void display() const
+		{
+			cout << "Medicine Name: " << name
+				<< ", Formulation: " << formulation
+				<< ", Quantity: " << quantity
+				<< ", Price: " << price << endl;
+		}
 		void updateStock(int num)
 		{
 			if (num > 0) 

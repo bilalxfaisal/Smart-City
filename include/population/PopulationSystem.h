@@ -20,7 +20,18 @@ private:
     int citizenCount = 0;
     int maxPopulationPerSector = 0;
     int minPopulationPerSector = 0;
+    void display() const {
+        cout << "=== Population System ===" << endl;
+        cout << "Total Sectors: " << sectorCount << endl;
 
+        for (int i = 0; i < sectorCount; i++) {
+            if (sectorMap[i] != nullptr) {
+                sectorMap[i]->display(); // Display each sector
+                cout << endl;
+            }
+        }
+        cout << "==========================" << endl;
+    }
 	Location* houseHead = nullptr; // Head of the house location list
 
     int hashStr(const string& s, int mod) const
