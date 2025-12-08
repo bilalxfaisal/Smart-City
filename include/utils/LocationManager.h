@@ -169,6 +169,10 @@ private:
         return matchArray[randIdx];
     }
 
+    float calculateEuclideanDistance(Location* a, Location* b) {
+        return sqrt(pow(b->x - a->x, 2) + pow(b->y - a->y, 2));
+    }
+
 public:
     locationManager()
     {
@@ -247,7 +251,53 @@ public:
         cout << "Road Network Generated (Diagonals: " << (allowDiagonals ? "ON" : "OFF") << ")\n";
     }
 
-    PathNode* findShortestPath(Location* start, Location* end) {
+    void addTemporaryEdge(Location* start, Location* end) {
+        if (!start || !end || start == end) return;
+
+        float dist = calculateEuclideanDistance(start, end);
+        addEdgeRaw(start, end, dist);
+        addEdgeRaw(end, start, dist);
+    }
+
+    void removeTemporaryEdge(Location* start, Location* end) {
+        if (!start || !end) return;
+
+        Edge* prev = nullptr;
+        Edge* curr = start->adjList;
+        while (curr) {
+            if (curr->destination == end) {
+                if (prev) {
+                    prev->nextEdge = curr->nextEdge;
+                }
+                else {
+                    start->adjList = curr->nextEdge;
+                }
+                delete curr;
+                break;
+            }
+            prev = curr;
+            curr = curr->nextEdge;
+        }
+
+        prev = nullptr;
+        curr = end->adjList;
+        while (curr) {
+            if (curr->destination == start) {
+                if (prev) {
+                    prev->nextEdge = curr->nextEdge;
+                }
+                else {
+                    end->adjList = curr->nextEdge;
+                }
+                delete curr;
+                break;
+            }
+            prev = curr;
+            curr = curr->nextEdge;
+        }
+    }
+
+    PathNode* findShortestPath(Location* start, Location* end, bool emergencyMode = false) {
         if (!start || !end) return nullptr;
         resetGraph();
 
@@ -267,6 +317,11 @@ public:
             {
                 Location* v = e->destination;
                 float weight = e->weight;
+
+                if (emergencyMode) {
+                    weight = weight / 0.6f;
+                }
+
                 if (!v->visited && u->minDist + weight < v->minDist)
                 {
                     v->minDist = u->minDist + weight;
@@ -278,7 +333,6 @@ public:
         }
 
         if (end->minDist == std::numeric_limits<float>::max()) {
-            cout << "No path found!\n";
             return nullptr;
         }
 
@@ -394,7 +448,7 @@ public:
             addEdge(newLocation, cornerNode);
         }
 
-        cout << "Added " << name << " at (" << finalX << "," << finalY << ") in " << resolvedSector << " (Input: " << sectorOrTag << ")\n";
+        cout << "Added " << name << " at (" << finalX << "," << finalY << ") in " << resolvedSector << "\n";
     }
 
     Location* getHead()
@@ -546,3 +600,4 @@ public:
 };
 
 #endif
+
