@@ -8,8 +8,8 @@
 
 int main()
 {
-    runTheCitySystem();
-    return 0;
+	CityManager cm;
+	cm.run();
 }
 
 
