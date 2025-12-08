@@ -46,6 +46,144 @@ public:
 		heapCapacity = nSchools;
 		heapArr = new School * [heapCapacity]; // array of pointers
 	}
+	// Add to EducationSystem class public section:
+
+	void connectSchoolsSubgraph() {
+		cout << "\n[INFO] Connecting schools subgraph...\n";
+
+		if (!schoolLocationHead) {
+			cout << "[WARNING] No schools to connect.\n";
+			return;
+		}
+
+		int connectedCount = 0;
+		Location* current = schoolLocationHead;
+
+		while (current) {
+			// Connect each school to nearby schools (within 200 units)
+			Location* other = schoolLocationHead;
+			while (other) {
+				if (current != other) {
+					float dist = sqrt(
+						pow(other->x - current->x, 2) +
+						pow(other->y - current->y, 2)
+					);
+
+					// Connect if within reasonable distance
+					if (dist < 200.0f && dist > 0) {
+						// Check if edge already exists
+						bool edgeExists = false;
+						Edge* e = current->adjList;
+						while (e) {
+							if (e->destination == other) {
+								edgeExists = true;
+								break;
+							}
+							e = e->nextEdge;
+						}
+
+						if (!edgeExists) {
+							// Add bidirectional edge
+							Edge* newEdge1 = new Edge(dist, other);
+							newEdge1->nextEdge = current->adjList;
+							current->adjList = newEdge1;
+
+							Edge* newEdge2 = new Edge(dist, current);
+							newEdge2->nextEdge = other->adjList;
+							other->adjList = newEdge2;
+
+							connectedCount++;
+						}
+					}
+				}
+				other = other->next;
+			}
+			current = current->next;
+		}
+
+		cout << "[SUCCESS] Connected " << connectedCount << " school pairs.\n";
+	}
+
+	// Find shortest path between two schools
+	PathNode* findShortestPathBetweenSchools(string schoolID1, string schoolID2) {
+		// Find schools by ID
+		School* school1 = nullptr;
+		School* school2 = nullptr;
+
+		int idx1 = Polynomial_Rolling_Hash_V1(schoolID1) % totalSchools;
+		int idx2 = Polynomial_Rolling_Hash_V1(schoolID2) % totalSchools;
+
+		School* temp = schoolHashTable[idx1];
+		while (temp && temp->schoolID != schoolID1) {
+			temp = temp->nextSibling;
+		}
+		school1 = temp;
+
+		temp = schoolHashTable[idx2];
+		while (temp && temp->schoolID != schoolID2) {
+			temp = temp->nextSibling;
+		}
+		school2 = temp;
+
+		if (!school1 || !school2) {
+			cout << "[ERROR] One or both schools not found.\n";
+			return nullptr;
+		}
+
+		// Use Dijkstra on school locations
+		Location* start = &(school1->getSchoolLocation());
+		Location* end = &(school2->getSchoolLocation());
+
+		// Reset graph
+		Location* loc = schoolLocationHead;
+		while (loc) {
+			loc->minDist = std::numeric_limits<float>::max();
+			loc->visited = false;
+			loc->parent = nullptr;
+			loc = loc->next;
+		}
+
+		// Dijkstra's algorithm
+		MinHeap pq(1000);
+		start->minDist = 0;
+		pq.push(start, 0);
+
+		while (!pq.isEmpty()) {
+			Location* u = pq.extractMin();
+			if (u == end) break;
+			if (u->visited) continue;
+			u->visited = true;
+
+			Edge* e = u->adjList;
+			while (e) {
+				Location* v = e->destination;
+				float weight = e->weight;
+				if (!v->visited && u->minDist + weight < v->minDist) {
+					v->minDist = u->minDist + weight;
+					v->parent = u;
+					pq.push(v, v->minDist);
+				}
+				e = e->nextEdge;
+			}
+		}
+
+		if (end->minDist == std::numeric_limits<float>::max()) {
+			cout << "[ERROR] No path found between schools.\n";
+			return nullptr;
+		}
+
+		// Build path
+		PathNode* pathHead = nullptr;
+		Location* crawler = end;
+		while (crawler) {
+			PathNode* newNode = new PathNode(crawler);
+			newNode->next = pathHead;
+			pathHead = newNode;
+			crawler = crawler->parent;
+		}
+
+		return pathHead;
+	}
 
 	//RESIZING TEM
 	void resizeSchoolHashTable() {

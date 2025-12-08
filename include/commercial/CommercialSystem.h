@@ -26,6 +26,136 @@ public:
 			mallsTable[i] = nullptr;
 		}
 	}
+    // Add to CommercialSystem class public section:
+
+    void connectMallsSubgraph() {
+        cout << "\n[INFO] Connecting malls subgraph...\n";
+
+        if (!headMallLocation) {
+            cout << "[WARNING] No malls to connect.\n";
+            return;
+        }
+
+        int connectedCount = 0;
+        Location* m1 = headMallLocation;
+
+        while (m1) {
+            Location* m2 = headMallLocation;
+            while (m2) {
+                if (m1 != m2) {
+                    float dist = sqrt(
+                        pow(m2->x - m1->x, 2) +
+                        pow(m2->y - m1->y, 2)
+                    );
+
+                    // Connect malls within 300 units
+                    if (dist < 300.0f && dist > 0) {
+                        bool edgeExists = false;
+                        Edge* e = m1->adjList;
+                        while (e) {
+                            if (e->destination == m2) {
+                                edgeExists = true;
+                                break;
+                            }
+                            e = e->nextEdge;
+                        }
+
+                        if (!edgeExists) {
+                            Edge* newEdge1 = new Edge(dist, m2);
+                            newEdge1->nextEdge = m1->adjList;
+                            m1->adjList = newEdge1;
+
+                            Edge* newEdge2 = new Edge(dist, m1);
+                            newEdge2->nextEdge = m2->adjList;
+                            m2->adjList = newEdge2;
+
+                            connectedCount++;
+                        }
+                    }
+                }
+                m2 = m2->next;
+            }
+            m1 = m1->next;
+        }
+
+        cout << "[SUCCESS] Connected " << connectedCount << " mall pairs.\n";
+    }
+
+    // Find shortest path between two malls
+    PathNode* findShortestPathBetweenMalls(string mall1Name, string mall2Name) {
+        // Find malls
+        int idx1 = Polynomial_Rolling_Hash_V1(mall1Name) % mallTableSize;
+        int idx2 = Polynomial_Rolling_Hash_V1(mall2Name) % mallTableSize;
+
+        Mall* m1 = mallsTable[idx1];
+        while (m1 && m1->getMallName() != mall1Name) {
+            m1 = m1->nextMall;
+        }
+
+        Mall* m2 = mallsTable[idx2];
+        while (m2 && m2->getMallName() != mall2Name) {
+            m2 = m2->nextMall;
+        }
+
+        if (!m1 || !m2) {
+            cout << "[ERROR] One or both malls not found.\n";
+            return nullptr;
+        }
+
+        Location* start = &(m1->getLocation());
+        Location* end = &(m2->getLocation());
+
+        // Reset graph
+        Location* loc = headMallLocation;
+        while (loc) {
+            loc->minDist = std::numeric_limits<float>::max();
+            loc->visited = false;
+            loc->parent = nullptr;
+            loc = loc->next;
+        }
+
+        // Dijkstra
+        MinHeap pq(1000);
+        start->minDist = 0;
+        pq.push(start, 0);
+
+        while (!pq.isEmpty()) {
+            Location* u = pq.extractMin();
+            if (u == end) break;
+            if (u->visited) continue;
+            u->visited = true;
+
+            Edge* e = u->adjList;
+            while (e) {
+                Location* v = e->destination;
+                float weight = e->weight;
+                if (!v->visited && u->minDist + weight < v->minDist) {
+                    v->minDist = u->minDist + weight;
+                    v->parent = u;
+                    pq.push(v, v->minDist);
+                }
+                e = e->nextEdge;
+            }
+        }
+
+        if (end->minDist == std::numeric_limits<float>::max()) {
+            cout << "[ERROR] No path found between malls.\n";
+            return nullptr;
+        }
+
+        // Build path
+        PathNode* pathHead = nullptr;
+        Location* crawler = end;
+        while (crawler) {
+            PathNode* newNode = new PathNode(crawler);
+            newNode->next = pathHead;
+            pathHead = newNode;
+            crawler = crawler->parent;
+        }
+
+        return pathHead;
+    }
+
 	void resizeMallMap() 
 	{
 		int newSize = mallTableSize * 2;

@@ -279,6 +279,149 @@ public:
 			}
 		}
 	}
+	// Add to TransportSystem class public section:
+
+	void connectBusStopsSubgraph() {
+		cout << "\n[INFO] Connecting bus stops subgraph...\n";
+
+		if (!headBusStopsList) {
+			cout << "[WARNING] No bus stops to connect.\n";
+			return;
+		}
+
+		int connectedCount = 0;
+		Location* bs1 = headBusStopsList;
+
+		while (bs1) {
+			Location* bs2 = headBusStopsList;
+			while (bs2) {
+				if (bs1 != bs2) {
+					float dist = sqrt(
+						pow(bs2->x - bs1->x, 2) +
+						pow(bs2->y - bs1->y, 2)
+					);
+
+					// Connect bus stops within 150 units
+					if (dist < 150.0f && dist > 0) {
+						bool edgeExists = false;
+						Edge* e = bs1->adjList;
+						while (e) {
+							if (e->destination == bs2) {
+								edgeExists = true;
+								break;
+							}
+							e = e->nextEdge;
+						}
+
+						if (!edgeExists) {
+							Edge* newEdge1 = new Edge(dist, bs2);
+							newEdge1->nextEdge = bs1->adjList;
+							bs1->adjList = newEdge1;
+
+							Edge* newEdge2 = new Edge(dist, bs1);
+							newEdge2->nextEdge = bs2->adjList;
+							bs2->adjList = newEdge2;
+
+							connectedCount++;
+						}
+					}
+				}
+				bs2 = bs2->next;
+			}
+			bs1 = bs1->next;
+		}
+
+		cout << "[SUCCESS] Connected " << connectedCount << " bus stop pairs.\n";
+	}
+
+	// Find shortest path along a bus route
+	PathNode* findShortestPathOnRoute(string routeName, string startStopName, string endStopName) {
+		// Find route
+		int idx = Polynomial_Rolling_Hash_V1(routeName) % routesTableSize;
+		BusRoute* route = routeHashTable[idx];
+
+		while (route && route->getRouteName() != routeName) {
+			route = route->nextRoute;
+		}
+
+		if (!route) {
+			cout << "[ERROR] Route not found.\n";
+			return nullptr;
+		}
+
+		// Find start and end stops in route
+		BusStop* startStop = nullptr;
+		BusStop* endStop = nullptr;
+
+		BusStop* temp = route->getHead();
+		while (temp) {
+			if (temp->getStopName() == startStopName) {
+				startStop = temp;
+			}
+			if (temp->getStopName() == endStopName) {
+				endStop = temp;
+			}
+			temp = temp->nextStop;
+		}
+
+		if (!startStop || !endStop) {
+			cout << "[ERROR] One or both stops not found on route.\n";
+			return nullptr;
+		}
+
+		Location* start = &(startStop->getLocation());
+		Location* end = &(endStop->getLocation());
+
+		// Reset graph
+		Location* loc = headBusStopsList;
+		while (loc) {
+			loc->minDist = std::numeric_limits<float>::max();
+			loc->visited = false;
+			loc->parent = nullptr;
+			loc = loc->next;
+		}
+
+		// Dijkstra
+		MinHeap pq(1000);
+		start->minDist = 0;
+		pq.push(start, 0);
+
+		while (!pq.isEmpty()) {
+			Location* u = pq.extractMin();
+			if (u == end) break;
+			if (u->visited) continue;
+			u->visited = true;
+
+			Edge* e = u->adjList;
+			while (e) {
+				Location* v = e->destination;
+				float weight = e->weight;
+				if (!v->visited && u->minDist + weight < v->minDist) {
+					v->minDist = u->minDist + weight;
+					v->parent = u;
+					pq.push(v, v->minDist);
+				}
+				e = e->nextEdge;
+			}
+		}
+
+		if (end->minDist == std::numeric_limits<float>::max()) {
+			cout << "[ERROR] No path found between stops.\n";
+			return nullptr;
+		}
+
+		// Build path
+		PathNode* pathHead = nullptr;
+		Location* crawler = end;
+		while (crawler) {
+			PathNode* newNode = new PathNode(crawler);
+			newNode->next = pathHead;
+			pathHead = newNode;
+			crawler = crawler->parent;
+		}
+
+		return pathHead;
+	}
 
 	BusRoute** getRouteHashTable() {
 		return routeHashTable;

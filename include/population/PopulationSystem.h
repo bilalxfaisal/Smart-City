@@ -234,6 +234,138 @@ public:
         cout << "Adults: " << Adults << endl;
         cout << "Seniors: " << Old << endl;
     }
+    // Add to PopulationSystem class public section:
+
+    void connectHousesSubgraph() {
+        cout << "\n[INFO] Connecting houses subgraph...\n";
+
+        if (!houseHead) {
+            cout << "[WARNING] No houses to connect.\n";
+            return;
+        }
+
+        int connectedCount = 0;
+        Location* h1 = houseHead;
+
+        while (h1) {
+            Location* h2 = houseHead;
+            while (h2) {
+                if (h1 != h2) {
+                    float dist = sqrt(
+                        pow(h2->x - h1->x, 2) +
+                        pow(h2->y - h1->y, 2)
+                    );
+
+                    // Connect houses within 100 units (neighbors)
+                    if (dist < 100.0f && dist > 0) {
+                        bool edgeExists = false;
+                        Edge* e = h1->adjList;
+                        while (e) {
+                            if (e->destination == h2) {
+                                edgeExists = true;
+                                break;
+                            }
+                            e = e->nextEdge;
+                        }
+
+                        if (!edgeExists) {
+                            Edge* newEdge1 = new Edge(dist, h2);
+                            newEdge1->nextEdge = h1->adjList;
+                            h1->adjList = newEdge1;
+
+                            Edge* newEdge2 = new Edge(dist, h1);
+                            newEdge2->nextEdge = h2->adjList;
+                            h2->adjList = newEdge2;
+
+                            connectedCount++;
+                        }
+                    }
+                }
+                h2 = h2->next;
+            }
+            h1 = h1->next;
+        }
+
+        cout << "[SUCCESS] Connected " << connectedCount << " house pairs.\n";
+    }
+
+    // Find shortest path between two houses in same sector
+    PathNode* findPathBetweenHouses(string sectorName, int street1, int house1, int street2, int house2) {
+        // Find sector
+        int idx = hashStr(sectorName, sectorCap);
+        Sector* sec = sectorMap[idx];
+
+        while (sec && sec->getName() != sectorName) {
+            sec = sec->nextSector;
+        }
+
+        if (!sec) {
+            cout << "[ERROR] Sector not found.\n";
+            return nullptr;
+        }
+
+        // Find houses
+        House* h1 = sec->findHouse(street1, house1);
+        House* h2 = sec->findHouse(street2, house2);
+
+        if (!h1 || !h2) {
+            cout << "[ERROR] One or both houses not found.\n";
+            return nullptr;
+        }
+
+        Location* start = &(h1->getHouseLocation());
+        Location* end = &(h2->getHouseLocation());
+
+        // Reset graph
+        Location* loc = houseHead;
+        while (loc) {
+            loc->minDist = std::numeric_limits<float>::max();
+            loc->visited = false;
+            loc->parent = nullptr;
+            loc = loc->next;
+        }
+
+        // Dijkstra
+        MinHeap pq(1000);
+        start->minDist = 0;
+        pq.push(start, 0);
+
+        while (!pq.isEmpty()) {
+            Location* u = pq.extractMin();
+            if (u == end) break;
+            if (u->visited) continue;
+            u->visited = true;
+
+            Edge* e = u->adjList;
+            while (e) {
+                Location* v = e->destination;
+                float weight = e->weight;
+                if (!v->visited && u->minDist + weight < v->minDist) {
+                    v->minDist = u->minDist + weight;
+                    v->parent = u;
+                    pq.push(v, v->minDist);
+                }
+                e = e->nextEdge;
+            }
+        }
+
+        if (end->minDist == std::numeric_limits<float>::max()) {
+            cout << "[ERROR] No path found between houses.\n";
+            return nullptr;
+        }
+
+        // Build path
+        PathNode* pathHead = nullptr;
+        Location* crawler = end;
+        while (crawler) {
+            PathNode* newNode = new PathNode(crawler);
+            newNode->next = pathHead;
+            pathHead = newNode;
+            crawler = crawler->parent;
+        }
+
+        return pathHead;
+    }
 
     void reportOccupationSummary()
     {

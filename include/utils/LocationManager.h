@@ -442,6 +442,70 @@ public:
     {
         return cityLocationHead;
     }
+    // Add to locationManager class public section:
+
+// Find nearest intersection to a given location
+    Location* findNearestIntersection(int x, int y) {
+        Location* nearest = nullptr;
+        float minDist = std::numeric_limits<float>::max();
+
+        Location* temp = cityLocationHead;
+        while (temp) {
+            if (temp->type == "Intersection") {
+                float dist = sqrt(pow(temp->x - x, 2) + pow(temp->y - y, 2));
+                if (dist < minDist) {
+                    minDist = dist;
+                    nearest = temp;
+                }
+            }
+            temp = temp->next;
+        }
+        return nearest;
+    }
+
+    // Connect a location to the nearest intersections (for subgraph integration)
+    void connectLocationToGrid(Location* loc) {
+        if (!loc) return;
+
+        // Find 4 nearest intersections
+        Location* intersections[4] = { nullptr, nullptr, nullptr, nullptr };
+        float distances[4] = {
+            std::numeric_limits<float>::max(),
+            std::numeric_limits<float>::max(),
+            std::numeric_limits<float>::max(),
+            std::numeric_limits<float>::max()
+        };
+
+        Location* temp = cityLocationHead;
+        while (temp) {
+            if (temp->type == "Intersection") {
+                float dist = sqrt(pow(temp->x - loc->x, 2) + pow(temp->y - loc->y, 2));
+
+                // Insert into top 4
+                for (int i = 0; i < 4; i++) {
+                    if (dist < distances[i]) {
+                        // Shift down
+                        for (int j = 3; j > i; j--) {
+                            distances[j] = distances[j - 1];
+                            intersections[j] = intersections[j - 1];
+                        }
+                        distances[i] = dist;
+                        intersections[i] = temp;
+                        break;
+                    }
+                }
+            }
+            temp = temp->next;
+        }
+
+        // Connect to the nearest intersections
+        for (int i = 0; i < 4; i++) {
+            if (intersections[i]) {
+                addEdge(loc, intersections[i]);
+            }
+        }
+    }
+
 };
 
 #endif // !LOCATION_MANAGER

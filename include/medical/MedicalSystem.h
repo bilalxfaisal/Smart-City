@@ -133,6 +133,218 @@ public:
 		}
 	}
 
+	// Add to MedicalSystem class public section:
+
+	void connectMedicalSubgraph() {
+		cout << "\n[INFO] Connecting medical facilities subgraph...\n";
+
+		int connectedCount = 0;
+
+		// Connect hospitals to nearby hospitals
+		Location* h1 = hospitalLocationHead;
+		while (h1) {
+			Location* h2 = hospitalLocationHead;
+			while (h2) {
+				if (h1 != h2) {
+					float dist = sqrt(
+						pow(h2->x - h1->x, 2) +
+						pow(h2->y - h1->y, 2)
+					);
+
+					if (dist < 250.0f && dist > 0) {
+						bool edgeExists = false;
+						Edge* e = h1->adjList;
+						while (e) {
+							if (e->destination == h2) {
+								edgeExists = true;
+								break;
+							}
+							e = e->nextEdge;
+						}
+
+						if (!edgeExists) {
+							Edge* newEdge1 = new Edge(dist, h2);
+							newEdge1->nextEdge = h1->adjList;
+							h1->adjList = newEdge1;
+
+							Edge* newEdge2 = new Edge(dist, h1);
+							newEdge2->nextEdge = h2->adjList;
+							h2->adjList = newEdge2;
+
+							connectedCount++;
+						}
+					}
+				}
+				h2 = h2->next;
+			}
+			h1 = h1->next;
+		}
+
+		// Connect pharmacies to nearby pharmacies
+		Location* p1 = pharmacyLocationHead;
+		while (p1) {
+			Location* p2 = pharmacyLocationHead;
+			while (p2) {
+				if (p1 != p2) {
+					float dist = sqrt(
+						pow(p2->x - p1->x, 2) +
+						pow(p2->y - p1->y, 2)
+					);
+
+					if (dist < 150.0f && dist > 0) {
+						bool edgeExists = false;
+						Edge* e = p1->adjList;
+						while (e) {
+							if (e->destination == p2) {
+								edgeExists = true;
+								break;
+							}
+							e = e->nextEdge;
+						}
+
+						if (!edgeExists) {
+							Edge* newEdge1 = new Edge(dist, p2);
+							newEdge1->nextEdge = p1->adjList;
+							p1->adjList = newEdge1;
+
+							Edge* newEdge2 = new Edge(dist, p1);
+							newEdge2->nextEdge = p2->adjList;
+							p2->adjList = newEdge2;
+
+							connectedCount++;
+						}
+					}
+				}
+				p2 = p2->next;
+			}
+			p1 = p1->next;
+		}
+
+		// Connect hospitals to nearby pharmacies
+		h1 = hospitalLocationHead;
+		while (h1) {
+			Location* p = pharmacyLocationHead;
+			while (p) {
+				float dist = sqrt(
+					pow(p->x - h1->x, 2) +
+					pow(p->y - h1->y, 2)
+				);
+
+				if (dist < 180.0f && dist > 0) {
+					bool edgeExists = false;
+					Edge* e = h1->adjList;
+					while (e) {
+						if (e->destination == p) {
+							edgeExists = true;
+							break;
+						}
+						e = e->nextEdge;
+					}
+
+					if (!edgeExists) {
+						Edge* newEdge1 = new Edge(dist, p);
+						newEdge1->nextEdge = h1->adjList;
+						h1->adjList = newEdge1;
+
+						Edge* newEdge2 = new Edge(dist, h1);
+						newEdge2->nextEdge = p->adjList;
+						p->adjList = newEdge2;
+
+						connectedCount++;
+					}
+				}
+				p = p->next;
+			}
+			h1 = h1->next;
+		}
+
+		cout << "[SUCCESS] Connected " << connectedCount << " medical facility pairs.\n";
+	}
+
+	// Find shortest path between hospital and pharmacy
+	PathNode* findPathToNearestPharmacy(string hospitalName) {
+		// Find hospital
+		int idx = Polynomial_Rolling_Hash_V1(hospitalName) % hospitalTableSize;
+		Hospital* hosp = hospitalsTable[idx];
+
+		while (hosp && hosp->getHospitalName() != hospitalName) {
+			hosp = hosp->nextHospital;
+		}
+
+		if (!hosp) {
+			cout << "[ERROR] Hospital not found.\n";
+			return nullptr;
+		}
+
+		Location* start = &(hosp->getHospitalLocation());
+
+		// Find nearest pharmacy using Dijkstra
+		Location* allLocs = hospitalLocationHead;
+		while (allLocs) {
+			allLocs->minDist = std::numeric_limits<float>::max();
+			allLocs->visited = false;
+			allLocs->parent = nullptr;
+			allLocs = allLocs->next;
+		}
+
+		allLocs = pharmacyLocationHead;
+		while (allLocs) {
+			allLocs->minDist = std::numeric_limits<float>::max();
+			allLocs->visited = false;
+			allLocs->parent = nullptr;
+			allLocs = allLocs->next;
+		}
+
+		MinHeap pq(1000);
+		start->minDist = 0;
+		pq.push(start, 0);
+
+		Location* nearestPharmacy = nullptr;
+		float minPharmDist = std::numeric_limits<float>::max();
+
+		while (!pq.isEmpty()) {
+			Location* u = pq.extractMin();
+			if (u->visited) continue;
+			u->visited = true;
+
+			// Check if this is a pharmacy
+			if (u->type == "Pharmacy" && u->minDist < minPharmDist) {
+				nearestPharmacy = u;
+				minPharmDist = u->minDist;
+			}
+
+			Edge* e = u->adjList;
+			while (e) {
+				Location* v = e->destination;
+				float weight = e->weight;
+				if (!v->visited && u->minDist + weight < v->minDist) {
+					v->minDist = u->minDist + weight;
+					v->parent = u;
+					pq.push(v, v->minDist);
+				}
+				e = e->nextEdge;
+			}
+		}
+
+		if (!nearestPharmacy) {
+			cout << "[ERROR] No pharmacy reachable from hospital.\n";
+			return nullptr;
+		}
+
+		// Build path
+		PathNode* pathHead = nullptr;
+		Location* crawler = nearestPharmacy;
+		while (crawler) {
+			PathNode* newNode = new PathNode(crawler);
+			newNode->next = pathHead;
+			pathHead = newNode;
+			crawler = crawler->parent;
+		}
+
+		return pathHead;
+	}
+
+
 	void addHospital(Hospital& h1);
 	void removeHospital(const string& hospitalName);
 	void addPharmacy(Pharmacy& p1);

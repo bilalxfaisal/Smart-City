@@ -1471,7 +1471,8 @@ private:
         if (inputMethod == 0) {
             return; // Go back to main menu
         }
-        else if (inputMethod == 1) {
+        else if (inputMethod == 1)
+        {
             // Load from CSV
             cout << "\n=== Loading data from CSV files ===\n";
 
@@ -1515,6 +1516,21 @@ private:
 
             cout << "\n[SUCCESS] Data loading completed!\n";
             waitForEnter();
+
+            switch (choice) {
+            case 2: // Education
+                education.connectSchoolsSubgraph();
+                break;
+            case 3: // Medical
+                medical.connectMedicalSubgraph();
+                break;
+            case 4: // Population
+                population.connectHousesSubgraph();
+                break;
+            case 5: // Transport
+                transport.connectBusStopsSubgraph();
+                break;
+            }
         }
 
         // Now run the appropriate system
