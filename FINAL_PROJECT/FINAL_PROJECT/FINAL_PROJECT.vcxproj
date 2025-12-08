@@ -115,13 +115,13 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>D:\Hadiah\C++\VS\DS_PROJECT_SMART_CITY\Smart-City-DS-Project\FINAL_PROJECT\FINAL_PROJECT\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\SFML-2.6.2\include</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\Hadiah\C++\VS\DS_PROJECT_SMART_CITY\Smart-City-DS-Project\FINAL_PROJECT\FINAL_PROJECT\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\SFML-2.6.2\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;sfml-audio-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

@@ -298,7 +298,7 @@ public:
         }
     }
 
-    PathNode* findShortestPath(Location* start, Location* end, bool emergencyMode = false) {
+    PathNode* findShortestPath(Location* start, Location* end, bool emergencyMode = false, Location** pathLocationHead = nullptr) {
         if (!start || !end) return nullptr;
         resetGraph();
 
@@ -337,6 +337,7 @@ public:
             return nullptr;
         }
 
+        // Build PathNode linked list (for displaying route)
         PathNode* pathHead = nullptr;
         Location* crawler = end;
         while (crawler != nullptr) {
@@ -345,6 +346,56 @@ public:
             pathHead = newNode;
             crawler = crawler->parent;
         }
+
+        // Build Location* linked list with edges for visualization (only if pointer provided)
+        if (pathLocationHead != nullptr) {
+            Location* pathLocHead = nullptr;
+            Location* pathLocationTail = nullptr;
+
+            PathNode* current = pathHead;
+            while (current) {
+                // Create a copy of the location
+                Location* locCopy = new Location(
+                    current->loc->x,
+                    current->loc->y,
+                    current->loc->name,
+                    current->loc->type
+                );
+
+                // Copy ALL edges from the original location (including connections to sector corners)
+                Edge* originalEdge = current->loc->adjList;
+                while (originalEdge) {
+                    // Create a copy of the original location's edge destination
+                    Location* destCopy = new Location(
+                        originalEdge->destination->x,
+                        originalEdge->destination->y,
+                        originalEdge->destination->name,
+                        originalEdge->destination->type
+                    );
+                    
+                    // Add edge from locCopy to destCopy
+                    Edge* edgeCopy = new Edge(originalEdge->weight, destCopy);
+                    edgeCopy->nextEdge = locCopy->adjList;
+                    locCopy->adjList = edgeCopy;
+                    
+                    originalEdge = originalEdge->nextEdge;
+                }
+
+                // Add to linked list
+                if (!pathLocHead) {
+                    pathLocHead = locCopy;
+                    pathLocationTail = locCopy;
+                } else {
+                    pathLocationTail->next = locCopy;
+                    pathLocationTail = locCopy;
+                }
+
+                current = current->next;
+            }
+
+            *pathLocationHead = pathLocHead;
+        }
+
         return pathHead;
     }
 
@@ -635,6 +686,77 @@ public:
             if (intersections[i]) {
                 addEdge(loc, intersections[i]);
             }
+        }
+    }
+
+    // NEW FUNCTION: Create visualization copy of location list with all edges
+    Location* createVisualizationCopy(Location* originalHead) {
+        if (!originalHead) return nullptr;
+
+        Location* vizHead = nullptr;
+        Location* vizTail = nullptr;
+
+        // First pass: Copy all locations
+        Location* original = originalHead;
+        while (original) {
+            Location* locCopy = new Location(
+                original->x,
+                original->y,
+                original->name,
+                original->type
+            );
+
+            // Copy ALL edges from the original location
+            Edge* originalEdge = original->adjList;
+            while (originalEdge) {
+                // Create a copy of the destination
+                Location* destCopy = new Location(
+                    originalEdge->destination->x,
+                    originalEdge->destination->y,
+                    originalEdge->destination->name,
+                    originalEdge->destination->type
+                );
+
+                // Add edge from locCopy to destCopy
+                Edge* edgeCopy = new Edge(originalEdge->weight, destCopy);
+                edgeCopy->nextEdge = locCopy->adjList;
+                locCopy->adjList = edgeCopy;
+
+                originalEdge = originalEdge->nextEdge;
+            }
+
+            // Add to visualization list
+            if (!vizHead) {
+                vizHead = locCopy;
+                vizTail = locCopy;
+            } else {
+                vizTail->next = locCopy;
+                vizTail = locCopy;
+            }
+
+            original = original->next;
+        }
+
+        return vizHead;
+    }
+
+    // Cleanup function for visualization copy
+    void cleanupVisualizationCopy(Location* vizHead) {
+        while (vizHead) {
+            Location* temp = vizHead;
+            vizHead = vizHead->next;
+
+            // Clean up edges
+            Edge* edge = temp->adjList;
+            while (edge) {
+                Edge* nextEdge = edge->nextEdge;
+                // Delete the destination location copy
+                delete edge->destination;
+                delete edge;
+                edge = nextEdge;
+            }
+
+            delete temp;
         }
     }
 };

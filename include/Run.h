@@ -134,8 +134,6 @@ private:
             return;
         }
 
-        locationMgr.addTemporaryEdge(startLoc, endLoc);
-
         if (emergencyMode) {
             cout << "\n[EMERGENCY] Calculating fastest route...\n";
             cout << "[EMERGENCY] Priority lanes activated!\n";
@@ -144,16 +142,14 @@ private:
             cout << "\n[INFO] Calculating shortest path...\n";
         }
 
-        PathNode* path = locationMgr.findShortestPath(startLoc, endLoc, emergencyMode);
+        Location* pathLocationHead = nullptr;
+        PathNode* path = locationMgr.findShortestPath(startLoc, endLoc, emergencyMode, &pathLocationHead);
 
         if (!path) {
             cout << "\n[ERROR] No path found!\n";
-            locationMgr.removeTemporaryEdge(startLoc, endLoc);
             waitForEnter();
             return;
         }
-
-        locationMgr.addPathEdgesToVisualization(path);
 
         cout << "\n===========================================\n";
         if (emergencyMode) {
@@ -234,24 +230,62 @@ private:
         getline(cin, visualize);
 
         if (visualize == "y" || visualize == "Y") {
-            visualizeShortestPath(path);
+            // Debug: Print path details before visualization
+            cout << "\n=== DEBUG: Path Visualization Data ===\n";
+            cout << "Nodes in path:\n";
+            Location* debugLoc = pathLocationHead;
+            int nodeCount = 0;
+            while (debugLoc) {
+                nodeCount++;
+                cout << nodeCount << ". " << debugLoc->name 
+                     << " at (" << debugLoc->x << ", " << debugLoc->y << ")\n";
+                
+                // Count edges
+                int edgeCount = 0;
+                Edge* debugEdge = debugLoc->adjList;
+                while (debugEdge) {
+                    edgeCount++;
+                    debugEdge = debugEdge->nextEdge;
+                }
+                cout << "   Edges: " << edgeCount << "\n";
+                
+                debugLoc = debugLoc->next;
+            }
+            cout << "Total nodes: " << nodeCount << "\n";
+            cout << "====================================\n\n";
+            
+            visualizeShortestPath(pathLocationHead);
         }
 
-        locationMgr.removePathEdgesFromVisualization(path);
+        // Clean up pathLocationHead
+        while (pathLocationHead) {
+            Location* temp = pathLocationHead;
+            pathLocationHead = pathLocationHead->next;
+            
+            // Clean up edges
+            Edge* edge = temp->adjList;
+            while (edge) {
+                Edge* nextEdge = edge->nextEdge;
+                delete edge;
+                edge = nextEdge;
+            }
+            
+            delete temp;
+        }
 
+        // Clean up PathNode linked list
         while (path) {
             PathNode* temp = path;
             path = path->next;
             delete temp;
         }
 
-        locationMgr.removeTemporaryEdge(startLoc, endLoc);
         waitForEnter();
     }
 
 
-    void visualizeShortestPath(PathNode* path) {
-        if (!path) return;
+    void visualizeShortestPath(Location* pathLocationHead) {
+        if (!pathLocationHead) return;
 
         system("cls");
         cout << "\n===========================================\n";
@@ -260,41 +294,11 @@ private:
         cout << "Press ENTER to start...\n";
         cin.get();
 
-        Location* pathHead = nullptr;
-        Location* pathTail = nullptr;
-
-        PathNode* current = path;
-        while (current) {
-            Location* locCopy = new Location(
-                current->loc->x,
-                current->loc->y,
-                current->loc->name,
-                current->loc->type
-            );
-
-            if (!pathHead) {
-                pathHead = locCopy;
-                pathTail = locCopy;
-            }
-            else {
-                pathTail->next = locCopy;
-                pathTail = locCopy;
-            }
-
-            current = current->next;
-        }
-
         cityVisualizer.removeLocationHead();
-        cityVisualizer.setLocationHead(pathHead);
+        cityVisualizer.setLocationHead(pathLocationHead);
         cityVisualizer.setSectorPopHead(nullptr);
 
         cityVisualizer.run();
-
-        while (pathHead) {
-            Location* temp = pathHead;
-            pathHead = pathHead->next;
-            delete temp;
-        }
 
         cout << "\nVisualizer closed.\n";
     }
@@ -794,7 +798,7 @@ private:
         cout << "      " << systemName << " VISUALIZATION\n";
         cout << "===========================================\n";
         cout << "Launching " << systemName << " visualizer...\n";
-        cout << "\nNote: Showing only " << systemName << " locations.\n";
+        cout << "\nNote: Showing only " << systemName << " locations with road connections.\n";
         cout << "\nControls:\n";
         cout << "  - Left-click: Zoom into a sector\n";
         cout << "  - Right-click: Zoom out\n";
@@ -803,11 +807,17 @@ private:
         cin.ignore();
         cin.get();
 
+        // Create visualization copy with all edges
+        Location* vizCopy = locationMgr.createVisualizationCopy(systemLocationHead);
+
         cityVisualizer.removeLocationHead();
-        cityVisualizer.setLocationHead(systemLocationHead);
+        cityVisualizer.setLocationHead(vizCopy);
         cityVisualizer.setSectorPopHead(nullptr);
 
         cityVisualizer.run();
+
+        // Cleanup visualization copy
+        locationMgr.cleanupVisualizationCopy(vizCopy);
 
         cout << "\nVisualizer closed. Returning to " << systemName << " menu...\n";
         waitForEnter();
