@@ -223,13 +223,21 @@ public:
         window.draw(circle);
     }
 
-    void displayEdges(sf::RenderWindow& window, Location* loc) const {
+    void displayEdges(sf::RenderWindow& window, Location* loc) const
+    {
+        // Check if adjList exists
+        if (!loc->adjList) return;
         sf::Vertex EdgeLine[2];
         EdgeLine[0].position = sf::Vector2f(static_cast<float>(loc->x), static_cast<float>(loc->y));
         EdgeLine[0].color = sf::Color(220, 220, 220);
 
         Edge* dest = loc->adjList;
-        while (dest) {
+        while (dest) 
+        {
+            if (!dest->destination) {
+                dest = dest->nextEdge;
+                continue;
+            }
             EdgeLine[1].position = sf::Vector2f(
                 static_cast<float>(dest->destination->x),
                 static_cast<float>(dest->destination->y)
@@ -254,10 +262,26 @@ public:
             curr = curr->next;
         }
     }
-
+    // In Visualizer class
     void setLocationHead(Location* head) {
+        if (!head) {
+            cout << "[WARNING] Setting NULL location head in visualizer!\n";
+            location = nullptr;
+            return;
+        }
+
+        // Validate the list
+        int count = 0;
+        Location* temp = head;
+        while (temp && count < 1000) {
+            count++;
+            temp = temp->next;
+        }
+
+        cout << "[Visualizer] Received " << count << " locations\n";
         location = head;
     }
+
 
     void removeLocationHead() {
         location = nullptr;

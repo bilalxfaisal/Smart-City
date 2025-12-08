@@ -440,60 +440,62 @@ public:
         string line;
         int count = 0;
 
-        // 1. Count Rows (Skip Header)
-        getline(file, line);
+        // Count rows (skip header)
+        getline(file, line);  // Skip header
         while (getline(file, line)) {
             if (!line.empty()) count++;
         }
 
         numOfCitizens = count;
 
-        // Reset File
+        // Reset file
         file.clear();
         file.seekg(0);
-        getline(file, line); // Skip Header
+        getline(file, line); // Skip header again
 
-        // 2. Allocate Array
+        // Allocate array
         Citizen* citizenList = new Citizen[numOfCitizens];
 
-        // 3. Parse Data
+        // Parse data
         int index = 0;
         while (getline(file, line) && index < numOfCitizens)
         {
             if (line.empty()) continue;
 
-            string rowData[7];
-            // 0:CNIC, 1:Name, 2:Age, 3:Sector, 4:Street, 5:HouseNo, 6:Occupation
-
+            string rowData[7]; // CNIC, Name, Age, Sector, Street, HouseNo, Occupation
             int colIdx = 0;
             string buffer = "";
+            bool inQuotes = false;
 
-            // Simple CSV Split (assuming no commas inside names/occupation)
+            // Parse CSV line
             for (int i = 0; i < line.length(); i++) {
-                if (line[i] == ',') {
+                char c = line[i];
+                if (c == '"') {
+                    inQuotes = !inQuotes;
+                }
+                else if (c == ',' && !inQuotes) {
                     if (colIdx < 7) rowData[colIdx++] = buffer;
                     buffer = "";
                 }
                 else {
-                    buffer += line[i];
+                    buffer += c;
                 }
             }
             if (colIdx < 7) rowData[colIdx] = buffer;
 
-            // Extract & Convert
-            string cCNIC = rowData[0];
-            string cName = rowData[1];
-            int cAge = strToInt(rowData[2]);
-            string cSector = rowData[3];
-            int cStreet = strToInt(rowData[4]);
-            int cHouse = strToInt(rowData[5]);
-            string cOcc = cleanString(rowData[6]); 
+            // Extract data - MAKE SURE THE ORDER MATCHES YOUR CSV
+            string cnic = rowData[0];
+            string name = rowData[1];
+            int age = strToInt(rowData[2]);
+            string sector = rowData[3];  // THIS IS CRITICAL
+            int street = strToInt(rowData[4]);
+            int house = strToInt(rowData[5]);
+            string occupation = rowData[6];
 
-            // Fill Object
-            citizenList[index].setCitizenDetails(cCNIC, cName, cAge, cSector, cStreet, cHouse, cOcc);
-            // Add debug output to loadCitizensFromCSV()
-            cout << "Loading citizen: " << citizenList[index].getName() << endl;
+            cout << "Loading citizen: " << name << " (Sector: " << sector << ")" << endl;
 
+            // Create citizen with ALL parameters including sector
+            citizenList[index] = Citizen(cnic, name, age, sector, street, house, occupation);
 
             index++;
         }
@@ -501,6 +503,7 @@ public:
         file.close();
         return citizenList;
     }
+
 
 };
 

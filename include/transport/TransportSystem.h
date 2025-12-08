@@ -36,13 +36,25 @@ class TransportSystem
 	void addBusStopLocationToList(Location& busStopLocation) {
 		Location* temp = headBusStopsList;
 		while (temp) {
-			if (temp == &busStopLocation) return;
+			if (temp == &busStopLocation) {
+				cout << "[DEBUG] Bus stop already in list: " << busStopLocation.name << endl;
+				return;
+			}
 			temp = temp->next;
 		}
+
+		// Initialize edge list to nullptr if not already
+		if (busStopLocation.adjList == nullptr) {
+			cout << "[DEBUG] Initializing adjList for: " << busStopLocation.name << endl;
+		}
+
 		busStopLocation.next = headBusStopsList;
 		headBusStopsList = &busStopLocation;
 		busStopsCount++;
+
+		cout << "[DEBUG] Added to list. Total count: " << busStopsCount << endl;
 	}
+
 
 	// Helper: Remove bus stop location from linked list
 	void removeBusStopLocationFromList(Location& busStopLocation) {
@@ -443,6 +455,15 @@ public:
 			currRoute = currRoute->nextRoute;
 		}
 		return -1; // not found
+	}
+
+	void addBusStop(BusStop& busStop) 
+	{
+		// Add the bus stop location to the linked list
+		Location* busStopLoc = &(busStop.getLocation());
+		addBusStopLocationToList(*busStopLoc);
+		cout << "[DEBUG] Added bus stop location: " << busStopLoc->name
+			<< " at (" << busStopLoc->x << ", " << busStopLoc->y<< ")\n";
 	}
 
 	// Getter for bus stop location head (for visualization)

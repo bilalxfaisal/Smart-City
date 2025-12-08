@@ -651,7 +651,6 @@ private:
             cout << "Failed to load schools.\n";
         }
     }
-
     void loadBusStopsFromCSV()
     {
         string path = readLine("Enter path to bus stops CSV file: ");
@@ -659,21 +658,135 @@ private:
         BusStop* stops = csvHandler.traverseBusStops(path, count);
 
         if (stops) {
+            cout << "\n=== Loading Bus Stops ===\n";
+
             for (int i = 0; i < count; i++) {
+                string stopName = stops[i].getStopName();
+                string sector = stops[i].getStopSector();
+
+                // If sector is empty, try to intelligently detect it
+                if (sector.empty()) {
+                    sector = detectSectorFromStopName(stopName);
+                }
+
+                // Add to location manager for map visualization
                 locationMgr.addToCityGrid(
-                    stops[i].getStopName(),
-                    stops[i].getStopSector(),
+                    stopName,
+                    sector,
                     "Bus Stop",
                     stops[i].getLocation()
                 );
+
+                // Add to transport system
+                transport.addBusStop(stops[i]);
+
+                cout <<  stopName << " -> " << sector << endl;
             }
-            cout << "Loaded " << count << " bus stops.\n";
+
+            cout << "\n[SUCCESS] Loaded " << count << " bus stops.\n";
             delete[] stops;
         }
         else {
-            cout << "Failed to load bus stops.\n";
+            cout << "[ERROR] Failed to load bus stops.\n";
         }
     }
+
+    // Helper function to detect sector from stop name
+    string detectSectorFromStopName(const string& stopName) {
+        // Convert to lowercase for comparison
+        string lowerName = stopName;
+        for (size_t i = 0; i < lowerName.length(); i++) {
+            if (lowerName[i] >= 'A' && lowerName[i] <= 'Z') {
+                lowerName[i] = lowerName[i] + 32;
+            }
+        }
+
+        // Check for sector pattern (e.g., "F-8", "G-10")
+        size_t dashPos = stopName.find('-');
+        if (dashPos != string::npos && dashPos > 0 && dashPos < stopName.length() - 1) {
+            char letter = stopName[dashPos - 1];
+            if (letter >= 'A' && letter <= 'Z') {
+                // Extract potential sector name
+                size_t spacePos = stopName.find(' ', dashPos);
+                string potentialSector;
+
+                if (spacePos != string::npos) {
+                    potentialSector = stopName.substr(dashPos - 1, spacePos - (dashPos - 1));
+                }
+                else {
+                    // Try to get just the sector part (e.g., "F-8")
+                    size_t start = dashPos - 1;
+                    size_t end = dashPos + 1;
+                    while (end < stopName.length() && stopName[end] >= '0' && stopName[end] <= '9') {
+                        end++;
+                    }
+                    potentialSector = stopName.substr(start, end - start);
+                }
+
+                // Validate sector format
+                if (potentialSector.length() >= 3 && potentialSector.length() <= 5) {
+                    return potentialSector;
+                }
+            }
+        }
+
+        // Check for landmark keywords and map to sectors
+        struct LandmarkMapping {
+            string keyword;
+            string sector;
+        };
+
+        LandmarkMapping landmarks[] = {
+            {"blue area", "F-8"},
+            {"bluearea", "F-8"},
+            {"centaurus", "F-8"},
+            {"pims", "G-8"},
+            {"hospital", "G-8"},
+            {"faisal mosque", "E-8"},
+            {"mosque", "E-8"},
+            {"lake view", "F-9"},
+            {"lake", "F-9"},
+            {"markaz", "G-10"},  // Common market area
+            {"park", "F-10"},
+            {"kacheri", "F-8"},
+            {"secretariat", "G-5"},
+            {"parliament", "G-5"},
+            {"convention center", "F-5"},
+            {"jinnah super", "F-7"},
+            {"super market", "F-6"},
+            {"supermarket", "F-6"},
+            {"zero point", "G-5"},
+            {"aabpara", "G-6"},
+            {"melody", "G-6"},
+            {"karachi company", "F-6"},
+            {"sitara market", "F-6"}
+        };
+
+        int landmarkCount = sizeof(landmarks) / sizeof(landmarks[0]);
+
+        for (int i = 0; i < landmarkCount; i++) {
+            if (lowerName.find(landmarks[i].keyword) != string::npos) {
+                cout << "   [Landmark detected: " << landmarks[i].keyword << "]" << endl;
+                return landmarks[i].sector;
+            }
+        }
+
+        // If no pattern found, randomly assign to a valid sector
+        string validSectors[] = {
+            "F-5", "F-6", "F-7", "F-8", "F-9", "F-10", "F-11", "F-12",
+            "G-5", "G-6", "G-7", "G-8", "G-9", "G-10", "G-11", "G-12",
+            "E-7", "E-8", "E-9", "E-10", "E-11",
+            "H-8", "H-9", "H-10", "H-11",
+            "I-8", "I-9", "I-10"
+        };
+
+        int sectorCount = sizeof(validSectors) / sizeof(validSectors[0]);
+        int randomIndex = rand() % sectorCount;
+
+        cout << "   [No landmark found - Random assignment]" << endl;
+        return validSectors[randomIndex];
+    }
+
 
     void loadBusesFromCSV()
     {
@@ -682,13 +795,51 @@ private:
         Bus* buses = csvHandler.traverseBuses(path, count);
 
         if (buses) {
-            cout << "Loaded " << count << " buses.\n";
+            // Manual array to track unique companies (max 50 companies)
+            string companies[50];
+            int companyCount = 0;
+
+            // First pass: collect unique company names
+            for (int i = 0; i < count; i++) {
+                string companyName = "DefaultCompany"; // Fallback
+
+                bool exists = false;
+                for (int j = 0; j < companyCount; j++) {
+                    if (companies[j] == companyName) {
+                        exists = true;
+                        break;
+                    }
+                }
+
+                // If not exists, add it
+                if (!exists && companyCount < 50) {
+                    companies[companyCount] = companyName;
+                    companyCount++;
+                }
+            }
+
+            // Create transport companies
+            for (int i = 0; i < companyCount; i++) {
+                TransportCompany tc(companies[i]);
+                transport.addTransportCompany(tc);
+            }
+
+            // Now add buses to companies
+            for (int i = 0; i < count; i++) {
+                string companyName = "DefaultCompany"; // Same as above
+                // Or: companyName = buses[i].getCompanyName();
+
+                transport.addBusToTransportCompany(buses[i], companyName);
+            }
+
+            cout << "Loaded " << count << " buses across " << companyCount << " companies.\n";
             delete[] buses;
         }
         else {
             cout << "Failed to load buses.\n";
         }
     }
+
 
     void loadCitizensFromCSV()
     {
@@ -842,7 +993,7 @@ private:
                 break;
             }
 
-            if (choice == 8) {
+            if (choice == 9) {
                 if (!csvDataLoaded) {
                     cout << "\nPlease load CSV data first before visualizing.\n";
                     waitForEnter();
@@ -941,6 +1092,8 @@ private:
                 transport.displayRoutes(comp);
                 break;
             }
+            case 8:
+                cout << "Display Companies. \n";
             default:
                 cout << "Invalid choice. Try again.\n";
                 break;
