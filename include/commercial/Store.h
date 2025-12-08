@@ -3,7 +3,6 @@
 #include "../utils/Nodes.h"
 #include "Store.h"
 #include "Product.h"
-
 #ifndef STORE_H
 #define STORE_H
 
