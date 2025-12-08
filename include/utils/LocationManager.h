@@ -354,7 +354,7 @@ public:
 
             PathNode* current = pathHead;
             while (current) {
-                // Create a copy of the location
+                // Create a minimal copy of the location for path visualization
                 Location* locCopy = new Location(
                     current->loc->x,
                     current->loc->y,
@@ -362,30 +362,25 @@ public:
                     current->loc->type
                 );
 
-                // Copy ALL edges from the original location (including connections to sector corners)
-                Edge* originalEdge = current->loc->adjList;
-                while (originalEdge) {
-                    // Create a copy of the original location's edge destination
-                    Location* destCopy = new Location(
-                        originalEdge->destination->x,
-                        originalEdge->destination->y,
-                        originalEdge->destination->name,
-                        originalEdge->destination->type
-                    );
-                    
-                    // Add edge from locCopy to destCopy
-                    Edge* edgeCopy = new Edge(originalEdge->weight, destCopy);
-                    edgeCopy->nextEdge = locCopy->adjList;
-                    locCopy->adjList = edgeCopy;
-                    
-                    originalEdge = originalEdge->nextEdge;
-                }
-
-                // Add to linked list
+                // Append to path list
                 if (!pathLocHead) {
                     pathLocHead = locCopy;
                     pathLocationTail = locCopy;
                 } else {
+                    // Create ONLY the path edge between consecutive nodes (no corner edges)
+                    float dist = sqrtf(
+                        (float)((locCopy->x - pathLocationTail->x) * (locCopy->x - pathLocationTail->x) +
+                                (locCopy->y - pathLocationTail->y) * (locCopy->y - pathLocationTail->y))
+                    );
+
+                    Edge* forwardEdge = new Edge(dist, locCopy);
+                    forwardEdge->nextEdge = pathLocationTail->adjList;
+                    pathLocationTail->adjList = forwardEdge;
+
+                    Edge* backwardEdge = new Edge(dist, pathLocationTail);
+                    backwardEdge->nextEdge = locCopy->adjList;
+                    locCopy->adjList = backwardEdge;
+
                     pathLocationTail->next = locCopy;
                     pathLocationTail = locCopy;
                 }
@@ -758,6 +753,73 @@ public:
 
             delete temp;
         }
+    }
+
+    // Build a standalone visualization list for a subsystem:
+    // - Copies subsystem locations
+    // - Adds edges to 4 nearest intersections by copying those corner nodes too
+    Location* buildSubsystemVisualization(Location* originalHead) {
+        if (!originalHead) return nullptr;
+
+        Location* vizHead = nullptr;
+        Location* vizTail = nullptr;
+
+        Location* cur = originalHead;
+        while (cur) {
+            // Copy the subsystem location
+            Location* locCopy = new Location(cur->x, cur->y, cur->name, cur->type);
+
+            // Append to viz list
+            if (!vizHead) { vizHead = locCopy; vizTail = locCopy; }
+            else { vizTail->next = locCopy; vizTail = locCopy; }
+
+            // Find 4 nearest intersections from the main city grid
+            Location* intersections[4] = { nullptr, nullptr, nullptr, nullptr };
+            float distances[4] = {
+                std::numeric_limits<float>::max(),
+                std::numeric_limits<float>::max(),
+                std::numeric_limits<float>::max(),
+                std::numeric_limits<float>::max()
+            };
+
+            Location* it = cityLocationHead;
+            while (it) {
+                if (it->type == "Intersection") {
+                    float d = sqrtf((float)((it->x - cur->x) * (it->x - cur->x) + (it->y - cur->y) * (it->y - cur->y)));
+                    for (int i = 0; i < 4; ++i) {
+                        if (d < distances[i]) {
+                            for (int j = 3; j > i; --j) { distances[j] = distances[j - 1]; intersections[j] = intersections[j - 1]; }
+                            distances[i] = d;
+                            intersections[i] = it;
+                            break;
+                        }
+                    }
+                }
+                it = it->next;
+            }
+
+            // For each nearest intersection, create a copy node and add bidirectional edges
+            for (int i = 0; i < 4; ++i) {
+                if (!intersections[i]) continue;
+                Location* cornerCopy = new Location(intersections[i]->x, intersections[i]->y, intersections[i]->name, intersections[i]->type);
+                // Add to viz list so edges render to actual nodes
+                vizTail->next = cornerCopy;
+                vizTail = cornerCopy;
+
+                float w = sqrtf((float)((cornerCopy->x - locCopy->x) * (cornerCopy->x - locCopy->x) + (cornerCopy->y - locCopy->y) * (cornerCopy->y - locCopy->y)));
+                Edge* e1 = new Edge(w, cornerCopy);
+                e1->nextEdge = locCopy->adjList;
+                locCopy->adjList = e1;
+
+                Edge* e2 = new Edge(w, locCopy);
+                e2->nextEdge = cornerCopy->adjList;
+                cornerCopy->adjList = e2;
+            }
+
+            cur = cur->next;
+        }
+
+        return vizHead;
     }
 };
 

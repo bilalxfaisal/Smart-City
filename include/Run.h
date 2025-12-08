@@ -807,8 +807,8 @@ private:
         cin.ignore();
         cin.get();
 
-        // Create visualization copy with all edges
-        Location* vizCopy = locationMgr.createVisualizationCopy(systemLocationHead);
+        // Create visualization copy with 4 corner edges for subsystem
+        Location* vizCopy = locationMgr.buildSubsystemVisualization(systemLocationHead);
 
         cityVisualizer.removeLocationHead();
         cityVisualizer.setLocationHead(vizCopy);
@@ -816,8 +816,12 @@ private:
 
         cityVisualizer.run();
 
-        // Cleanup visualization copy
-        locationMgr.cleanupVisualizationCopy(vizCopy);
+        // Cleanup visualization copy (nodes + edges)
+        Location* del = vizCopy;
+        while (del) {
+            Edge* e = del->adjList;
+            while (e) { Edge* ne = e->nextEdge; e->destination = nullptr; delete e; e = ne; }
+            Location* nd = del->next; delete del; del = nd; }
 
         cout << "\nVisualizer closed. Returning to " << systemName << " menu...\n";
         waitForEnter();
