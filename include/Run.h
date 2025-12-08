@@ -37,6 +37,327 @@ private:
     // State tracking
     bool csvDataLoaded;
 
+
+    void findShortestPathBetweenLocations()
+    {
+        system("cls");
+        cout << "\n===========================================\n";
+        cout << "      SHORTEST PATH FINDER                 \n";
+        cout << "===========================================\n";
+        cout << "Find the shortest route between ANY two locations in Islamabad.\n\n";
+
+        cout << "You can search by:\n";
+        cout << "  1. Sector names (e.g., F-8, G-8)\n";
+        cout << "  2. Landmarks (e.g., BlueArea, Centaurus, PIMS Hospital)\n";
+        cout << "  3. Specific locations (e.g., Hospital name, School name, Mall name)\n";
+        cout << "  4. House addresses (e.g., House)\n\n";
+
+        cout << "=== START LOCATION ===\n";
+        cout << "Enter start location name or sector: ";
+        string startInput;
+        cin.ignore();
+        getline(cin, startInput);
+
+        cout << "\nSearching for start location...\n";
+        locationMgr.searchLocations(startInput);
+
+        cout << "\n=== END LOCATION ===\n";
+        cout << "Enter end location name or sector: ";
+        string endInput;
+        getline(cin, endInput);
+
+        cout << "\nSearching for end location...\n";
+        locationMgr.searchLocations(endInput);
+
+        cout << "\n=== CONFIRM SELECTION ===\n";
+        cout << "Press ENTER to find path, or type 'cancel' to abort: ";
+        string confirm;
+        getline(cin, confirm);
+
+        if (confirm == "cancel" || confirm == "CANCEL") {
+            cout << "Path finding cancelled.\n";
+            waitForEnter();
+            return;
+        }
+
+        Location* startLoc = nullptr;
+        Location* endLoc = nullptr;
+
+        startLoc = locationMgr.findLocationByName(startInput);
+        endLoc = locationMgr.findLocationByName(endInput);
+
+        if (!startLoc) {
+            int startX, startY;
+            if (locationMgr.getSectorBounds(startInput, startX, startY)) {
+                startX += 80;
+                startY += 50;
+
+                Location* temp = locationMgr.getHead();
+                while (temp) {
+                    if (temp->x == startX && temp->y == startY) {
+                        startLoc = temp;
+                        break;
+                    }
+                    temp = temp->next;
+                }
+            }
+        }
+
+        if (!endLoc) {
+            int endX, endY;
+            if (locationMgr.getSectorBounds(endInput, endX, endY)) {
+                endX += 80;
+                endY += 50;
+
+                Location* temp = locationMgr.getHead();
+                while (temp) {
+                    if (temp->x == endX && temp->y == endY) {
+                        endLoc = temp;
+                        break;
+                    }
+                    temp = temp->next;
+                }
+            }
+        }
+
+        if (!startLoc) {
+            cout << "\n[ERROR] Could not find start location '" << startInput << "'.\n";
+            cout << "Please check the spelling or try a different search term.\n";
+            waitForEnter();
+            return;
+        }
+
+        if (!endLoc) {
+            cout << "\n[ERROR] Could not find end location '" << endInput << "'.\n";
+            cout << "Please check the spelling or try a different search term.\n";
+            waitForEnter();
+            return;
+        }
+
+        cout << "\n[INFO] Calculating shortest path...\n";
+        PathNode* path = locationMgr.findShortestPath(startLoc, endLoc);
+
+        if (!path) {
+            cout << "\n[ERROR] No path found between the two locations!\n";
+            waitForEnter();
+            return;
+        }
+
+        cout << "\n===========================================\n";
+        cout << "      SHORTEST PATH FOUND                  \n";
+        cout << "===========================================\n";
+        cout << "From: " << startLoc->name << " [" << startLoc->type << "]\n";
+        cout << "      Location: (" << startLoc->x << ", " << startLoc->y << ")\n";
+        cout << "To:   " << endLoc->name << " [" << endLoc->type << "]\n";
+        cout << "      Location: (" << endLoc->x << ", " << endLoc->y << ")\n";
+        cout << "Total Distance: " << endLoc->minDist << " units\n\n";
+
+        cout << "===========================================\n";
+        cout << "                  ROUTE                    \n";
+        cout << "===========================================\n";
+        int step = 1;
+        PathNode* current = path;
+
+        while (current) {
+            Location* loc = current->loc;
+
+            cout << "Step " << step << ": ";
+            cout << loc->name;
+
+            if (loc->type == "Intersection") {
+                cout << " [Intersection]";
+            }
+            else if (loc->type == "Hospital") {
+                cout << " [Hospital]";
+            }
+            else if (loc->type == "School") {
+                cout << " [School]";
+            }
+            else if (loc->type == "Mall") {
+                cout << " [Mall]";
+            }
+            else if (loc->type == "Bus Stop") {
+                cout << " [Bus Stop]";
+            }
+            else if (loc->type == "House") {
+                cout << " [House]";
+            }
+            else if (loc->type == "Pharmacy") {
+                cout << " [Pharmacy]";
+            }
+            else {
+                cout << " [" << loc->type << "]";
+            }
+
+            cout << "\n       Location: (" << loc->x << ", " << loc->y << ")";
+
+            if (current->next) {
+                float segmentDist = current->next->loc->minDist - loc->minDist;
+                cout << "\n       -> Distance to next: " << segmentDist << " units\n";
+            }
+            else {
+                cout << "\n       [DESTINATION REACHED]\n";
+            }
+
+            cout << "-------------------------------------------\n";
+
+            current = current->next;
+            step++;
+        }
+
+        cout << "\n[SUCCESS] Total Steps: " << (step - 1) << "\n";
+        cout << "[SUCCESS] Total Distance: " << endLoc->minDist << " units\n";
+        cout << "===========================================\n";
+
+        cout << "\nWould you like to visualize this path? (y/n): ";
+        string visualize;
+        getline(cin, visualize);
+
+        if (visualize == "y" || visualize == "Y" || visualize == "yes" || visualize == "YES") {
+            visualizeShortestPath(path);
+        }
+
+        while (path) {
+            PathNode* temp = path;
+            path = path->next;
+            delete temp;
+        }
+
+        waitForEnter();
+    }
+
+    void visualizeShortestPath(PathNode* path) {
+        if (!path) return;
+
+        system("cls");
+        cout << "\n===========================================\n";
+        cout << "      PATH VISUALIZATION                   \n";
+        cout << "===========================================\n";
+        cout << "Launching path visualizer...\n";
+        cout << "\nThe path will be highlighted in the visualizer.\n";
+        cout << "\nControls:\n";
+        cout << "  - Left-click: Zoom into a sector\n";
+        cout << "  - Right-click: Zoom out\n";
+        cout << "  - Close window: Return to menu\n";
+        cout << "\nPress ENTER to start...\n";
+        cin.get();
+
+        Location* pathHead = nullptr;
+        Location* pathTail = nullptr;
+
+        PathNode* current = path;
+        while (current) {
+            Location* locCopy = new Location(
+                current->loc->x,
+                current->loc->y,
+                current->loc->name,
+                current->loc->type
+            );
+
+            if (!pathHead) {
+                pathHead = locCopy;
+                pathTail = locCopy;
+            }
+            else {
+                pathTail->next = locCopy;
+                pathTail = locCopy;
+            }
+
+            current = current->next;
+        }
+
+        cityVisualizer.removeLocationHead();
+        cityVisualizer.setLocationHead(pathHead);
+        cityVisualizer.setSectorPopHead(nullptr);
+
+        cityVisualizer.run();
+
+        while (pathHead) {
+            Location* temp = pathHead;
+            pathHead = pathHead->next;
+            delete temp;
+        }
+
+        cout << "\nVisualizer closed. Returning to menu...\n";
+    }
+
+    void searchForLocation() {
+        system("cls");
+        cout << "\n===========================================\n";
+        cout << "      LOCATION SEARCH                      \n";
+        cout << "===========================================\n";
+        cout << "Search for any location in the city.\n\n";
+
+        cout << "Enter search term (name, type, or partial match): ";
+        string searchTerm;
+        cin.ignore();
+        getline(cin, searchTerm);
+
+        locationMgr.searchLocations(searchTerm);
+
+        cout << "\n===========================================\n";
+        cout << "Would you like to:\n";
+        cout << "1. Search again\n";
+        cout << "2. Find path from a location\n";
+        cout << "3. View location types\n";
+        cout << "0. Return to main menu\n";
+        cout << "Enter choice: ";
+
+        int choice;
+        cin >> choice;
+
+        switch (choice) {
+        case 1:
+            searchForLocation();
+            break;
+        case 2:
+            findShortestPathBetweenLocations();
+            break;
+        case 3:
+            displayLocationTypes();
+            break;
+        default:
+            break;
+        }
+    }
+
+    void displayLocationTypes() {
+        system("cls");
+        cout << "\n===========================================\n";
+        cout << "      LOCATION TYPES IN CITY               \n";
+        cout << "===========================================\n";
+
+        int counts[10] = { 0 };
+        string types[] = { "Intersection", "Hospital", "School", "Mall",
+                         "Bus Stop", "House", "Pharmacy", "Mosque", "Park", "Water Cooler" };
+
+        Location* temp = locationMgr.getHead();
+        while (temp) {
+            for (int i = 0; i < 10; i++) {
+                if (temp->type == types[i]) {
+                    counts[i]++;
+                    break;
+                }
+            }
+            temp = temp->next;
+        }
+
+        cout << "\nLocation Type Statistics:\n";
+        cout << "-------------------------------------------\n";
+        for (int i = 0; i < 10; i++) {
+            if (counts[i] > 0) {
+                cout << types[i] << ": " << counts[i] << "\n";
+            }
+        }
+        cout << "===========================================\n";
+
+        waitForEnter();
+    }
+
+
+
+
+
     // ==================== UTILITY FUNCTIONS ====================
 
     void waitForEnter()
@@ -97,12 +418,14 @@ private:
         cout << "6. Public Facility System\n";
         cout << "7. Visualize City Map\n";
         cout << "8. Find Shortest Path Between Locations\n";
+        cout << "9. Search for a Location\n";
         cout << "0. Exit\n";
         cout << "--------------------------------------------\n";
         cout << "Enter choice: ";
         cin >> ch;
         choice = ch;
     }
+
 
     int showDataInputMenu()
     {
@@ -1493,9 +1816,13 @@ private:
             return;
         }
 
-        // Handle shortest path finder
         if (choice == 8) {
             findShortestPathBetweenLocations();
+            return;
+        }
+
+        if (choice == 9) {
+            searchForLocation();
             return;
         }
 

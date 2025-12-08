@@ -14,14 +14,12 @@ using std::cout;
 using std::to_string;
 using std::stoi;
 
-// Simple struct to return the path as a Linked List
 struct PathNode {
     Location* loc;
     PathNode* next;
     PathNode(Location* l) : loc(l), next(nullptr) {}
 };
 
-// A simple Min-Heap for Dijkstra
 class MinHeap
 {
 private:
@@ -84,7 +82,6 @@ private:
     static const int SECTOR_SIZE = 90;
     Location* cityLocationHead = nullptr;
 
-
     Sector* sectors[100];
     int sectorCount = 0;
 
@@ -104,7 +101,7 @@ private:
     Location* getOrCreateNode(int x, int y, string type)
     {
         Location* existing = findLocationAt(x, y);
-        if (existing) 
+        if (existing)
         {
             return existing;
         }
@@ -116,7 +113,6 @@ private:
         return newNode;
     }
 
-    // HELPER: Adds raw edge to adjacency list
     void addEdgeRaw(Location* from, Location* to, float weight)
     {
         if (!from || !to) return;
@@ -126,18 +122,13 @@ private:
         from->adjList = newEdge;
     }
 
-    // MAIN: Adds Undirected Edge (Same weight both ways)
     void addEdge(Location* nodeA, Location* nodeB) {
         if (!nodeA || !nodeB || nodeA == nodeB) return;
 
-        // 1. Calculate Distance
         float dist = sqrt(pow(nodeB->x - nodeA->x, 2) + pow(nodeB->y - nodeA->y, 2));
-
-        // 2. Calculate Random Factor ONCE (1.0 to 2.0)
         float randomFactor = 1.0f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
         float finalWeight = dist * randomFactor;
 
-        // 3. Add symmetric edges (A->B and B->A)
         addEdgeRaw(nodeA, nodeB, finalWeight);
         addEdgeRaw(nodeB, nodeA, finalWeight);
     }
@@ -154,21 +145,16 @@ private:
         }
     }
 
-
-    // ---------------------------------------------------------
     string resolveSectorName(string inputName) {
-        // 1. First, check if it's already a valid coordinate (e.g., "F-8")
         int dX, dY;
         if (getSectorBounds(inputName, dX, dY)) {
             return inputName;
         }
 
-        // 2. If not, search all sectors for this tag
         string matchArray[100];
         int matchCount = 0;
 
         for (int i = 0; i < sectorCount; i++) {
-            // Pass inputName to searchLoc (Sector.h)
             if (sectors[i]->searchLoc(inputName)) {
                 if (matchCount < 100) {
                     matchArray[matchCount] = sectors[i]->getName();
@@ -177,9 +163,8 @@ private:
             }
         }
 
-        if (matchCount == 0) return ""; // Not found
+        if (matchCount == 0) return "";
 
-        // 3. Pick a random sector from the matches
         int randIdx = rand() % matchCount;
         return matchArray[randIdx];
     }
@@ -190,13 +175,9 @@ public:
         cityLocationHead = nullptr;
         srand(time(0));
 
-        // 1. Build Road Network
         buildRoadNetwork(true);
-
-        // 2. Initialize Sector Objects (D-5 to J-12)
         initializeSectors();
 
-        // 3. DEMO: Add "BlueArea" tag to F-8 and G-8 for testing
         addTagToSector("F-8", "BlueArea");
         addTagToSector("F-8", "Centaurus");
         addTagToSector("G-8", "BlueArea");
@@ -205,7 +186,6 @@ public:
         addTagToSector("F-9", "Lake View");
     }
 
-    // Initialize the Sector objects so we can store tags in them
     void initializeSectors() {
         for (char row = 'D'; row <= 'J'; row++) {
             for (int col = 5; col <= 12; col++) {
@@ -219,7 +199,6 @@ public:
         cout << "Initialized " << sectorCount << " Sectors.\n";
     }
 
-    // Helper to manually add tags to sectors
     void addTagToSector(string sectorName, string tag)
     {
         for (int i = 0; i < sectorCount; i++) {
@@ -229,7 +208,6 @@ public:
                 return;
             }
         }
-        // Silent fail or cout if preferred
     }
 
     void buildRoadNetwork(bool allowDiagonals)
@@ -240,8 +218,7 @@ public:
             {
                 int rIdx = row - 'D';
                 int cIdx = col - 5;
-                
-                // FIXED: Add the START offsets here to match visualizer coordinate system
+
                 int currX = 80 + cIdx * SECTOR_SIZE;
                 int currY = 50 + rIdx * SECTOR_SIZE;
 
@@ -316,15 +293,11 @@ public:
         return pathHead;
     }
 
-    // ---------------------------------------------------------
-    // Utils
-    // ---------------------------------------------------------
     bool getSectorBounds(string& sector, int& secX, int& secY)
     {
         if (sector.length() < 3) return false;
 
         char rowChar = sector[0];
-        // Handle lowercase
         if (rowChar >= 'a' && rowChar <= 'z') {
             rowChar = rowChar - 32;
         }
@@ -357,13 +330,7 @@ public:
         return false;
     }
 
-    // ---------------------------------------------------------
-    // addToCityGrid 
-    // ---------------------------------------------------------
     void addToCityGrid(string name, string sectorOrTag, string type, Location& toSet) {
-
-        // 1. Resolve the input string. 
-        // If it's "BlueArea", it randomly picks a sector that has that tag.
         string resolvedSector = resolveSectorName(sectorOrTag);
 
         if (resolvedSector == "") {
@@ -386,8 +353,7 @@ public:
         {
             int offsetX = 1 + (rand() % (SECTOR_SIZE - 2));
             int offsetY = 1 + (rand() % (SECTOR_SIZE - 2));
-            
-            // FIXED: Add START offsets here
+
             finalX = 80 + SectorStartX + offsetX;
             finalY = 50 + SectorStartY + offsetY;
 
@@ -409,18 +375,17 @@ public:
         newLocation->next = cityLocationHead;
         cityLocationHead = newLocation;
 
-        // FIXED: Connect to the 4 corners with proper offsets
-        int cornersX[4] = { 
-            80 + SectorStartX, 
-            80 + SectorStartX + SECTOR_SIZE, 
-            80 + SectorStartX, 
-            80 + SectorStartX + SECTOR_SIZE 
+        int cornersX[4] = {
+            80 + SectorStartX,
+            80 + SectorStartX + SECTOR_SIZE,
+            80 + SectorStartX,
+            80 + SectorStartX + SECTOR_SIZE
         };
-        int cornersY[4] = { 
-            50 + SectorStartY, 
-            50 + SectorStartY, 
-            50 + SectorStartY + SECTOR_SIZE, 
-            50 + SectorStartY + SECTOR_SIZE 
+        int cornersY[4] = {
+            50 + SectorStartY,
+            50 + SectorStartY,
+            50 + SectorStartY + SECTOR_SIZE,
+            50 + SectorStartY + SECTOR_SIZE
         };
 
         for (int i = 0; i < 4; i++)
@@ -437,14 +402,92 @@ public:
         return cityLocationHead;
     }
 
-    // Add this method:
     Location* getAllLocations() const
     {
         return cityLocationHead;
     }
-    // Add to locationManager class public section:
 
-// Find nearest intersection to a given location
+    Location* findLocationByName(const string& locationName) {
+        Location* temp = cityLocationHead;
+        while (temp) {
+            string tempName = temp->name;
+            string searchName = locationName;
+
+            for (size_t i = 0; i < tempName.length(); i++) {
+                if (tempName[i] >= 'A' && tempName[i] <= 'Z') {
+                    tempName[i] = tempName[i] + 32;
+                }
+            }
+            for (size_t i = 0; i < searchName.length(); i++) {
+                if (searchName[i] >= 'A' && searchName[i] <= 'Z') {
+                    searchName[i] = searchName[i] + 32;
+                }
+            }
+
+            if (tempName.find(searchName) != string::npos) {
+                return temp;
+            }
+            temp = temp->next;
+        }
+        return nullptr;
+    }
+
+    void searchLocations(const string& searchTerm) {
+        cout << "\n=== Search Results for: '" << searchTerm << "' ===\n";
+
+        Location* temp = cityLocationHead;
+        int count = 0;
+
+        while (temp) {
+            string tempName = temp->name;
+            string search = searchTerm;
+
+            for (size_t i = 0; i < tempName.length(); i++) {
+                if (tempName[i] >= 'A' && tempName[i] <= 'Z') {
+                    tempName[i] = tempName[i] + 32;
+                }
+            }
+            for (size_t i = 0; i < search.length(); i++) {
+                if (search[i] >= 'A' && search[i] <= 'Z') {
+                    search[i] = search[i] + 32;
+                }
+            }
+
+            if (tempName.find(search) != string::npos) {
+                count++;
+                cout << count << ". " << temp->name
+                    << " [" << temp->type << "] "
+                    << "at (" << temp->x << ", " << temp->y << ")\n";
+            }
+            temp = temp->next;
+        }
+
+        if (count == 0) {
+            cout << "No locations found matching '" << searchTerm << "'.\n";
+        }
+        else {
+            cout << "\nTotal: " << count << " location(s) found.\n";
+        }
+    }
+
+    Location* findNearestLocationType(int x, int y, const string& type) {
+        Location* nearest = nullptr;
+        float minDist = std::numeric_limits<float>::max();
+
+        Location* temp = cityLocationHead;
+        while (temp) {
+            if (temp->type == type) {
+                float dist = sqrt(pow(temp->x - x, 2) + pow(temp->y - y, 2));
+                if (dist < minDist) {
+                    minDist = dist;
+                    nearest = temp;
+                }
+            }
+            temp = temp->next;
+        }
+        return nearest;
+    }
+
     Location* findNearestIntersection(int x, int y) {
         Location* nearest = nullptr;
         float minDist = std::numeric_limits<float>::max();
@@ -463,11 +506,9 @@ public:
         return nearest;
     }
 
-    // Connect a location to the nearest intersections (for subgraph integration)
     void connectLocationToGrid(Location* loc) {
         if (!loc) return;
 
-        // Find 4 nearest intersections
         Location* intersections[4] = { nullptr, nullptr, nullptr, nullptr };
         float distances[4] = {
             std::numeric_limits<float>::max(),
@@ -481,10 +522,8 @@ public:
             if (temp->type == "Intersection") {
                 float dist = sqrt(pow(temp->x - loc->x, 2) + pow(temp->y - loc->y, 2));
 
-                // Insert into top 4
                 for (int i = 0; i < 4; i++) {
                     if (dist < distances[i]) {
-                        // Shift down
                         for (int j = 3; j > i; j--) {
                             distances[j] = distances[j - 1];
                             intersections[j] = intersections[j - 1];
@@ -498,14 +537,12 @@ public:
             temp = temp->next;
         }
 
-        // Connect to the nearest intersections
         for (int i = 0; i < 4; i++) {
             if (intersections[i]) {
                 addEdge(loc, intersections[i]);
             }
         }
     }
-
 };
 
-#endif // !LOCATION_MANAGER
+#endif
