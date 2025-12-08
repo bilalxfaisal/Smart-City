@@ -63,11 +63,13 @@ public:
 class Category
 {
     string categoryName;
-	Product** productsTable;
+	
     int productCountCat;
-    int productsTableSizeCat;
+   
 
 public:
+    Product** productsTable;
+    int productsTableSizeCat;
     Category* nextCategory;
     Category(string name = "", int productsNum = 10)
     {

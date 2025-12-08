@@ -50,8 +50,29 @@ public:
     void printHouse() const
     {
         cout << "House " << houseNum << " : \n";
-        family.printFamily();
+        family.display();
+    }
+    void display() const {
+        cout << "House Number: " << houseNum
+            << ", Street Number: " << streetNum
+            << ", Sector: " << sector
+            << ", Location: ";
+        houseLocation.display(); // Assuming Location has a display method
+
+        cout << "Residents:" << endl;
+        Citizen* residentsHead = family.getCitizenHead();
+        if (residentsHead) {
+            Citizen* current = residentsHead;
+            while (current) {
+                current->displayCitizenInfo(); // Display each citizen
+                current = current->nextSibling; // Move to next resident
+            }
+        }
+        else {
+            cout << "No residents." << endl;
+        }
     }
 };
+
 
 #endif

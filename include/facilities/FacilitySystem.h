@@ -314,7 +314,48 @@ public:
         }
         return true;
     }
+    void displayAllMosques() const {
+        cout << "\n=== All Mosques ===" << endl;
+        for (int i = 0; i < mosqueTableSize; i++) {
+            Mosque* current = mosquesTable[i];
+            while (current != nullptr) {
+                current->display();
+                cout << endl;
+                current = current->next; // Move to next mosque
+            }
+        }
+    }
 
+    void displayAllParks() const {
+        cout << "\n=== All Parks ===" << endl;
+        for (int i = 0; i < parkTableSize; i++) {
+            Park* current = parksTable[i];
+            while (current != nullptr) {
+                current->display();
+                cout << endl;
+                current = current->next; // Move to next park
+            }
+        }
+    }
+
+    void displayAllWaterCoolers() const {
+        cout << "\n=== All Water Coolers ===" << endl;
+        for (int i = 0; i < coolerTableSize; i++) {
+            WaterCooler* current = coolersTable[i];
+            while (current != nullptr) {
+                current->display();
+                cout << endl;
+                current = current->next; // Move to next cooler
+            }
+        }
+    }
+
+    void display() const 
+    {
+        displayAllMosques();
+        displayAllParks();
+        displayAllWaterCoolers();
+    }
     // Delete functions
     void deleteMosque(const string& name) {
         int index = Polynomial_Rolling_Hash_V1(name) % mosqueTableSize;

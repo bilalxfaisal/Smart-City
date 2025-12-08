@@ -314,7 +314,7 @@ public:
         while (getline(file, line)) { if (!line.empty()) rowCount++; }
 
         count = rowCount;
-        BusStop* stops = new BusStop[count]; // Allocate Array
+        BusStop* stops = new BusStop[count]; // Allocate Acorray
 
         // Reset File
         file.clear();

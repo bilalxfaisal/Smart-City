@@ -113,15 +113,7 @@ public:
         }
     }
 
-    void display() const {
-        Class* temp = Bacha;
-        while (temp) {
-            cout << "  Class ID: " << temp->classID << " | ";
-            cout << "Class Name: " << temp->className << endl;
-            temp->display();
-            temp = temp->nextSibling;
-        }
-    }
+
 
     bool removeStudentByName(string classID, string studentID) {
         Class* cls = findClassByID(classID);

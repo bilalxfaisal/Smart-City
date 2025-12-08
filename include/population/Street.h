@@ -102,6 +102,18 @@ public:
     {
         return housesHead;
     }
+    void display() const 
+    {
+        cout << "Street ID: " << id
+            << ", Name: " << name << endl;
+
+        cout << "Houses:" << endl;
+        House* current = housesHead;
+        while (current) {
+            current->display(); // Display each house
+            current = current->nextHouse; // Move to next house
+        }
+    }
 };
 
 #endif

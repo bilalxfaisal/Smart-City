@@ -159,7 +159,16 @@ public:
         }
         cout << "Street not found\n";
 	}
+    void display() const {
+        cout << "Sector Name: " << name << endl;
+        cout << "Streets:" << endl;
 
+        for (int i = 0; i < streetCount; i++) {
+            if (streets[i] != nullptr) {
+                streets[i]->display(); // Display each street
+            }
+        }
+    }
 	void setName(const string& n) { name = n; }
 	void setTopLeft(int x, int y) { topLeft = Location(x, y); }
     Location getTopLeft() const { return topLeft; }

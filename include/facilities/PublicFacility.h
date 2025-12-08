@@ -25,11 +25,7 @@ struct PublicFacility {
 		}
 		return *this;
 	}
-	// Display function
-	virtual void display() const {
-		cout << "Public Facility: " << name << " at ";
-		location.display(); // Assuming location has a display method
-	}
+
 	// Destructor
 	virtual ~PublicFacility() {}
 
@@ -61,10 +57,7 @@ struct Mosque : public PublicFacility
 		cout << "Mosque: " << name << " at ";
 		location.display();
 	}
-	void display() const override {
-		cout << "Mosque: " << name << " at ";
-		location.display();
-	}
+
 };
 
 struct Park : public PublicFacility 
@@ -79,10 +72,7 @@ struct Park : public PublicFacility
 		cout << "Park: " << name << " at ";
 		location.display();
 	}
-	void display() const override {
-		cout << "Park: " << name << " at ";
-		location.display();
-	}
+
 };
 
 struct WaterCooler : public PublicFacility {
@@ -92,10 +82,7 @@ struct WaterCooler : public PublicFacility {
 	WaterCooler(const Location& loc, const string& n) : PublicFacility(loc, n) {}
 
 	// Override display
-	void display() const override {
-		cout << "Water Cooler: " << name << " at ";
-		location.display();
-	}
+
 	void display() const override 
 	{
 		cout << "Water Cooler: " << name << " at ";
