@@ -1,9 +1,9 @@
-#ifndef DEPARTMENT_H
-#define DEPARTMENT_H
-
 #include "../utils/Nodes.h"
 #include "../education/Class.h"
 #include <iostream>
+
+#ifndef DEPARTMENT_H
+#define DEPARTMENT_H
 
 using std::cout;
 using std::cin;
