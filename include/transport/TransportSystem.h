@@ -1,4 +1,5 @@
 #include "../utils/Nodes.h"
+#include "../utils/LocationManager.h"
 #include "BusStop.h"
 #include "Bus.h"
 #include "BusRoute.h"
@@ -353,7 +354,7 @@ public:
 		BusStop* startStop = nullptr;
 		BusStop* endStop = nullptr;
 
-		BusStop* temp = route->getHead();
+		BusStop* temp = route->getStartingStop();
 		while (temp) {
 			if (temp->getStopName() == startStopName) {
 				startStop = temp;

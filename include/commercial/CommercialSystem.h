@@ -460,6 +460,7 @@ public:
                 Mall* current = mallsTable[i];
                 while (current != nullptr) {
                     current->displayMall();
+					current->getLocation().display(); // Display mall location
                     current = current->nextMall; // Move to next mall
                 }
             }

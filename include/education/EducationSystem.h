@@ -1,4 +1,5 @@
 #include "../utils/Nodes.h"
+#include "../utils/LocationManager.h"
 #include "School.h"
 #include <iostream>
 #ifndef EDUCATIONSYSTEM_H
@@ -255,21 +256,6 @@ public:
 		}
 
 	}
-	void display() const {
-		cout << "=== Education System ===" << endl;
-		cout << "Total Schools: " << currSchools << endl;
-
-		for (int i = 0; i < totalSchools; i++) {
-			if (schoolHashTable[i] != nullptr) {
-				School* current = schoolHashTable[i];
-				while (current != nullptr) {
-					current->display();  // Display school details
-					current = current->nextSibling;  // Move to next school
-				}
-			}
-		}
-		cout << "==========================" << endl;
-	}
 	// Heapify up : maintains max - heap property after insertion
 	// CONSIDERING NO DELETION HAPPENS
 	void heapifyUp(int index) {
@@ -344,13 +330,31 @@ public:
 	}
 
 	void display() {
+		cout << "\n=== Education System ===" << endl;
+		cout << "Total Schools: " << currSchools << endl;
+		cout << "\nDisplaying all schools in the Education System:" << endl;
+		cout << "==============================================" << endl;
+
 		School* temp = schools;
-		cout << "Displaying all schools in the Education System:" << endl;
+		int count = 0;
 		while (temp) {
-			cout << "School ID: " << temp->schoolID << ", Name: " << temp->schoolName << ", Rating: " << temp->rating << endl;
-			temp->display();
+			count++;
+			cout << "\nSchool #" << count << ":" << endl;
+			cout << "School ID: " << temp->schoolID
+				<< ", Name: " << temp->schoolName
+				<< ", Rating: " << temp->rating
+				<< ", Sector: " << temp->sector
+				<< ", Campus: " << temp->campusNo << endl;
+			cout << "Location: (" << temp->schoolLocation.x
+				<< ", " << temp->schoolLocation.y << ")" << endl;
+			cout << "-------------------------------------------" << endl;
 			temp = temp->nextSibling;
 		}
+
+		if (count == 0) {
+			cout << "No schools found in the system." << endl;
+		}
+		cout << "==============================================" << endl;
 	}
 	void displayStudentsInClass(const string& schoolId, const string& deptId, const string& classId) 
 	{

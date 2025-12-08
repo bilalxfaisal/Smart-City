@@ -1,6 +1,7 @@
 #ifndef POPULATIONSYSTEM_H
 #define POPULATIONSYSTEM_H
 
+#include "../utils/LocationManager.h"
 #include "Sector.h"
 #include "Citizen.h"
 #include <string>

@@ -198,6 +198,23 @@ public:
             }
         
     }
+
+	House* findHouse(int street, int houseNum)
+    {
+        int idx = hashInt(street);
+        Street* s = streets[idx];
+        House* h = s->getHouseHead();
+        while (h)
+        {
+            if (h->getHouseNum() == houseNum) 
+            {
+                return h;
+            }
+            h = h->nextHouse;
+        }
+		return nullptr;
+    }
+
     void printHouseInStreet(int street, int houseNum) 
     {
         int idx = hashInt(street);

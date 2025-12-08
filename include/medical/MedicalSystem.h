@@ -1,6 +1,7 @@
 #include "../utils/Nodes.h"
 #include "Hospital.h"
 #include "Pharmacy.h"
+#include "../utils/LocationManager.h"
 #ifndef MEDICALSYSTEM_H
 #define	MEDICALSYSTEM_H
 #include <iostream>
@@ -335,13 +336,33 @@ public:
 	{
 		cout << "=== Medical System ===" << endl;
 		cout << "Total Hospitals: " << hospitalCount << endl;
+		cout << "Total Pharmacies: " << pharmaciesCount << endl;
+		cout << "\n--- HOSPITALS ---" << endl;
 
-		for (int i = 0; i < hospitalCount; i++) {
-			if (hospitalsTable[i] != nullptr) {
-				hospitalsTable[i]->display();  // Display each hospital
+		// Traverse the entire hash table
+		for (int i = 0; i < hospitalTableSize; i++) {
+			Hospital* current = hospitalsTable[i];
+			// Traverse the linked list at each bucket
+			while (current != nullptr) {
+				current->display();  // Display each hospital
+				cout << "Location: (" << current->getHospitalLocation().x 
+					 << ", " << current->getHospitalLocation().y << ")" << endl;
 				cout << endl;
+				current = current->nextHospital;  // Move to next in chain
 			}
 		}
+
+		cout << "\n--- PHARMACIES ---" << endl;
+		// Traverse pharmacies hash table too
+		for (int i = 0; i < pharmaciesTableSize; i++) {
+			Pharmacy* current = pharmaciesTable[i];
+			while (current != nullptr) {
+				current->display();  // Display each pharmacy
+				cout << endl;
+				current = current->nextPharmacy;  // Move to next in chain
+			}
+		}
+		
 		cout << "==========================" << endl;
 	}
 
