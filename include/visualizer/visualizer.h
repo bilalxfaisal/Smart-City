@@ -227,6 +227,10 @@ public:
         location = head;
     }
 
+    void removeLocationHead() {
+        location = nullptr;
+	}
+
     void setSectorPopHead(SectorPopNode* head) {
         sectorPopHead = head;
 	}

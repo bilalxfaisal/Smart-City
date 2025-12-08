@@ -7,6 +7,7 @@
 #include "facilities/FacilitySystem.h"
 #include "population/PopulationSystem.h"
 #include "utils/LocationManager.h"
+#include "visualizer/visualizer.h"
 #include <iostream>
 #include <cstdlib>
 #include <string>
@@ -14,6 +15,11 @@ using namespace std;
 
 locationManager Loco;
 CSVHandler csvHandler;
+Visualizer cityVisualizer; // Global visualizer instance
+
+// Track if CSV data has been loaded
+bool csvDataLoaded = false;
+PopulationSystem* globalPopulation = nullptr; // Store population system for heatmap data
 
 void waitForEnter()
 {
@@ -25,7 +31,7 @@ void waitForEnter()
 
 void runTheCitySystem();
 void showMainMenu(int& choice);
-int showDataInputMenu(); // NEW: Choose CSV or Manual
+int showDataInputMenu(); // Choose CSV or Manual
 int showTransportMenu();
 int showCommercialMenu();
 int showEducationMenu();
@@ -39,8 +45,10 @@ void runEducationSystem(EducationSystem&);
 void runMedicalSystem(MedicalSystem&);
 void runFacilitySystem(FacilitySystem&);
 void runPopulationSystem(PopulationSystem&);
+void runVisualization(); // Full city visualization
+void runSystemVisualization(Location* systemLocationHead, const string& systemName); // Individual system visualization
 
-// NEW: Load data from CSV files (updated signatures to pass system references)
+// Load data from CSV files
 void loadHospitalsFromCSV(MedicalSystem& medical);
 void loadPharmaciesFromCSV(MedicalSystem& medical);
 void loadSchoolsFromCSV(EducationSystem& education);
@@ -84,7 +92,7 @@ float readFloat(const string& prompt)
     }
 }
 
-// NEW: Show data input menu
+// Show data input menu
 int showDataInputMenu()
 {
     int ch;
@@ -97,10 +105,13 @@ int showDataInputMenu()
     return ch;
 }
 
-// FUNCION DEFINITIONS
+// FUNCTION DEFINITIONS
 
 void runTheCitySystem()
 {
+    // Initialize Islamabad sector grid ONCE at program start
+    initializeIslamabadSectorGrid();
+
     int mainMenuCh = 0;
     do {
         system("cls");
@@ -122,6 +133,7 @@ void showMainMenu(int& choice)
     cout << "4. Population System\n";
     cout << "5. Transport System\n";
     cout << "6. Public Facility\n";
+    cout << "7. Visualize City Map\n";
     cout << "0. Exit to main menu\n";
     cout << "\nEnter choice: ";
     cin >> ch;
@@ -139,6 +151,7 @@ int showTransportMenu()
     cout << "5. Simulate Bus Movement\n";
     cout << "6. Display Transport Company Status\n";
     cout << "7. Show Routes\n";
+    cout << "8. Visualize Transport System\n"; // NEW
     cout << "0. Exit to main menu\n";
     cout << "Enter choice: ";
     cin >> ch;
@@ -179,6 +192,7 @@ int showEducationMenu()
     cout << "10. Display Students in Class\n";
     cout << "11. Display All Students in School\n";
     cout << "12. Find Student\n";
+    cout << "13. Visualize Education System\n"; // NEW
     cout << "0. Exit to main menu\n";
     cout << "Enter choice: ";
     cin >> ch;
@@ -205,6 +219,7 @@ int showMedicalSystemMenu()
     cout << "14. Search Hospital By Name\n";
     cout << "15. Search Pharmacy By Name\n";
     cout << "16. Search Patient By Name\n";
+    cout << "17. Visualize Medical System\n"; // NEW
     cout << "0. Exit to main menu\n";
     cout << "Enter choice: ";
     cin >> ch;
@@ -221,6 +236,7 @@ int showFacilityMenu()
     cout << "4. Display All Mosques\n";
     cout << "5. Display All Parks\n";
     cout << "6. Display All Water Coolers\n";
+    cout << "7. Visualize Facility System\n"; // NEW
     cout << "0. Exit to main menu\n";
     cout << "Enter choice: ";
     cin >> ch;
@@ -241,6 +257,7 @@ int showPopulationMenu()
     cout << "8. Population Density Report\n";
     cout << "9. Display Memebers of a House\n";
 	cout << "10. Display Houses in a Street\n";
+    cout << "11. Visualize Population System\n"; // NEW
     cout << "0. Exit to main menu\n";
     cout << "Enter choice: ";
     cin >> ch;
@@ -250,16 +267,33 @@ int showPopulationMenu()
 void simulateBasedOnMainChoice(int ch)
 {
     // Create system instances FIRST
-    CommercialSystem commercial;
-    TransportSystem transport;
-    EducationSystem education(20);
-    MedicalSystem medical;
-    FacilitySystem facility;
-	PopulationSystem population;
+    static CommercialSystem commercial;
+    static TransportSystem transport;
+    static EducationSystem education(20);
+    static MedicalSystem medical;
+    static FacilitySystem facility;
+	static PopulationSystem population;
+
+    // Store global reference for heatmap
+    globalPopulation = &population;
 
     int choice = ch;
 
-    // NEW: Ask for input method
+    // Handle visualization separately
+    if (choice == 7) {
+        if (!csvDataLoaded) {
+            cout << "\nWARNING: No CSV data has been loaded yet!\n";
+            cout << "Please load data from at least one system before visualizing.\n";
+            cout << "\nPress ENTER to return to menu...\n";
+            cin.ignore();
+            cin.get();
+            return;
+        }
+        runVisualization();
+        return;
+    }
+
+    // Ask for input method
     system("cls");
     int inputMethod = showDataInputMenu();
     cin.ignore();
@@ -274,25 +308,30 @@ void simulateBasedOnMainChoice(int ch)
         switch (choice)
         {
         case 1: // Commercial
-            cout << "CSV loading not implemented for Commercial System yet.\n";
+            cout << "CSV loading for Commercial System is not available.\n";
+            cout << "Please use manual input instead.\n";
             break;
             
         case 2: // Education
             loadSchoolsFromCSV(education);
+            csvDataLoaded = true;
             break;
             
         case 3: // Medical
             loadHospitalsFromCSV(medical);
             loadPharmaciesFromCSV(medical);
+            csvDataLoaded = true;
             break;
             
         case 4: // Population
             loadCitizensFromCSV(population);
+            csvDataLoaded = true;
             break;
             
         case 5: // Transport
             loadBusStopsFromCSV(transport);
             loadBusesFromCSV(transport);
+            csvDataLoaded = true;
             break;
             
         case 6: // Facility
@@ -307,7 +346,6 @@ void simulateBasedOnMainChoice(int ch)
         cout << "\nData loading completed!\n";
         waitForEnter();
     }
-    // If inputMethod == 2 (Manual), just proceed to the system menu
 
     // Now run the appropriate system
     switch (choice)
@@ -350,7 +388,77 @@ void simulateBasedOnMainChoice(int ch)
     }
 }
 
-// NEW: Load hospitals from CSV
+// Full city visualization
+void runVisualization()
+{
+    system("cls");
+    cout << "\n====== FULL CITY VISUALIZATION ======\n";
+    cout << "Launching full city visualizer...\n";
+    cout << "\nControls:\n";
+    cout << "  - Left-click: Zoom into a sector\n";
+    cout << "  - Right-click: Zoom out\n";
+    cout << "  - Press 'H': Toggle heatmap mode (shows population density)\n";
+    cout << "  - Press 'Enter': Exit heatmap mode\n";
+    cout << "  - Close window: Return to main menu\n";
+    cout << "\nPress ENTER to start...\n";
+    cin.ignore();
+    cin.get();
+
+    // Clear previous data and set new data
+    cityVisualizer.removeLocationHead();
+    
+    // Get all locations from LocationManager (full city graph)
+    Location* allLocations = Loco.getHead();
+    cityVisualizer.setLocationHead(allLocations);
+
+    // Set up heatmap data from population system if available
+    if (globalPopulation) {
+        globalPopulation->GetMinMaxPop();
+        SectorPopNode* popList = globalPopulation->getSectorPopulationList();
+        cityVisualizer.setSectorPopHead(popList);
+        cityVisualizer.setMinMaxPop(
+            globalPopulation->getMinPopulation(),
+            globalPopulation->getMaxPopulation()
+        );
+    }
+
+    // Run the visualizer
+    cityVisualizer.run();
+
+    cout << "\nVisualizer closed. Returning to main menu...\n";
+    waitForEnter();
+}
+
+// Individual system visualization
+void runSystemVisualization(Location* systemLocationHead, const string& systemName)
+{
+    system("cls");
+    cout << "\n====== " << systemName << " VISUALIZATION ======\n";
+    cout << "Launching " << systemName << " visualizer...\n";
+    cout << "\nControls:\n";
+    cout << "  - Left-click: Zoom into a sector\n";
+    cout << "  - Right-click: Zoom out\n";
+    cout << "  - Close window: Return to menu\n";
+    cout << "\nNote: Heatmap mode is only available in full city view.\n";
+    cout << "\nPress ENTER to start...\n";
+    cin.ignore();
+    cin.get();
+
+    // Clear previous data and set system-specific subgraph
+    cityVisualizer.removeLocationHead();
+    cityVisualizer.setLocationHead(systemLocationHead);
+
+    // Don't set population data for individual system views
+    cityVisualizer.setSectorPopHead(nullptr);
+
+    // Run the visualizer
+    cityVisualizer.run();
+
+    cout << "\nVisualizer closed. Returning to " << systemName << " menu...\n";
+    waitForEnter();
+}
+
+// Load hospitals from CSV
 void loadHospitalsFromCSV(MedicalSystem& medical)
 {
     string path = readLine("Enter path to hospitals CSV file: ");
@@ -369,7 +477,7 @@ void loadHospitalsFromCSV(MedicalSystem& medical)
     }
 }
 
-// NEW: Load pharmacies from CSV
+// Load pharmacies from CSV
 void loadPharmaciesFromCSV(MedicalSystem& medical)
 {
     string path = readLine("Enter path to pharmacies CSV file: ");
@@ -388,7 +496,7 @@ void loadPharmaciesFromCSV(MedicalSystem& medical)
     }
 }
 
-// NEW: Load schools from CSV
+// Load schools from CSV
 void loadSchoolsFromCSV(EducationSystem& education)
 {
     string path = readLine("Enter path to schools CSV file: ");
@@ -407,7 +515,7 @@ void loadSchoolsFromCSV(EducationSystem& education)
     }
 }
 
-// NEW: Load bus stops from CSV
+// Load bus stops from CSV
 void loadBusStopsFromCSV(TransportSystem& transport)
 {
     string path = readLine("Enter path to bus stops CSV file: ");
@@ -416,7 +524,6 @@ void loadBusStopsFromCSV(TransportSystem& transport)
     
     if (stops) {
         cout << "Loaded " << count << " bus stops.\n";
-        // Note: You'll need to add these to routes manually
         delete[] stops;
     }
     else {
@@ -424,7 +531,7 @@ void loadBusStopsFromCSV(TransportSystem& transport)
     }
 }
 
-// NEW: Load buses from CSV
+// Load buses from CSV
 void loadBusesFromCSV(TransportSystem& transport)
 {
     string path = readLine("Enter path to buses CSV file: ");
@@ -440,7 +547,7 @@ void loadBusesFromCSV(TransportSystem& transport)
     }
 }
 
-// NEW: Load citizens from CSV
+// Load citizens from CSV
 void loadCitizensFromCSV(PopulationSystem& population)
 {
     string path = readLine("Enter path to citizens CSV file: ");
@@ -477,6 +584,18 @@ void runEducationSystem(EducationSystem& education)
             cout << "Exiting...\n";
             break;
         }
+        
+        if (choice == 13) { // Visualize Education System
+            if (!csvDataLoaded) {
+                cout << "\nPlease load CSV data first before visualizing.\n";
+                waitForEnter();
+                continue;
+            }
+            Location* eduLocations = education.getSchoolLocationsHead();
+            runSystemVisualization(eduLocations, "Education System");
+            continue;
+        }
+        
         switch (choice)
         {
         case 1: // Add School
@@ -619,12 +738,23 @@ void runTransportSystem(TransportSystem& transport)
         system("cls");
 
         int choice = showTransportMenu();
-        cin.ignore(); // flush newline
+        cin.ignore();
 
         if (choice == 0)
         {
             cout << "Exiting...\n";
             break;
+        }
+
+        if (choice == 8) { // Visualize Transport System
+            if (!csvDataLoaded) {
+                cout << "\nPlease load CSV data first before visualizing.\n";
+                waitForEnter();
+                continue;
+            }
+            Location* transportLocations = transport.getBusStopLocationHead();
+            runSystemVisualization(transportLocations, "Transport System");
+            continue;
         }
 
         switch (choice)
@@ -670,7 +800,6 @@ void runTransportSystem(TransportSystem& transport)
             BusStop bs(stopName);
             Loco.addToCityGrid(stopName, sect, "Bus Stop", bs.getLocation());
 
-            // Must find route (simple hash lookup)
             int idx = Polynomial_Rolling_Hash_V1(rname);
             idx %= 20;
 
@@ -760,7 +889,7 @@ void runCommercialSystem(CommercialSystem& commercial)
         system("cls");
 
         int choice = showCommercialMenu();
-        cin.ignore(); // flush newline
+        cin.ignore();
 
         if (choice == 0)
         {
@@ -887,6 +1016,33 @@ void runMedicalSystem(MedicalSystem& medical)
             break;
         }
 
+        if (choice == 17) { // Visualize Medical System
+            if (!csvDataLoaded) {
+                cout << "\nPlease load CSV data first before visualizing.\n";
+                waitForEnter();
+                continue;
+            }
+            Location* hospitalLocs = medical.getHospitalLocationHead();
+            Location* pharmacyLocs = medical.getPharmacyLocationHead();
+            
+            // Merge both lists temporarily for visualization
+            if (hospitalLocs && pharmacyLocs) {
+                Location* temp = hospitalLocs;
+                while (temp->next) temp = temp->next;
+                temp->next = pharmacyLocs;
+            }
+            
+            runSystemVisualization(hospitalLocs ? hospitalLocs : pharmacyLocs, "Medical System");
+            
+            // Unlink after visualization
+            if (hospitalLocs && pharmacyLocs) {
+                Location* temp = hospitalLocs;
+                while (temp->next != pharmacyLocs) temp = temp->next;
+                temp->next = nullptr;
+            }
+            continue;
+        }
+
         switch (choice)
         {
         case 1: // Add Hospital
@@ -899,12 +1055,10 @@ void runMedicalSystem(MedicalSystem& medical)
             int bedNum = readInt("Enter number of beds: ");
             Hospital hospital(name, id, sec, bedNum, specs);
 
-            //Add to map? Create a location manager object then give it stuff to add.
             Loco.addToCityGrid(name, sec, "Hospital", hospital.getHospitalLocation());
             medical.addHospital(hospital);
             break;
         }
-        ///TO DO: MAKE REMOVE FROM GRID IN CITY MANAGER
 
         case 2: // Remove Hospital
         {
@@ -1072,6 +1226,49 @@ void runFacilitySystem(FacilitySystem& facility)
             cout << "Exiting Facility System...\n";
             break;
         }
+        
+        if (choice == 7) { // Visualize Facility System
+            // Merge all facility location lists
+            Location* mosqueLocs = facility.getMosqueLocationHead();
+            Location* parkLocs = facility.getParkLocationHead();
+            Location* coolerLocs = facility.getCoolerLocationHead();
+            
+            // Link them together temporarily
+            Location* facilityHead = mosqueLocs;
+            if (mosqueLocs) {
+                Location* temp = mosqueLocs;
+                while (temp->next) temp = temp->next;
+                temp->next = parkLocs;
+                if (parkLocs) {
+                    temp = parkLocs;
+                    while (temp->next) temp = temp->next;
+                    temp->next = coolerLocs;
+                }
+            } else if (parkLocs) {
+                facilityHead = parkLocs;
+                Location* temp = parkLocs;
+                while (temp->next) temp = temp->next;
+                temp->next = coolerLocs;
+            } else {
+                facilityHead = coolerLocs;
+            }
+            
+            runSystemVisualization(facilityHead, "Facility System");
+            
+            // Unlink after visualization
+            if (mosqueLocs && parkLocs) {
+                Location* temp = mosqueLocs;
+                while (temp->next != parkLocs) temp = temp->next;
+                temp->next = nullptr;
+            }
+            if (parkLocs && coolerLocs) {
+                Location* temp = parkLocs;
+                while (temp->next != coolerLocs) temp = temp->next;
+                temp->next = nullptr;
+            }
+            continue;
+        }
+        
         switch (choice)
         {
         case 1: // Add Mosque
@@ -1145,6 +1342,18 @@ void runPopulationSystem(PopulationSystem& population)
             cout << "Exiting Population System...\n";
             break;
         }
+        
+        if (choice == 11) { // Visualize Population System
+            if (!csvDataLoaded) {
+                cout << "\nPlease load CSV data first before visualizing.\n";
+                waitForEnter();
+                continue;
+            }
+            Location* houseLocs = population.getHouseLocationHead();
+            runSystemVisualization(houseLocs, "Population System");
+            continue;
+        }
+        
         switch (choice)
         {
         case 1: // Add Sector
