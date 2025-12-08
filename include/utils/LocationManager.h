@@ -384,8 +384,8 @@ public:
         {
             int offsetX = 1 + (rand() % (SECTOR_SIZE - 2));
             int offsetY = 1 + (rand() % (SECTOR_SIZE - 2));
-            finalX = SectorStartX + offsetX;
-            finalY = SectorStartY + offsetY;
+            finalX = SectorStartX + offsetX + 80;
+            finalY = SectorStartY + offsetY + 50;
 
             if (!isOccupied(finalX, finalY))
             {
@@ -400,7 +400,7 @@ public:
             return;
         }
 
-        Location* newLocation = new Location(finalX, finalY, name, type);
+        Location* newLocation = new Location(finalX + 80, finalY + 50, name, type);
         toSet = *newLocation;
         newLocation->next = cityLocationHead;
         cityLocationHead = newLocation;
@@ -419,6 +419,12 @@ public:
     }
 
     Location* getHead()
+    {
+        return cityLocationHead;
+    }
+
+    // Add this method:
+    Location* getAllLocations() const
     {
         return cityLocationHead;
     }

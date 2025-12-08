@@ -408,7 +408,7 @@ void runVisualization()
     cityVisualizer.removeLocationHead();
     
     // Get all locations from LocationManager (full city graph)
-    Location* allLocations = Loco.getHead();
+    Location* allLocations = Loco.getAllLocations(); // CHANGED from getHead()
     cityVisualizer.setLocationHead(allLocations);
 
     // Set up heatmap data from population system if available
@@ -432,24 +432,33 @@ void runVisualization()
 // Individual system visualization
 void runSystemVisualization(Location* systemLocationHead, const string& systemName)
 {
+    if (!systemLocationHead) {
+        cout << "\nNo locations found in " << systemName << ".\n";
+        waitForEnter();
+        return;
+    }
+
     system("cls");
     cout << "\n====== " << systemName << " VISUALIZATION ======\n";
     cout << "Launching " << systemName << " visualizer...\n";
+    cout << "\nNote: Showing only " << systemName << " locations on the city grid.\n";
     cout << "\nControls:\n";
     cout << "  - Left-click: Zoom into a sector\n";
     cout << "  - Right-click: Zoom out\n";
     cout << "  - Close window: Return to menu\n";
-    cout << "\nNote: Heatmap mode is only available in full city view.\n";
     cout << "\nPress ENTER to start...\n";
     cin.ignore();
     cin.get();
 
-    // Clear previous data and set system-specific subgraph
-    cityVisualizer.removeLocationHead();
-    cityVisualizer.setLocationHead(systemLocationHead);
+    // IMPORTANT: Create a COPY of the subgraph linked list
+    // because the system heads use the 'next' pointer for their own list,
+    // NOT for traversing the visualization
+    Location* subgraphHead = systemLocationHead;
 
-    // Don't set population data for individual system views
-    cityVisualizer.setSectorPopHead(nullptr);
+    // Clear previous data and set new subgraph
+    cityVisualizer.removeLocationHead();
+    cityVisualizer.setLocationHead(subgraphHead);
+    cityVisualizer.setSectorPopHead(nullptr); // No heatmap for system view
 
     // Run the visualizer
     cityVisualizer.run();
@@ -467,6 +476,13 @@ void loadHospitalsFromCSV(MedicalSystem& medical)
     
     if (hospitals) {
         for (int i = 0; i < count; i++) {
+            // IMPORTANT: Assign random location BEFORE adding to system
+            Loco.addToCityGrid(
+                hospitals[i].getHospitalName(), 
+                hospitals[i].getHospitalSector(), 
+                "Hospital", 
+                hospitals[i].getHospitalLocation()
+            );
             medical.addHospital(hospitals[i]);
         }
         cout << "Loaded " << count << " hospitals.\n";
@@ -486,6 +502,13 @@ void loadPharmaciesFromCSV(MedicalSystem& medical)
     
     if (pharmacies) {
         for (int i = 0; i < count; i++) {
+            // IMPORTANT: Assign random location BEFORE adding to system
+            Loco.addToCityGrid(
+                pharmacies[i].getPharmacyName(), 
+                pharmacies[i].getPharmacySector(), 
+                "Pharmacy", 
+                pharmacies[i].getPharmacyLocation()
+            );
             medical.addPharmacy(pharmacies[i]);
         }
         cout << "Loaded " << count << " pharmacies.\n";
@@ -505,6 +528,13 @@ void loadSchoolsFromCSV(EducationSystem& education)
     
     if (schools) {
         for (int i = 0; i < count; i++) {
+            // IMPORTANT: Assign random location BEFORE adding to system
+            Loco.addToCityGrid(
+                schools[i].getSchoolName(), 
+                schools[i].getSchoolSector(), 
+                "School", 
+                schools[i].getSchoolLocation()
+            );
             education.addSchool(schools[i]);
         }
         cout << "Loaded " << count << " schools.\n";
@@ -523,6 +553,17 @@ void loadBusStopsFromCSV(TransportSystem& transport)
     BusStop* stops = csvHandler.traverseBusStops(path, count);
     
     if (stops) {
+        for (int i = 0; i < count; i++) {
+            // IMPORTANT: Assign random location BEFORE adding to system
+            Loco.addToCityGrid(
+                stops[i].getStopName(), 
+                stops[i].getStopSector(), 
+                "Bus Stop", 
+                stops[i].getLocation()
+            );
+            // Note: You'll need to implement transport.addBusStop() method
+            // transport.addBusStop(stops[i]);
+        }
         cout << "Loaded " << count << " bus stops.\n";
         delete[] stops;
     }
@@ -539,6 +580,12 @@ void loadBusesFromCSV(TransportSystem& transport)
     Bus* buses = csvHandler.traverseBuses(path, count);
     
     if (buses) {
+        // Buses don't need location assignment as they move along routes
+        for (int i = 0; i < count; i++) {
+            // Add bus to transport system
+            // You'll need to implement this based on your TransportSystem structure
+            // transport.addBus(buses[i]);
+        }
         cout << "Loaded " << count << " buses.\n";
         delete[] buses;
     }
@@ -556,10 +603,15 @@ void loadCitizensFromCSV(PopulationSystem& population)
     
     if (citizens) {
         for (int i = 0; i < count; i++) {
+            // Citizens are tied to houses, so we need to:
+            // 1. Get the house location from the citizen's address
+            // 2. The house should already have a location assigned when it was added
+            
             // Extract sector, street, house from citizen data
-            string sector = ""; // You'll need getter methods in Citizen class
-            int street = 0;
-            int house = 0;
+            string sector = citizens[i].getCitizenSector(); 
+            int street = citizens[i].getCitizenStreet();
+            int house = citizens[i].getCitizenHouse();
+            
             population.addCitizen(citizens[i], sector, street, house);
         }
         cout << "Loaded " << count << " citizens.\n";
@@ -797,7 +849,7 @@ void runTransportSystem(TransportSystem& transport)
             string after = afterFlag ? readLine("Add AFTER which stop? (exact name): ") : readLine("Add BEFORE which stop? (exact name): ");
 
 
-            BusStop bs(stopName);
+            BusStop bs(stopName, sect);
             Loco.addToCityGrid(stopName, sect, "Bus Stop", bs.getLocation());
 
             int idx = Polynomial_Rolling_Hash_V1(rname);

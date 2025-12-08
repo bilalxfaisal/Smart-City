@@ -40,6 +40,13 @@ public:
 	bool addDepartment(Department& dept);
 	void display();
 	void displayStudentsInClass(string, string);
+
+	string getSchoolName() const {
+		return schoolName;
+	}
+	string getSchoolSector() const {
+		return sector;
+	}
 	Location& getSchoolLocation() 
 	{
 		return schoolLocation;

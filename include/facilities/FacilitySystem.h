@@ -525,6 +525,10 @@ public:
     int getMosqueCount() const { return mosqueCount; }
     int getParkCount() const { return parkCount; }
     int getCoolerCount() const { return coolerCount; }
+
+	Location* getMosqueLocationHead() const { return mosqueLocationHead; }
+	Location* getParkLocationHead() const { return parkLocationHead; }
+	Location* getCoolerLocationHead() const { return coolerLocationHead; }
 };
 
 #endif // !FACILITYSYSTEM_H

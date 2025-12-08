@@ -16,13 +16,15 @@ class BusStop {
 	int currBuses; // number of buses currently at the stop
 	int totalSize; // size of the array
 	Bus** busesAtStop; // dynamic array of pointers to buses currently at the stop
+	string stopSector; // sector of the bus stop
 public:
 	BusStop* nextStop; // pointer to the next bus stop in the route
 	// Removed prevStop - using singly linked list only
 
 public:
-	BusStop(string name) {
+	BusStop(string name, string sector) {
 		stopName = name;
+		stopSector = sector;
 		currBuses = 0;
 		totalSize = 10;
 		busesAtStop = new Bus * [totalSize];
@@ -93,6 +95,9 @@ public:
 		stopLocation.y = lon;
 	}
 
+	string getStopSector() const {
+		return stopSector;
+	}
 };
 
 int BusStop::counter = 0;

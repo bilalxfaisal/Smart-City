@@ -293,6 +293,16 @@ public:
 		return hospitalLocation;
 	}
 
+	string getHospitalName() const
+	{
+		return name;
+	}
+	string getHospitalSector() const
+	{
+		return sector;
+	}
+
+
 };
 int Hospital::patientIdCounter = 1;
 int Hospital::doctorIdCounter = 1;

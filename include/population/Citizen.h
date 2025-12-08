@@ -14,6 +14,9 @@ private:
     string gender;
     string Occupation;
     string address;
+	string citizenSector;
+	int  citizenStreet;
+	int citizenHouse;
 
 public:
     //FOR TREE
@@ -37,7 +40,12 @@ public:
         CNIC = cn;
         name = n;
         age = ag;
-    
+        citizenSector = sec;
+		citizenStreet = sn;
+		citizenHouse = hn;
+
+		// Combine address parts
+
         address = sec + " " + to_string(sn) + " " + to_string(hn);
         Occupation = occ;
     }
@@ -88,6 +96,15 @@ public:
         // Combine address parts
         address = sec + " " + to_string(sn) + " " + to_string(hn);
         Occupation = occ;
+    }
+    string getCitizenSector() const {
+        return citizenSector;
+	}
+    int getCitizenStreet() const {
+        return citizenStreet;
+	}
+    int getCitizenHouse() const {
+        return citizenHouse;
     }
 
 };

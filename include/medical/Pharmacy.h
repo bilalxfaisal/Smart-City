@@ -211,6 +211,19 @@ public:
     {
         return pharmacyLocation;
     }
+    string getSector()
+    {
+        return sector;
+	}
+
+    string getPharmacyName() const
+    {
+        return name;
+	}
+    string getPharmacySector() const
+    {
+        return sector;
+	}
 };
 
 #endif
