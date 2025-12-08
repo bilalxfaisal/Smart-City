@@ -319,7 +319,7 @@ public:
                 float weight = e->weight;
 
                 if (emergencyMode) {
-                    weight = weight / 0.6f;
+                    weight = weight / 1.67f;
                 }
 
                 if (!v->visited && u->minDist + weight < v->minDist)
@@ -345,6 +345,44 @@ public:
             crawler = crawler->parent;
         }
         return pathHead;
+    }
+
+    void addPathEdgesToVisualization(PathNode* path) {
+        if (!path) return;
+
+        PathNode* current = path;
+        while (current && current->next) {
+            Location* from = current->loc;
+            Location* to = current->next->loc;
+
+            bool edgeExists = false;
+            Edge* e = from->adjList;
+            while (e) {
+                if (e->destination == to) {
+                    edgeExists = true;
+                    break;
+                }
+                e = e->nextEdge;
+            }
+
+            if (!edgeExists) {
+                addTemporaryEdge(from, to);
+            }
+
+            current = current->next;
+        }
+    }
+
+    void removePathEdgesFromVisualization(PathNode* path) {
+        if (!path) return;
+
+        PathNode* current = path;
+        while (current && current->next) {
+            Location* from = current->loc;
+            Location* to = current->next->loc;
+            removeTemporaryEdge(from, to);
+            current = current->next;
+        }
     }
 
     bool getSectorBounds(string& sector, int& secX, int& secY)
@@ -600,4 +638,3 @@ public:
 };
 
 #endif
-
