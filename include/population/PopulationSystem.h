@@ -196,6 +196,7 @@ public:
         Sector* s = findSector(sectorName);
         if (!s) return;
         s->addCitizenToHouseInStreet(streetID, houseNum, c);
+
     }
 
     void searchIndividual(const string& cnic)

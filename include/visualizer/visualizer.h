@@ -29,8 +29,8 @@ struct SectorBounds {
     float topLeftY = 0.0;
 };
 
-// Fixed array — no STL containers used beyond std::string
-const int TOTAL_SECTORS = 56; // 7 rows (D-J) × 8 cols (5-12)
+// Fixed array ? no STL containers used beyond std::string
+const int TOTAL_SECTORS = 56; // 7 rows (D-J) ? 8 cols (5-12)
 static SectorBounds ISLAMABAD_SECTORS[TOTAL_SECTORS];
 
 // Initialize the grid once (call this in your Visualizer constructor or main)
@@ -81,14 +81,14 @@ private:
     static const int ZOOMED_AREA_SIZE = 600;
 
     bool isZoomedIn = false;
-	bool HeatMapMode = false;
+    bool HeatMapMode = false;
     int zoomedRow = -1;
     int zoomedCol = -1;
 
     Location* location; // head of all Locations
-	SectorPopNode* sectorPopHead; // head of sector population list
-	int minPop = INT_MAX;
-	int maxPop = INT_MIN;
+    SectorPopNode* sectorPopHead; // head of sector population list
+    int minPop = INT_MAX;
+    int maxPop = INT_MIN;
 
     char getRowLetter(int r) const { return static_cast<char>('D' + r); }
     int getColNumber(int c) const { return 5 + c; }
@@ -261,15 +261,15 @@ public:
 
     void removeLocationHead() {
         location = nullptr;
-	}
+    }
 
     void setSectorPopHead(SectorPopNode* head) {
         sectorPopHead = head;
-	}
+    }
     void setMinMaxPop(int minP, int maxP) {
         minPop = minP;
         maxPop = maxP;
-	}
+    }
 
     Location* getLocationHead() const {
         return location;
@@ -304,13 +304,13 @@ public:
             }
 
             // Draw frame
-            if(!HeatMapMode){
+            if (!HeatMapMode) {
                 draw(window, font);
             }
             else {
                 // HeatMapMode drawing logic here
                 window.clear(sf::Color::Black);
-				drawHeatMap(window, font);
+                drawHeatMap(window, font);
             }
             window.display();
         }
@@ -467,30 +467,30 @@ public:
 
 
     void drawHeatMap(sf::RenderWindow& window, sf::Font& font) {
-		drawGrid(window);
-		drawLabels(window, font);
-		// TO DO: Implement heat map drawing logic here
+        drawGrid(window);
+        drawLabels(window, font);
+        // TO DO: Implement heat map drawing logic here
         SectorPopNode* head = sectorPopHead;
         int min = minPop;
-		int max = maxPop;
-		while (head) {
-			float topLeftX, topLeftY;
+        int max = maxPop;
+        while (head) {
+            float topLeftX, topLeftY;
             if (getSectorTopLeft(head->sectorName, topLeftX, topLeftY)) {
-					// this will output 0.0 to 1.0
-                    float intensity = static_cast<float>(head->population - min) / (max - min);
-					sf::Color redColor = sf::Color(255, 0, 0, intensity * 255);
-					sf::RectangleShape rectangle(sf::Vector2f(SECTOR_SIZE, SECTOR_SIZE));
-					rectangle.setPosition(topLeftX, topLeftY);
-					rectangle.setFillColor(redColor);
-					window.draw(rectangle);
+                // this will output 0.0 to 1.0
+                float intensity = static_cast<float>(head->population - min) / (max - min);
+                sf::Color redColor = sf::Color(255, 0, 0, intensity * 255);
+                sf::RectangleShape rectangle(sf::Vector2f(SECTOR_SIZE, SECTOR_SIZE));
+                rectangle.setPosition(topLeftX, topLeftY);
+                rectangle.setFillColor(redColor);
+                window.draw(rectangle);
 
             }
             else {
                 // Sector name not found
-				// no need to do anything here for now
+                // no need to do anything here for now
             }
-			head = head->next;
+            head = head->next;
         }
-        
-	}
+
+    }
 };

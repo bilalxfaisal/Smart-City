@@ -251,7 +251,8 @@ public:
         cout << "Road Network Generated (Diagonals: " << (allowDiagonals ? "ON" : "OFF") << ")\n";
     }
 
-    void addTemporaryEdge(Location* start, Location* end) {
+    void addTemporaryEdge(Location* start, Location* end)
+    {
         if (!start || !end || start == end) return;
 
         float dist = calculateEuclideanDistance(start, end);
@@ -347,7 +348,8 @@ public:
         return pathHead;
     }
 
-    void addPathEdgesToVisualization(PathNode* path) {
+    void addPathEdgesToVisualization(PathNode* path)
+    {
         if (!path) return;
 
         PathNode* current = path;

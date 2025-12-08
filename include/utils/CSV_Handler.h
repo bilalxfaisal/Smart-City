@@ -491,6 +491,9 @@ public:
 
             // Fill Object
             citizenList[index].setCitizenDetails(cCNIC, cName, cAge, cSector, cStreet, cHouse, cOcc);
+            // Add debug output to loadCitizensFromCSV()
+            cout << "Loading citizen: " << citizenList[index].getName() << endl;
+
 
             index++;
         }
