@@ -1,101 +1,129 @@
-# Smart City — Islamabad Simulation System
+<div align="center">
 
-A terminal-based C++ simulation of a smart city modelled on Islamabad. The system manages six city subsystems — transport, commercial, education, medical, public facilities, and population — all connected through a shared location graph. It includes an SFML-powered interactive city map visualizer with heatmap support and a Dijkstra-based shortest path finder that works across any two locations in the city.
+# Smart City
+### Islamabad Urban Simulation System
 
-No STL containers are used. All data structures — linked lists, hash tables, stacks, queues, min-heap, max-heap, graphs, and trees — are implemented from scratch.
+![C++](https://img.shields.io/badge/C++-17-00599C?style=for-the-badge&logo=cplusplus&logoColor=white)
+![SFML](https://img.shields.io/badge/SFML-2.x-8CC445?style=for-the-badge&logo=sfml&logoColor=white)
+![CMake](https://img.shields.io/badge/CMake-Build-064F8C?style=for-the-badge&logo=cmake&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Active-2E7D32?style=for-the-badge)
+![Contributors](https://img.shields.io/badge/Contributors-3-0097A7?style=for-the-badge&logo=github&logoColor=white)
+
+*A terminal-based C++ simulation of a smart city modelled on Islamabad,*
+*managing six urban subsystems through a shared location graph with an SFML interactive city map.*
+
+[Features](#features) · [Subsystems](#subsystems) · [Data Structures](#data-structures) · [Quick Start](#quick-start) · [Team](#team)
+
+</div>
+
+---
+
+## Overview
+
+**Smart City** is a terminal-based C++ simulation of a smart city modelled on Islamabad. It manages six city subsystems — transport, commercial, education, medical, public facilities, and population — all connected through a shared location graph. It includes an SFML-powered interactive city map with heatmap support and a Dijkstra-based shortest path finder that works across any two locations in the city.
+
+No STL containers are used. Every data structure — linked lists, hash tables, stacks, queues, min-heap, max-heap, graphs, and trees — is implemented from scratch.
+
+> Built as a team project by 3 contributors as part of a Data Structures course at FAST NUCES Islamabad.
 
 ---
 
 ## Features
 
-**Main Menu**
+### Shortest Path Finder
+- Dijkstra's algorithm with a custom min-heap
+- Works between any two city locations — sectors, hospitals, schools, malls, bus stops, houses
+- Normal mode and Emergency mode with a 60% speed boost and priority lanes
+- Found path can be visualized directly on the city map
 
-From the main menu you can enter any of the six subsystems, visualize the full city map, find the shortest path between any two locations, or search for a specific location by name or type.
+### SFML City Map Visualizer
+- Full Islamabad sector grid rendered in an interactive window (sectors D-5 through J-12)
+- Left-click to zoom into any sector and see its locations
+- Right-click to zoom back out
+- Press H to toggle population heatmap — sectors colour from green (low) to red (high density)
 
-**Transport System**
+### Global Search and Location Lookup
+- Search any location by name or type across the entire city graph
+- Results linked back to the subsystem they belong to
 
-Add transport companies, define bus routes, assign bus stops to routes, and attach buses to companies. Simulates bus movement along routes. Bus stops are stored in a graph structure with adjacency lists, and routes are stored in a hash table keyed by route name. You can display the status of any company or visualize the full transport network.
-
-**Commercial System**
-
-Add malls, add stores to malls, organize products into categories within stores, search for products, and simulate a purchase. Malls are stored in a hash table using the Polynomial Rolling Hash. Stores within a mall use a separate hash table keyed by store name.
-
-**Education System**
-
-Add schools, departments within schools, classes within departments, faculty members, students, and subjects. Schools are organized as an n-ary tree. Students can be removed by name or ID and faculty members can be removed by ID. All school locations are registered in the shared city location graph.
-
-**Medical System**
-
-Add and remove hospitals and pharmacies. Add and remove doctors and patients from specific hospitals. Add and remove medicines from pharmacies. Hospitals are stored in a max-heap ordered by bed capacity for priority-based access. The medical subgraph connects hospitals and pharmacies in the city location graph.
-
-**Public Facility System**
-
-Add mosques, parks, and water coolers. Display all facilities by type. A dedicated visualizer shows the spatial distribution of public facilities across the city.
-
-**Population System**
-
-Add sectors, streets within sectors, houses within streets, and citizens within houses. Citizens are stored in a hash table keyed by CNIC for O(1) lookup. Search for any individual by CNIC. Generate reports on age distribution, occupation summary, and population density across sectors. Display all members of a house, all houses on a street, or a full listing of all sectors.
-
-**Shortest Path Finder**
-
-Find the shortest route between any two locations in the city — sectors (e.g., F-8, G-8), landmarks (e.g., BlueArea, Centaurus), hospitals, schools, malls, bus stops, or houses. Supports a normal mode that considers traffic weights and an emergency mode that applies a 60% speed boost with priority lanes. Uses Dijkstra's algorithm implemented with a custom min-heap. The found path can optionally be visualized on the city map.
-
-**City Map Visualizer**
-
-An SFML window renders the full Islamabad sector grid (sectors D-5 through J-12). Left-click zooms into any sector to see its locations. Right-click zooms back out. Press H to toggle heatmap mode, which colours sectors by population density from green (low) to red (high). Press Enter to exit heatmap mode.
-
-**CSV Import**
-
-Hospitals, pharmacies, schools, and bus stops can be bulk-loaded from CSV files instead of manual entry. The CSV handler parses files including quoted fields and maps each record into the appropriate system.
+### CSV Bulk Import
+- Hospitals, pharmacies, schools, and bus stops can be bulk-loaded from CSV files
+- Parser handles quoted fields and maps records directly into the appropriate subsystem
 
 ---
 
-## Data Structures Used
+## Subsystems
+
+| Subsystem | Description |
+|-----------|-------------|
+| Transport | Companies, bus routes, bus stops, buses, route simulation |
+| Commercial | Malls, stores, product categories, product search and purchase |
+| Education | Schools, departments, classes, faculty, students — organized as an n-ary tree |
+| Medical | Hospitals and pharmacies with doctor and patient management — max-heap ordered by bed capacity |
+| Public Facilities | Mosques, parks, water coolers with spatial distribution visualizer |
+| Population | Sectors, streets, houses, citizens — CNIC-keyed hash table with age, occupation, and density reports |
+
+---
+
+## Data Structures
 
 All implemented from scratch with no STL containers.
 
-- Linked lists: location graph nodes, bus stop lists, hospital/pharmacy lists, route lists
-- Hash tables with chaining: transport companies, bus routes, malls, stores, sectors, citizens
-- Polynomial Rolling Hash (two variants) and DJB2 hash for string keys; Golden Ratio hash for integer keys
-- Min-heap: Dijkstra's priority queue in LocationManager
-- Max-heap: hospital priority ordering in MedicalSystem
-- Custom stack (myStack) and queue (myQueue) with void* generics
-- Graph with adjacency lists: city location graph (intersections, hospitals, schools, malls, bus stops, houses), bus stop subgraph, transport subgraph, medical subgraph, commercial subgraph
-- N-ary tree: school hierarchy (school → department → class)
+| Structure | Used For |
+|-----------|----------|
+| Linked Lists | Location graph nodes, bus stop lists, hospital and pharmacy lists |
+| Hash Tables with Chaining | Transport companies, bus routes, malls, stores, sectors, citizens |
+| Polynomial Rolling Hash / DJB2 / Golden Ratio Hash | String and integer key hashing |
+| Min-Heap | Dijkstra's priority queue in the location manager |
+| Max-Heap | Hospital priority ordering by bed capacity |
+| Custom Stack and Queue | Generic void* implementations used across subsystems |
+| Graph with Adjacency Lists | City location graph, bus stop subgraph, transport, medical, and commercial subgraphs |
+| N-ary Tree | School hierarchy — school, department, class |
 
 ---
 
-## Build Requirements
-
-- C++17 or later
-- SFML 2.x (for the visualizer)
-- A C++ compiler such as g++ or MSVC
-
-The visualizer depends on SFML. If you only want the terminal simulation without the map window, the SFML dependency can be removed by stripping the visualizer include from Run.h.
-
----
-
-## How to Run
+## Quick Start
 
 Compile with SFML linked:
 
 ```bash
+git clone https://github.com/bilalxfaisal/Smart-City.git
+cd Smart-City
 g++ main.cpp -o SmartCity -lsfml-graphics -lsfml-window -lsfml-system
 ./SmartCity
 ```
 
+On Windows, link the SFML .lib files and place the SFML .dll files in the same directory as the executable.
+
+Navigate using the numbered menus. Enter 0 at any submenu to return to the main menu.
+
 ---
 
-## Collaborators
+## Built With
+
+- **[C++17](https://isocpp.org/)** — Core language
+- **[SFML 2.x](https://www.sfml-dev.org/)** — Interactive city map visualizer
+- **[CMake](https://cmake.org/)** — Build system
+
+---
+
+## Team
 
 <table>
   <tr>
     <td align="center">
-      <a href="https://github.com/Hashimk101">
-        <img src="https://github.com/Hashimk101.png" width="80" style="border-radius:50%" /><br/>
+      <a href="https://github.com/bilalxfaisal">
+        <img src="https://github.com/bilalxfaisal.png" width="80" style="border-radius:50%" /><br/>
+        <b>Muhammad Bilal Faisal</b>
+      </a><br/>
+      <a href="https://github.com/bilalxfaisal">@bilalxfaisal</a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/HashimK101">
+        <img src="https://github.com/HashimK101.png" width="80" style="border-radius:50%" /><br/>
         <b>Hashim Khushal Khan</b>
       </a><br/>
-      <a href="https://github.com/Hashimk101">@Hashimk101</a>
+      <a href="https://github.com/HashimK101">@HashimK101</a>
     </td>
     <td align="center">
       <a href="https://github.com/Hadiah-Batool">
@@ -104,14 +132,14 @@ g++ main.cpp -o SmartCity -lsfml-graphics -lsfml-window -lsfml-system
       </a><br/>
       <a href="https://github.com/Hadiah-Batool">@Hadiah-Batool</a>
     </td>
-    <td align="center">
-      <a href="https://github.com/bilalxfaisal">
-        <img src="https://github.com/bilalxfaisal.png" width="80" style="border-radius:50%" /><br/>
-        <b>Muhammad Bilal Faisal</b>
-      </a><br/>
-      <a href="https://github.com/bilalxfaisal">@bilalxfaisal</a>
-    </td>
   </tr>
 </table>
 
 ---
+
+<div align="center">
+
+*Built as a collaborative team project demonstrating custom data structures,*
+*graph algorithms, and real-time visualization in C++.*
+
+</div>
